@@ -14,5 +14,5 @@
     "MD058": false, // lignes vides autour des tableaux
     "MD060": false  // style des colonnes de tableau
   },
-  "ignores": [".idea/**", "node_modules/**"]
+  "ignores": [".idea/**", "node_modules/**", "docs/sprints/sprint-1/**"]
 }
