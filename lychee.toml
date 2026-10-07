@@ -2,5 +2,5 @@
 # Hors ligne : seuls les liens relatifs et les ancres des fichiers locaux sont
 # contrôlés. Aucun lien externe n'est vérifié dans les PR.
 offline = true
-include_fragments = true
+include_fragments = "anchor-only"
 no_progress = true
