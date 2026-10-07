@@ -168,7 +168,7 @@ Consigner les résultats (OK / KO / non testé, voir §6) et signaler les échec
 
 - **Branches de travail :** push libre ; un correctif = un commit annulable.
 - **`main` :** protégée, uniquement par pull request avec contrôles au vert (D17). Jamais de push direct.
-- **Contrôles requis** *(mise en place progressive : CI documentaire MPL-024, CI code MPL-026)* :
+- **Contrôles requis** *(mise en place progressive : CI documentaire MPL-024 **en place** — workflow `docs-ci`, jobs `markdown-lint`, `links`, `secrets`, `repo-checks`, voir `.github/workflows/docs-ci.yml` ; ces contrôles ne sont obligatoires qu'une fois la protection de branche appliquée (dépôt public) ; CI code MPL-026 à mettre en place)* :
   1. `dart format --set-exit-if-changed .`
   2. `flutter analyze` sans avertissement
   3. `flutter test`

@@ -1,0 +1,18 @@
+// Configuration markdownlint-cli2 : règles par défaut, sauf celles que le
+// style compact des documents existants impose (désactivées ci-dessous).
+{
+  "config": {
+    "default": true,
+    "MD012": false, // plusieurs lignes vides consécutives
+    "MD013": false, // longueur de ligne (paragraphes d'une seule ligne)
+    "MD022": false, // lignes vides autour des titres
+    "MD028": false, // ligne vide dans une citation
+    "MD031": false, // lignes vides autour des blocs de code
+    "MD032": false, // lignes vides autour des listes
+    "MD036": false, // gras utilisé comme sous-titre
+    "MD041": false, // première ligne = titre H1 (les snapshots commencent par une ligne en gras)
+    "MD058": false, // lignes vides autour des tableaux
+    "MD060": false  // style des colonnes de tableau
+  },
+  "ignores": [".idea/**", "node_modules/**"]
+}
