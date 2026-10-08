@@ -1,16 +1,16 @@
 # MusicPlayer
 
-**Version du document :** 0.2 · **Dernière MAJ :** 05/10/2026
+**Version du document :** 0.2 · **Dernière MAJ :** 08/10/2026
 
 Lecteur audio local, **libre, gratuit, sans publicité, sans compte, sans télémétrie**, avec l'expérience d'un service de streaming moderne.
 
-> **Statut :** prototype audio Android en cours de validation. Aucune version livrée. Voir `PRD.md`.
+> **Statut :** prototype audio Android validé sur appareil ; stockage amovible à l'étude ; aucune version livrée. Voir `PRD.md`.
 
 ## Plateformes
 
 | Plateforme | État |
 |---|---|
-| Android | En cours (prototype validé partiellement sur Pixel 10 Pro (lecture, arrière-plan écran verrouillé, notification et contrôles, persistance) ; Auto-test des formats en cours) |
+| Android | En cours (prototype audio **validé sur Pixel 10 Pro** (build release) : lecture, arrière-plan écran verrouillé, notification et contrôles, persistance de la liste, Auto-test des formats ; stockage amovible à l'étude (MPL-003)) |
 | Windows 11, macOS | Prévus, en pause |
 | iOS | Hors périmètre actuel |
 
@@ -27,6 +27,7 @@ Lecteur audio local, **libre, gratuit, sans publicité, sans compte, sans télé
 - Bibliothèque indexée : tags, pochettes, recherche
 - File d'attente, lecteur plein écran, contrôles système
 - Accueil dynamique et mix automatiques générés à partir de la bibliothèque
+- Lecture de web-radio (fonction en ligne, variante de build dédiée, voir `PRD.md` D26)
 
 ## Vie privée
 
@@ -47,7 +48,7 @@ Aucune donnée ne quitte l'appareil. La build release ne déclare pas la permiss
 
 ## Contribuer
 
-`main` est protégée : toute modification passe par une pull request dont les contrôles (format, analyse, tests, sécurité, documentation) sont au vert. Voir `HOWTO.md` §9.
+`main` est protégée (ruleset actif) : toute modification passe par une pull request dont les 4 contrôles (`markdown-lint`, `links`, `secrets`, `repo-checks`) sont au vert. Voir `HOWTO.md` §9.
 
 ## Licence
 

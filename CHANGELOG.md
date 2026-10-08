@@ -1,6 +1,6 @@
 # Changelog — MusicPlayer
 
-**Dernière MAJ :** 05/10/2026 · Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
+**Dernière MAJ :** 08/10/2026 · Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 
 **Règle :** une entrée n'est ajoutée qu'après **confirmation par test réel** de l'utilisateur
 (jamais sur la seule base d'un rapport de l'outil de génération). Chaque entrée référence la clé
@@ -13,6 +13,9 @@ du backlog (`MPL-NNN`). Un changement dans `lib/` sans entrée ici bloquera la p
 ### Ajouté
 
 - **MPL-012** (05/10/2026) — Demande de la permission de notification (Android 13+) : dialogue explicatif au premier lancement d'une lecture, gestion du refus, bandeau avec lien vers les réglages. Confirmé sur Pixel 10 Pro (build release).
+- **MPL-002** (07/10/2026) — Prototype audio Android clos : lecture locale avec deux moteurs (`just_audio` et `media_kit`) ; lecture, pause, seek, lecture écran verrouillé, notification et contrôles, seek depuis la notification, persistance de la liste après fermeture et redémarrage. Voir aussi MPL-008, MPL-012 et MPL-013. Confirmé sur Pixel 10 Pro (build release). **Limites connues :** WMA lisible uniquement avec `media_kit` ; un MP3 de test illisible par les deux moteurs (fichier probablement tronqué, cas témoin).
+- **MPL-006** (07/10/2026) — Auto-test sur échantillon : 1 à 2 pistes par format, 20 au plus ; moteur figé pendant le test ; exports `.csv` et journal `.txt`. Validé sur 13 pistes avec chaque moteur ; résultats dans `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md`. Confirmé sur Pixel 10 Pro (build release). **Limites connues :** WMA lisible uniquement avec `media_kit` ; un MP3 de test illisible par les deux moteurs (fichier probablement tronqué, cas témoin).
+- **MPL-007** (07/10/2026) — Console de test : recherche, tri, filtre par format ; défilement, recherche et tri fluides sur 2 625 pistes ; liste conservée au redémarrage. Confirmé sur Pixel 10 Pro (build release).
 
 ### Corrigé
 
