@@ -24,21 +24,12 @@ jobs:
         with:
           persist-credentials: false
 
-      # Bloquant : configuration dans .markdownlint-cli2.jsonc.
+      # Configuration dans .markdownlint-cli2.jsonc (snapshots figés de
+      # docs/sprints/sprint-1/ exclus via `ignores`).
       - name: markdownlint
         uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
         with:
-          globs: |
-            **/*.md
-            #docs/sprints/sprint-1/DIAGNOSTICS.md
-
-      # Avertissement seulement : défauts réels connus dans ce snapshot figé
-      # (MD056 ligne 377, MD040 ligne 73). Non corrigés (documents non modifiés).
-      - name: markdownlint (avertissement, DIAGNOSTICS.md)
-        continue-on-error: true
-        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
-        with:
-          globs: docs/sprints/sprint-1/DIAGNOSTICS.md
+          globs: "**/*.md"
 
   links:
     name: links
@@ -78,6 +69,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GITLEAKS_ENABLE_COMMENTS: "false"
+          # Dépôt public : les artefacts sont téléchargeables, pas de SARIF.
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
 
   repo-checks:
     name: repo-checks
