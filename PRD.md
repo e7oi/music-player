@@ -92,8 +92,8 @@ Le registre complet (`Dn`) est tenu dans le backlog. Résumé des décisions qui
 | Code | Décision | Statut |
 |---|---|---|
 | D1 | Projet open source ; licence GPL-3.0-or-later | Tranchée 05/10/2026 |
-| D2 | Moteur audio : `media_kit` unique et `just_audio` en repli Android (tendance `media_kit` moteur unique). Test SSD réalisé le 08/10/2026 : `media_kit` lit le SSD ; le WARN observé vient de deux fichiers (MPL-010) ; les deux moteurs sont tués de la même façon au retrait sans traitement | Provisoire |
-| D3 | Gestion d'état et base locale (ex. Riverpod, Drift/SQLite) | Ouverte |
+| D2 | Moteur audio : `media_kit` (libmpv/FFmpeg) est le **moteur unique** de l'application réelle, derrière une **interface indépendante du moteur** (`PlayerController`, MPL-017) qui permet de changer de moteur plus tard ; `just_audio` n'est pas repris dans l'application réelle, le prototype reste la référence. Motifs : un seul moteur à tester et à maintenir, WMA lisible (D16 : toujours non prioritaire), ReplayGain possible via mpv (MPL-019, D13), même moteur sur Windows et macOS. Conséquences acceptées : les WARN de MPL-010 (sans effet audible constaté) ; poids de l'APK non mesuré (risque à suivre). Tests SSD du 08/10/2026 : les deux moteurs lisent le SSD et réagissent de la même façon au retrait ; remplace la recommandation de `docs/sprints/sprint-1/RESULTS.md` §6 (snapshot Sprint 1) | Tranchée 09/10/2026 |
+| D3 | Base locale : SQLite via **Drift** (requêtes typées, migrations de schéma versionnées, flux réactifs, exécution en isolate, recherche plein texte FTS5 possible). Gestion d'état : **Riverpod**. Motif de la base : le modèle D23 est relationnel (disques, pistes par disque + chemin relatif, playlists mêlant plusieurs disques) ; Isar (état de maintenance en 2026 non vérifié) et ObjectBox (plus de natif, relations moins naturelles) ne sont pas retenus. Reporté à l'implémentation : la version exacte de Riverpod et l'usage ou non de sa génération de code (en plus de celle de Drift) | Tranchée 09/10/2026 |
 | D4 | Nom définitif de l'application | Ouverte |
 | D5 | Canaux de distribution (stores, téléchargement direct, F-Droid) | Ouverte |
 | D6 | Android Auto et Google Play (apps non installées via le Play Store non visibles dans Android Auto hors mode développeur, à revérifier) | Ouverte |
@@ -104,9 +104,9 @@ Le registre complet (`Dn`) est tenu dans le backlog. Résumé des décisions qui
 | D16 | WMA non prioritaire | Tranchée 05/10/2026 |
 | D20 | Enrichissement en ligne optionnel, variante de build séparée, opt-in, cache local ; préciserait D15 (« aucun réseau sortant ») | Ouverte |
 | D21 | Organisation : documents à la racine, méthodologies dans le dépôt privé `ai-tools`, snapshots dans `docs/sprints/` | Tranchée 05/10/2026 |
-| D23 | Modèle de « source de bibliothèque » | Ouverte |
+| D23 | Modèle de « source de bibliothèque » : une source est un **disque** : le stockage interne (« Local ») ou un volume amovible, identifié par l'UUID de son système de fichiers. Un disque contient les dossiers choisis par l'utilisateur ; une piste est identifiée par (disque, chemin relatif). Les pistes d'un disque absent restent dans la bibliothèque, grisées ; pendant la lecture, elles sont sautées avec un message (du type « 12 pistes ignorées : SSD absent »). Une playlist peut mêler les pistes de plusieurs disques. Si l'utilisateur ajoute un disque dont les chemins relatifs correspondent à ceux d'un disque absent, l'application propose de le réassocier (playlists, favoris et statistiques conservés). Dans l'interface, la source est le disque (« SSD : 26 pistes, indisponible »), et non chaque dossier comme dans le prototype | Tranchée 09/10/2026 |
 | D24 | Le prototype reste dans un dépôt privé séparé | Tranchée |
-| D25 | Android : MediaStore pour le stockage interne, sélecteur Android (SAF) pour le stockage amovible USB ; remplace D11. Accès SSD par SAF vérifié sur le Pixel ; risque du retrait pendant la lecture traité par le spike (MPL-035) | Provisoire |
+| D25 | Android : MediaStore pour le stockage interne, sélecteur Android (SAF) pour le stockage amovible USB ; remplace D11. Accès SSD par SAF vérifié sur le Pixel 10 Pro (MPL-003) ; risque du retrait pendant la lecture traité par le spike (MPL-035) | Tranchée 09/10/2026 |
 | D26 | Toute fonction en ligne (dont la web-radio et l'enrichissement de D20) n'existe que dans une variante de build qui déclare `INTERNET` ; la variante « offline » n'a pas de réseau | Provisoire |
 
 ## 10. Risques
@@ -118,6 +118,8 @@ Le registre complet (`Dn`) est tenu dans le backlog. Résumé des décisions qui
 - **Android** : scoped storage et service d'arrière-plan ; un seul appareil testé ; disque externe à valider.
 - **SSD USB-C non visible des applications** : accès par le sélecteur Android, lecture `media_kit` à prototyper.
 - **Retrait du SSD pendant la lecture** : sans arrêt préalable du moteur, Android tue l'app (`vold` détecte un descripteur ouvert sur le volume et envoie `SIGINT`, environ 1 s après l'éjection). Mitigation (arrêt du moteur dès l'annonce d'éjection) essayée en spike seulement : 5 essais, un Pixel, un SSD ; marge sous charge non vérifiée (MPL-035).
+- **Poids de l'APK de `media_kit`** (libmpv/FFmpeg) : non mesuré ; à suivre (D2).
+- **Dépendance à des fonctions Android précises** (SAF, éjection de volume) : à retester sur d'autres appareils et versions d'Android (D25).
 - **macOS** : sandbox et entitlements ; accès disque qui échoue silencieusement si mal configuré.
 - **Android Auto** : exige une architecture média native (service + session média), des critères de qualité Google pour être listé sur Google Play, et un test sur émulateur DHU ou en voiture.
 - **Publication du dépôt** : expose l'historique complet ; le dépôt est public depuis le 08/10/2026, audit fait (MPL-025).
