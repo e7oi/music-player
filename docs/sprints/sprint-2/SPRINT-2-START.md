@@ -1,15 +1,15 @@
 # SPRINT-2-START — MusicPlayer
 
-**Version :** 3 · **Mise à jour :** 07/10/2026 (démarrage du sprint : 05/10/2026) · **Préfixe backlog :** MPL
+**Version :** 4 · **Mise à jour :** 09/10/2026 (démarrage du sprint : 05/10/2026) · **Préfixe backlog :** MPL
 **Clôture de référence :** `docs/sprints/sprint-1/SPRINT-1-CLOSURE.md`
-**Dépôts :** `e7oi/music-player` (privé ; `main` orpheline : documentation seulement) · `e7oi/music-player-prototype` (privé, **jamais public** ; branche `mpl-002-audio-prototype` : code du prototype) · méthodologies : dépôt privé `ai-tools`
+**Dépôts :** `e7oi/music-player` (public depuis le 08/10/2026 ; `main` orpheline : documentation seulement) · `e7oi/music-player-prototype` (privé, **jamais public** ; branches `mpl-002-audio-prototype` et `mpl-003-saf-prototype` (jamais fusionnée) : code du prototype) · méthodologies : dépôt privé `ai-tools`
 **Stack :** Flutter 3.47.6 / Dart 3.13.5 · Android (Pixel 10 Pro, build release) · **Licence :** GPL-3.0-or-later, © 2026 Eloi BERTIN
 
 ---
 
 ## 1. Contexte
 
-MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sans télémétrie, avec l'UX d'un service de streaming. **Android est la plateforme principale et prioritaire** (D10). Le prototype audio est validé en grande partie sur le Pixel (lecture, écran verrouillé, notification, contrôles, seek depuis la notification). Restent l'Auto-test des formats, la fluidité de la liste et le test du stockage amovible. En parallèle, le dépôt propre est en place (licence, `main`, documents) ; la CI documentaire est la prochaine étape.
+MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sans télémétrie, avec l'UX d'un service de streaming. **Android est la plateforme principale et prioritaire** (D10). Le prototype audio est clos (MPL-002, 006, 007 : lecture, écran verrouillé, notification, contrôles, Auto-test des formats, fluidité de la liste ; résultats dans `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md`). L'accès au SSD par SAF a été testé sur le Pixel (MPL-003, terminé avec réserves : le retrait pendant la lecture n'est traité qu'en spike, MPL-035). Le dépôt est public depuis le 08/10/2026, `main` protégée et testée, CI documentaire en place.
 
 ## 2. Deux pistes parallèles
 
@@ -21,6 +21,8 @@ MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sa
 | A2 | MPL-007 | Fluidité du défilement (2 624 pistes), recherche, tri, exports `.txt`/`.csv`, « Rejouer les échecs » — même session que A1 | Une seule session sur appareil |
 | A3 | MPL-003 | **Diagnostic SSD** (Samsung T7 Shield) : commandes `adb` en mode sans fil, puis décision A (requête MediaStore multi-volumes) ou B (sélecteur Android, SAF) | Test d'architecture : peut changer D2, D3 et MPL-018 |
 | A4 | D2 | Trancher le moteur audio avec les résultats A1 et A3 | Débloque MPL-017 |
+
+**État au 09/10/2026 :** A1 à A3 réalisées (voir §3 et `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md`) ; A4 (D2) non tranchée, D2 reste provisoire. Piste B : B1 à B3 réalisées.
 
 **Piste B — dépôt et qualité.**
 
@@ -37,35 +39,39 @@ MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sa
 | Clé | Type | Prio | Titre | Parent | Statut |
 |---|---|---|---|---|---|
 | MPL-001 | 🗂️ | 🔺 | Épique « Lecture locale » | — | En cours |
-| MPL-002 | 🔧 | 🔺 | Prototype audio Android | 001 | En cours : reste l'Auto-test des formats (seek depuis la notification : validé) |
-| MPL-003 | 📖 | 🔺 | Sources de bibliothèque : stockage amovible (SSD USB-C), test Pixel (titre proposé) 🔗 ⚠️ | 001 | ⬜ À faire (diagnostic `adb` en attente) |
+| MPL-002 | 🔧 | 🔺 | Prototype audio Android | 001 | ✅ Clos (07/10/2026) |
+| MPL-003 | 📖 | 🔺 | Sources de bibliothèque : stockage amovible (SSD USB-C), test Pixel (titre proposé) 🔗 ⚠️ | 001 | ✅ Terminé avec réserves (08/10/2026) : SSD lu par SAF avec les deux moteurs ; tags non lus pendant le parcours (≈ 39 ms par fichier mesurés) ; retrait pendant la lecture traité en spike seulement (MPL-035) ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4 |
 | MPL-004 | 🗂️ | 🔸 | Épique « Expérience de type streaming » | — | ⬜ À faire |
 | MPL-005 | 🗂️ | ▫️ | Épique « Voiture / Android Auto » 🔗 dépend de 001 ⚠️ D6 | — | ⬜ À faire |
-| MPL-006 | 🔧 | 🔺 | Auto-test sur échantillon, isolé, exporté | 001 | 📤 Prompt livré ; amendement pondéré (≥10 MP3 variés) optionnel, proposé |
-| MPL-007 | 🔧 | 🔺 | Console de test : recherche, tri, filtre par format | 002 | 📤 Prompt livré, reste à vérifier (fluidité, exports) |
+| MPL-006 | 🔧 | 🔺 | Auto-test sur échantillon, isolé, exporté | 001 | ✅ Clos (07/10/2026) : 13 pistes par moteur ; élargissement de l'échantillon MP3 : MPL-034 |
+| MPL-007 | 🔧 | 🔺 | Console de test : recherche, tri, filtre par format | 002 | ✅ Clos (07/10/2026) |
 | MPL-008 | 🐛 | 🔺 | Lecture coupée après ~1 min écran verrouillé | 002 | ✅ Résolu (cause initiale non déterminée) |
 | MPL-009 | 🐛 | ▫️ | WMA non lu par `just_audio` | — | ⛔ Abandonné — WMA = 1,2 % de la bibliothèque, seul `media_kit` le lit, non prioritaire (D16, 05/10/2026) |
-| MPL-010 | 🐛 | ▫️ | FLAC avec étiquettes ID3 : avertissement `media_kit` sans effet audible | — | 🐞 Bug actif |
+| MPL-010 | 🐛 | ▫️ | Avertissements de décodage `media_kit` sans effet audible constaté : FLAC avec étiquettes ID3 ; MP3 avec données non-MPEG après la dernière trame (MP3 A, MP3 B ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.5) | — | 🐞 Bug actif (origine des octets et fréquence dans la bibliothèque non établies ; pas de changement de code) |
 | MPL-011 | 🔧 | ▫️ | Écart de volume entre moteurs | 002 | ✅ Clos (accepté, D13) |
 | MPL-012 | 🔧 | 🔺 | Permission de notification | 002 | ✅ Résolu |
 | MPL-013 | 🐛 | 🔺 | Icônes `audio_service` supprimées en release | 002 | ✅ Résolu |
 | MPL-014 | 🔧 | ▫️ | Prototype audio Windows et macOS | — | ⏸️ En pause |
 | MPL-015 | 🔧 | ▫️ | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | — | ⬜ À faire |
-| MPL-016 | 🔧 | 🔺 | Maquettes UI/UX dans Claude Design | — | ⬜ À faire |
-| MPL-017 | 🔧 | 🔺 | Fondations du projet de production 🔗 bloqué par D2, D3 (et MPL-003, proposé) | — | 🔒 Bloqué |
-| MPL-018 | 📖 | 🔺 | Indexation : tags, pochettes, SQLite, test à 10 000 pistes (lié à D23) | 001 | ⬜ À faire |
+| MPL-016 | 🔧 | 🔺 | Maquettes UI/UX dans Claude Design (note : prévoir l'état « sources indisponibles » sans écraser la liste de pistes, défaut observé dans le prototype MPL-003) | — | ⬜ À faire |
+| MPL-017 | 🔧 | 🔺 | Fondations du projet de production 🔗 bloqué par D2, D3 | — | 🔒 Bloqué |
+| MPL-018 | 📖 | 🔺 | Indexation : tags, pochettes, SQLite, test à 10 000 pistes (lié à D23 ; note : lecture des tags mesurée à ≈ 39 ms par fichier sur SAF, ≈ 100 s pour 2 600 fichiers, à faire en arrière-plan) | 001 | ⬜ À faire |
 | MPL-019 | 📖 | ▫️ | Normalisation du volume (ReplayGain, préampli) | 004 | ⬜ À faire |
 | MPL-020 | 🗂️ | 🔺 | Épique « Qualité, CI et documentation » | — | En cours |
 | MPL-021 | 🔧 | 🔺 | Licence GPL-3.0-or-later (© 2026 Eloi BERTIN) | 020 | ✅ Résolu (06/10/2026) |
 | MPL-022 | 🔧 | 🔺 | Docs : PRD v0.2, README, CHANGELOG, HOWTO, snapshots du Sprint 1 | 020 | ✅ Résolu (06/10/2026) |
-| MPL-023 | 🔧 | 🔺 | `main` orpheline, dépôts séparés, protection de branche | 020 | En cours : `main` orpheline, branche par défaut, deux dépôts ✅ ; protection **non appliquée** (dépôt privé, forfait gratuit) |
-| MPL-024 | 🔧 | 🔺 | CI documentaire (markdownlint, liens, gitleaks, cohérence) | 020 | 📤 Prompt livré (07/10/2026) |
-| MPL-025 | 🔧 | 🔺 | Audit avant publication (historique, e-mails), puis dépôt public 🔗 | 020 | 🔒 Bloqué par MPL-024 |
+| MPL-023 | 🔧 | 🔺 | `main` orpheline, dépôts séparés, protection de branche | 020 | ✅ Résolu (08/10/2026) : `main` orpheline, deux dépôts, ruleset `protect-main` appliqué ; push direct refusé (test réel) |
+| MPL-024 | 🔧 | 🔺 | CI documentaire (markdownlint, liens, gitleaks, cohérence) | 020 | ✅ Résolu (07/10/2026) |
+| MPL-025 | 🔧 | 🔺 | Audit avant publication (historique, e-mails), puis dépôt public 🔗 | 020 | ✅ Résolu (08/10/2026) : audit fait, dépôt public depuis le 08/10/2026 |
 | MPL-026 | 🔧 | 🔸 | CI code Flutter : format, analyse, tests, vulnérabilités, licences, **liste blanche des permissions** du manifest, vérification de l'empreinte de libmpv 🔗 | 020 | 🔒 Bloqué par MPL-017 |
 | MPL-027 | 🔧 | 🔸 | Tests fonctionnels `integration_test` + procédure appareil réel 🔗 | 020 | 🔒 Bloqué par MPL-017 |
 | MPL-028 | 🔧 | 🔸 | Fraîcheur des docs (en-têtes, modèle de PR, étape `/endSprint`) | 020 | ⬜ À faire |
 | MPL-029 | 📖 | ▫️ | Enrichissement en ligne opt-in (pochettes, paroles, métadonnées manquantes) 🔗 ⚠️ | 004 | 🔒 Bloqué par D20, MPL-018 |
 | MPL-030 | 📖 | ▫️ | Support Linux (desktop) — nice to have, non engagé 🔗 | — | 🔒 Bloqué par D2 |
+| MPL-031 | 🔧 | ▫️ | Test négatif de la CI dans un dépôt privé jetable | 020 | ⬜ À faire |
+| MPL-033 | 📖 | ▫️ | Lecture de web-radio (France Info, Radio-Canada, France Inter, Radio Nova, CBC...), Phase 2 🔗 | 004 | 🔒 Bloqué par D26 |
+| MPL-034 | 🔧 | ▫️ | Auto-test : davantage de MP3 dans l'échantillon (92 % de la bibliothèque), un MP3 illisible gardé comme témoin, pistes en erreur signalées (« flaggées ») dans l'interface | 001 | ⬜ À faire (possible depuis MPL-003) |
+| MPL-035 | 🔧 | ▫️ | Retrait du stockage amovible pendant la lecture : écouteur natif d'éjection puis `stop()` et fermeture du descripteur dans `PlayerController` (indépendant du moteur) ; vérifier la marge sous charge et avec d'autres descripteurs ouverts ; retirer le récepteur `ACTION_MEDIA_*` ; décider de la reprise au rebranchement ; descripteur proxy gardé comme alternative non testée. Voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.3 🔗 MPL-017, D25 | 001 | ⬜ À faire |
 
 **Note sur MPL-023 et MPL-025.** La protection de `main` ne s'applique qu'en dépôt public (ou forfait payant) ; or la publication exige l'audit (MPL-025). MPL-025 n'est donc pas bloqué par la fin de MPL-023 : MPL-023 se ferme après la publication, avec un test réel.
 
@@ -76,7 +82,7 @@ MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sa
 | Code | Décision | Statut |
 |---|---|---|
 | D1 | Projet **open source** ; licence GPL-3.0-or-later ; titulaire Eloi BERTIN (2026) | Tranchée 05/10/2026 |
-| D2 | Moteur audio : `media_kit` unique, `just_audio` en repli Android. Le prototype démarre sur `just_audio` | **Provisoire** (dépend de l'Auto-test et du test SSD) |
+| D2 | Moteur audio : `media_kit` unique, `just_audio` en repli Android. Le prototype démarre sur `just_audio`. Test SSD réalisé le 08/10/2026 : `media_kit` lit le SSD ; le WARN observé vient de deux fichiers (MPL-010) ; les deux moteurs sont tués de la même façon au retrait sans traitement | **Provisoire** |
 | D3 | Gestion d'état et base de données | Ouverte |
 | D4 | Nom définitif de l'application | Ouverte |
 | D5 | Canaux de distribution (la release est signée avec la clé debug : TODO avant toute distribution) | Ouverte |
@@ -85,13 +91,13 @@ MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sa
 | D8 | Flutter/Dart, codebase unique | Tranchée |
 | D9 | Lecteur local ; aucun catalogue sous licence ; pas de copie de l'identité Spotify/Deezer | Tranchée |
 | D10 | **Android plateforme principale et prioritaire** ; Windows et macOS en pause (MPL-014) ; iOS hors périmètre ; Linux nice to have (MPL-030) | Tranchée (révisée 06/10/2026) |
-| D11 | Android : MediaStore comme voie principale, pas de sélecteur de dossier (à revoir selon MPL-003) | Tranchée |
+| D11 | Android : MediaStore comme voie principale, pas de sélecteur de dossier | Remplacée par D25 |
 | D12 | Android Auto : Épique P2 (MPL-005), architecture audio prévue dès le départ | Tranchée |
-| D13 | Volume : build B3 (`media_kit`, sans `ao=audiotrack`) ; normalisation par ReplayGain (MPL-019) | Tranchée |
+| D13 | `media_kit` avec sa sortie par défaut (OpenSL ES), sans `ao=audiotrack` ; écart léger accepté ; normalisation par ReplayGain (MPL-019) | Tranchée |
 | D14 | Valider tout item en **build release** avant fermeture (HOWTO §6) | Tranchée |
 | D15 | Aucune requête réseau sortante (pas de `INTERNET` en release). Pourra être précisée par D20 | Tranchée |
 | D16 | WMA non prioritaire ; MPL-009 abandonné | Tranchée 05/10/2026 |
-| D17 | `main` orpheline et protégée ; merge par PR avec contrôles au vert ; push libre des branches de travail. La protection n'est pas appliquée tant que le dépôt est privé : en attendant, discipline (jamais de push direct) | Tranchée 05/10/2026 |
+| D17 | `main` orpheline et protégée ; merge par PR avec contrôles au vert ; push libre des branches de travail. Protection appliquée le 08/10/2026 (ruleset `protect-main`), push direct refusé en test réel | Tranchée 05/10/2026 |
 | D18 | Méthodologies hors dépôt | Remplacée par D21 |
 | D19 | Dépôt public après licence + `main` + CI documentaire + audit (MPL-025) | Tranchée 05/10/2026 |
 | D20 | Enrichissement en ligne optionnel : opt-in par fonction, cache local, variante de build séparée. Précisera D15. À trancher avant l'Épique MPL-004 | **Ouverte** |
@@ -99,6 +105,9 @@ MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sa
 | D22 | Les fichiers du dépôt sont modifiés par Claude Code ; ce Project rédige les prompts, challenge et relit | Tranchée 06/10/2026 |
 | D23 | Modèle de « source de bibliothèque » : identifiant de volume, pistes disponibles ou indisponibles selon la présence du SSD, playlists pouvant mêler plusieurs sources | **Ouverte** (06/10/2026) |
 | D24 | Le prototype reste dans un dépôt privé séparé (`music-player-prototype`) ; `music-player` ne contient que `main` et ses branches de travail | Tranchée 07/10/2026 |
+| D25 | Android : MediaStore pour le stockage interne, sélecteur Android (SAF) pour le stockage amovible USB ; remplace D11. Accès SSD par SAF vérifié sur le Pixel ; risque du retrait pendant la lecture traité par le spike (MPL-035) | **Provisoire** |
+| D26 | Toute fonction en ligne (dont la web-radio et l'enrichissement de D20) n'existe que dans une variante de build qui déclare `INTERNET` ; la variante « offline » n'a pas de réseau | **Provisoire** |
+| D27 | Les exports d'essai (CSV, journaux, logcat) contiennent des titres, des chemins et des identifiants de volume : ils sont analysés par Claude Code dans un dossier hors dépôt, jamais versionnés ; Claude (chat) ne reçoit que des extraits ou des synthèses | **Provisoire** |
 
 ## 5. Définition de « terminé » pour le prototype Android
 
@@ -108,11 +117,11 @@ MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sa
 | 2 | Lecture écran verrouillé > 15 min avec enchaînement | ✅ |
 | 3 | Notification, canal et contrôles | ✅ |
 | 4 | Seek depuis la notification | ✅ |
-| 5 | Persistance au redémarrage, touches des écouteurs | ✅ selon la clôture du Sprint 1 ; `RESULTS.md` §10 laissait « redémarrage » non testé — **à confirmer** |
-| 6 | Auto-test échantillon non filtré, deux moteurs (~13 pistes) | ⬜ A1 |
-| 7 | Fluidité (2 624 pistes), recherche, tri, exports | ⬜ A2 |
-| 8 | Lecture d'une piste du SSD avec les deux moteurs ; comportement au débranchement | ⬜ A3 |
-| 9 | Décision D2 | ⬜ A4 |
+| 5 | Persistance au redémarrage, touches des écouteurs | ✅ persistance de la liste après redémarrage (07/10/2026) ; touches des écouteurs : non précisé |
+| 6 | Auto-test échantillon non filtré, deux moteurs (~13 pistes) | ✅ A1 (07/10/2026, 13 pistes par moteur) |
+| 7 | Fluidité (2 624 pistes), recherche, tri, exports | ✅ A2 (07/10/2026) |
+| 8 | Lecture d'une piste du SSD avec les deux moteurs ; comportement au débranchement | ✅ avec réserves, A3 (08/10/2026) : lecture avec les deux moteurs ; retrait traité en spike seulement (MPL-035) |
+| 9 | Décision D2 | ⬜ A4 (D2 reste provisoire) |
 | 10 | « Tout » sur 2 624 pistes (≈ 4 h par moteur) | Optionnel |
 
 ## 6. Règles critiques à ne pas casser
@@ -123,29 +132,29 @@ MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sa
 4. Permission de notification en natif dans `MainActivity` (commit `cf79f4f`) ; pas de `permission_handler`.
 5. Pendant un Auto-test, ne pas toucher à l'app.
 6. Tests d'arrière-plan : téléphone débranché.
-7. Un correctif = un commit annulable. Push libre des branches de travail ; **`main` uniquement par pull request** (D17), jamais de push direct, même si la protection n'est pas appliquée.
+7. Un correctif = un commit annulable. Push libre des branches de travail ; **`main` uniquement par pull request** (D17), jamais de push direct (protection appliquée depuis le 08/10/2026).
 8. Aucune télémétrie, aucun réseau sortant (D15, sous réserve de D20).
 9. Pas de gain de volume arbitraire (ReplayGain, MPL-019).
 10. `media_kit` sur Android : chemin de fichier, pas d'URI `content://`.
 11. **Deux dépôts, deux clones distincts.** Ne jamais ajouter l'un comme remote de l'autre. `music-player-prototype` ne devient jamais public.
-12. `music-player` reste privé jusqu'à la fin de MPL-025.
+12. `music-player` est public depuis le 08/10/2026 (fin de MPL-025) : aucun contenu personnel dans les fichiers versionnés (D27).
 13. Identité Git `Eloi BERTIN <228106+e7oi@users.noreply.github.com>`, configurée **dans les clones MusicPlayer seulement** (pas en global).
 14. Les fichiers du dépôt sont modifiés par Claude Code (D22) ; les prompts interdisent tout push sur `main`.
 15. La branche `mpl-002-audio-prototype` reste intacte jusqu'à la fermeture de MPL-002, puis reçoit l'étiquette `prototype-sprint1`.
 
 ## 7. Risques ouverts
 
-- **Stockage amovible** : le SSD n'apparaît pas dans « Scanner MediaStore ». Cause non établie : requête limitée au volume principal, ou volume non indexé par Android. Impact possible sur D2, D3, MPL-017 et MPL-018.
-- **Protection de `main`** non appliquée en dépôt privé gratuit : repose sur la discipline jusqu'à la publication.
-- **Publication** : l'historique complet devient public ; e-mails des commits, chemins personnels, secrets à auditer (MPL-025).
+- **Stockage amovible** : le SSD n'est pas indexé par MediaStore ; accès par SAF vérifié sur le Pixel (MPL-003, terminé avec réserves). **Retrait pendant la lecture** : sans traitement, Android tue l'app (`vold`, `SIGINT`) ; arrêt préalable du moteur essayé en spike seulement (5 essais, un appareil, un SSD), marge sous charge non vérifiée (MPL-035).
+- **Publication** : l'historique complet est public depuis le 08/10/2026 (audit MPL-025 fait) ; toute fuite dans un fichier versionné est durable.
 - Release signée avec la clé debug ; build qui télécharge libmpv depuis github.com sans empreinte vérifiée ; licence libmpv sur Windows et macOS non vérifiée sur un build de l'app ; un seul appareil testé.
 - Cause initiale de MPL-008 inconnue ; volume jamais mesuré en dB ; OpenSL ES à surveiller ; indexation, SQLite et gapless non essayés ; Android Auto et Google Play (D6).
 - Minutes de GitHub Actions limitées en dépôt privé (la CI documentaire est légère).
 
 ## 8. Questions en attente
 
-1. **Persistance après redémarrage** testée sur le Pixel ? (clôture du Sprint 1 : oui ; `RESULTS.md` §10 : non testé). Conditionne la formulation « validé partiellement » du PRD et du README.
-2. **Diagnostic SSD** : sorties de `adb shell sm list-volumes all`, `ls /storage`, et de la requête `content://media/<uuid>/audio/media` (débogage sans fil).
+1. ~~Persistance après redémarrage~~ : persistance de la liste confirmée sur le Pixel (07/10/2026).
+2. ~~Diagnostic SSD~~ : fait (MPL-003, voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md`).
+3. **Reprise de la lecture au rebranchement** du stockage amovible : décision produit à prendre (MPL-035).
 
 ## 9. Sources
 
@@ -154,4 +163,4 @@ MusicPlayer est un lecteur audio local libre, gratuit, sans pub, sans compte, sa
 
 ---
 
-*SPRINT-2-START.md v3 — 07/10/2026 · à placer dans `docs/sprints/sprint-2/` du dépôt `music-player` (via MPL-024)*
+*SPRINT-2-START.md v4 — 09/10/2026 · à placer dans `docs/sprints/sprint-2/` du dépôt `music-player` (via MPL-024)*

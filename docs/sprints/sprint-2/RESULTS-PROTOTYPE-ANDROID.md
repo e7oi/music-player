@@ -35,3 +35,63 @@ Build release, Pixel 10 Pro : défilement, recherche et tri fluides sur 2 625 pi
 Un SSD USB-C (exFAT) est monté par Android mais **non visible des applications** (absent de `/storage`, volume inconnu de MediaStore, indicateurs de montage sans visibilité).
 
 Conclusion : sélecteur Android (SAF) pour le stockage amovible (D25, provisoire). Impact : `media_kit` ne lit pas les URI `content://` ; contournement à prototyper (MPL-003, en cours).
+
+## 4. MPL-003 : SSD par SAF (tests sur le Pixel, 08/10/2026)
+
+Ajout du 09/10/2026 à ce snapshot (campagne distincte de celles des §1 à §3, qui restent inchangées). Le code du prototype est dans le dépôt privé `music-player-prototype` (branche `mpl-003-saf-prototype`, jamais fusionnée).
+
+### 4.1 Matériel et accès
+
+SSD Samsung T7 Shield 1 To, exFAT, USB-C. Android le monte mais MediaStore ne l'indexe pas : seul le sélecteur de dossiers Android (SAF) y donne accès (D25, provisoire).
+
+### 4.2 Résultats sur le Pixel (établis)
+
+- Sélection du dossier, droit d'accès persistant (conservé après fermeture, arrêt forcé, et arrêt forcé avec vidage du cache de l'app), restauration au démarrage.
+- Lecture des pistes du SSD avec les deux moteurs.
+- Détection du retrait et du rebranchement : sources grisées « indisponibles », puis de nouveau lisibles quelques secondes après le rebranchement, sans nouvelle sélection.
+- Lecture manuelle et Auto-test.
+- **Auto-test sur le SSD (2 MP3) :** `just_audio` 2/2 OK ; `media_kit` 2/2 WARN. Le WARN vient des fichiers, pas du SSD ni du SAF (voir 4.5).
+- **Tags :** non lus pendant le parcours SAF. Lecture mesurée à environ 39 ms par fichier (11 à 77 ms), soit environ 100 s pour 2 600 fichiers : à faire en arrière-plan (MPL-018).
+
+### 4.3 Retrait du SSD pendant la lecture
+
+**Sans traitement (établi) :** l'app est tuée par Android. `vold` (gestionnaire de stockage) trouve un descripteur de l'app ouvert sur le montage brut du volume et envoie `SIGINT`, environ 0,86 à 1,02 s après l'annonce d'éjection (EJECTING) sur le Pixel (environ 100 ms sur l'émulateur). Ce n'est pas un plantage : aucune exception ni trace de crash, et aucun code Dart ou Java ne peut l'intercepter. Les deux moteurs sont concernés (`media_kit` et `just_audio`).
+
+**Spike (dépôt privé du prototype, commit `a70b2b5`) :** un écouteur natif d'éjection (`StorageManager.StorageVolumeCallback`, API 30+) prévient Dart, qui appelle `stop()` du moteur courant ; `stop()` arrête le moteur avant de fermer le descripteur.
+
+| # | Moteur | Contexte | Arrêt préalable | Résultat |
+|---|---|---|---|---|
+| 1 | `media_kit` | premier plan | oui | l'app survit |
+| 2 | `media_kit` | écran verrouillé | oui | l'app survit |
+| 3 | `just_audio` | premier plan | oui | l'app survit |
+| 4 | `just_audio` | écran verrouillé | oui | l'app survit |
+| 5 | `just_audio` | essai refait (contexte non précisé) | oui | l'app survit |
+| Témoin | non précisé | non précisé | non | l'app est morte, comme prévu |
+
+Sur les essais valides : événement reçu 101 à 227 ms après le retrait USB, moteur arrêté 124 à 282 ms après le retrait, soit bien avant l'interruption (valeurs globales, pas détaillées par essai ici). Débranchements à 30–43 s sur des pistes de 176 à 255 s.
+
+**Non établi :** que ça fonctionne toujours. Un seul Pixel, un seul SSD, 5 essais.
+
+**Non vérifié :** marge sous charge (fil Dart occupé, parcours ou lecture de tags en cours), autres descripteurs ouverts sur le volume, autres appareils et versions d'Android, fichiers courts entièrement tamponnés.
+
+À retirer : le récepteur de diffusions `ACTION_MEDIA_*` n'a rien reçu dans les captures. Au rebranchement, la lecture arrêtée ne reprend pas (décision produit à prendre).
+
+Alternative **non testée** : fournir au moteur un descripteur qui passe par l'app (`StorageManager.openProxyFileDescriptor`), de sorte qu'aucun descripteur ne reste sur le montage brut. Compatibilité mpv/ExoPlayer et effet sur la fluidité inconnus.
+
+Deux sorties `SIGNALED` plus anciennes dans l'historique d'Android restent sans cause connue (non établi qu'elles soient liées au plantage observé).
+
+### 4.4 Défauts du prototype (non corrigés dans le prototype)
+
+- Quand des sources sont « indisponibles », le long message d'état écrase la liste de pistes en portrait et la liste disparaît en paysage : à éviter dans la vraie interface (MPL-016/017).
+- L'état du lecteur reste « idle · lecture » après le plantage.
+
+### 4.5 MPL-010 : erreurs de décodage `media_kit` sans effet audible constaté
+
+Deux cas :
+
+1. FLAC avec ID3 (déjà documenté dans `docs/sprints/sprint-1/DIAGNOSTICS.md`).
+2. MP3 avec des données non-MPEG après la dernière trame audio. MP3 A (53 s) a 60 200 octets après l'audio (dont ID3v1 de 128 octets), MP3 B (238 s) en a 37 304. Les deux ont pourtant un en-tête `Info` correct. `media_kit` tente de décoder ces octets : `mp3float: Header missing`, puis « Error decoding audio » (14 et 9 fois), et annonce une durée supérieure de 0,2 à 0,3 s à celle de `just_audio`. Copies tronquées juste après la dernière trame : 0 erreur et durée identique à `just_audio`. Reproduit à l'identique sur l'émulateur avec des copies internes : ni le SSD ni le SAF ne sont en cause.
+
+Un test d'écoute sur le Pixel n'a révélé aucune différence audible entre les deux moteurs en fin de piste (coupure éventuelle d'environ 0,3 s non mesurée). Origine de ces octets : **inconnue**. Fréquence dans la bibliothèque (92 % de MP3) : **non mesurée**. Décision : documenter seulement, pas de changement de code ; le verdict WARN de l'Auto-test reste tel quel.
+
+Messages `mpv` « No cache data directory supplied » et `property not found` (`subs-fallback`, `osc`) : origine et effet **non établis**.
