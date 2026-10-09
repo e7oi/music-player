@@ -1,6 +1,6 @@
 # PRD — MusicPlayer
 
-**Version :** 0.2 · **Dernière MAJ :** 08/10/2026 · **Préfixe backlog :** MPL · **Licence :** GPL-3.0-or-later
+**Version :** 0.2 · **Dernière MAJ :** 09/10/2026 · **Préfixe backlog :** MPL · **Licence :** GPL-3.0-or-later
 
 > Le backlog (`MPL-NNN`) et le registre des décisions (`Dn`) sont tenus dans les conversations du Project et figés à chaque clôture de sprint dans `docs/sprints/`. Ce document fixe le produit, le périmètre et les critères de succès.
 
@@ -22,7 +22,7 @@ Personne possédant une bibliothèque de fichiers audio (téléphone, disque int
 
 | Plateforme | État | Remarque |
 |---|---|---|
-| Android | **P0 — en cours ; plateforme principale et prioritaire** | Accès aux pistes via MediaStore (`READ_MEDIA_AUDIO`). Prototype audio **validé sur Pixel 10 Pro** (build release) : lecture, arrière-plan écran verrouillé, notification et contrôles, persistance de la liste, Auto-test des formats ; stockage amovible à l'étude (MPL-003) (Android 17) |
+| Android | **P0 — en cours ; plateforme principale et prioritaire** | Accès aux pistes via MediaStore (`READ_MEDIA_AUDIO`). Prototype audio **validé sur Pixel 10 Pro** (build release) : lecture, arrière-plan écran verrouillé, notification et contrôles, persistance de la liste, Auto-test des formats ; stockage amovible : accès au SSD par le sélecteur Android (SAF) vérifié sur le Pixel dans le prototype (MPL-003, terminé avec réserves) ; retrait pendant la lecture non traité hors prototype (MPL-035) (Android 17) |
 | Windows 11 | P0 cible — **en pause** | Reprise après la stabilisation d'Android (MPL-014) |
 | macOS | P0 cible — **en pause** | App Sandbox + entitlements ; compilation requiert un Mac (ou CI macOS) |
 | iOS | Hors périmètre actuel | Pas d'appareil de test ; même codebase si repris plus tard |
@@ -85,14 +85,14 @@ _Prévue après l'Épique « Expérience de type streaming ». L'architecture au
 - Lecture en arrière-plan stable sur Android
 - Aucune requête réseau sortante dans l'usage de base, dans la variante offline (la build release ne déclare pas `INTERNET` ; `ACCESS_NETWORK_STATE`, ajoutée par une dépendance, est tolérée) ; les fonctions en ligne (web-radio, enrichissement) n'existent que dans une variante de build qui déclare `INTERNET` (D26)
 
-## 9. Décisions structurantes (état au 08/10/2026)
+## 9. Décisions structurantes (état au 09/10/2026)
 
 Le registre complet (`Dn`) est tenu dans le backlog. Résumé des décisions qui fixent ce document :
 
 | Code | Décision | Statut |
 |---|---|---|
 | D1 | Projet open source ; licence GPL-3.0-or-later | Tranchée 05/10/2026 |
-| D2 | Moteur audio : `media_kit` unique et `just_audio` en repli Android | Provisoire (tendance `media_kit` moteur unique ; reste provisoire jusqu'au test du stockage amovible) |
+| D2 | Moteur audio : `media_kit` unique et `just_audio` en repli Android (tendance `media_kit` moteur unique). Test SSD réalisé le 08/10/2026 : `media_kit` lit le SSD ; le WARN observé vient de deux fichiers (MPL-010) ; les deux moteurs sont tués de la même façon au retrait sans traitement | Provisoire |
 | D3 | Gestion d'état et base locale (ex. Riverpod, Drift/SQLite) | Ouverte |
 | D4 | Nom définitif de l'application | Ouverte |
 | D5 | Canaux de distribution (stores, téléchargement direct, F-Droid) | Ouverte |
@@ -106,7 +106,7 @@ Le registre complet (`Dn`) est tenu dans le backlog. Résumé des décisions qui
 | D21 | Organisation : documents à la racine, méthodologies dans le dépôt privé `ai-tools`, snapshots dans `docs/sprints/` | Tranchée 05/10/2026 |
 | D23 | Modèle de « source de bibliothèque » | Ouverte |
 | D24 | Le prototype reste dans un dépôt privé séparé | Tranchée |
-| D25 | Android : MediaStore pour le stockage interne, sélecteur Android (SAF) pour le stockage amovible USB ; remplace D11 | Provisoire |
+| D25 | Android : MediaStore pour le stockage interne, sélecteur Android (SAF) pour le stockage amovible USB ; remplace D11. Accès SSD par SAF vérifié sur le Pixel ; risque du retrait pendant la lecture traité par le spike (MPL-035) | Provisoire |
 | D26 | Toute fonction en ligne (dont la web-radio et l'enrichissement de D20) n'existe que dans une variante de build qui déclare `INTERNET` ; la variante « offline » n'a pas de réseau | Provisoire |
 
 ## 10. Risques
@@ -117,6 +117,7 @@ Le registre complet (`Dn`) est tenu dans le backlog. Résumé des décisions qui
 - **Release signée avec la clé debug** (TODO dans `build.gradle.kts`) : à traiter avant toute distribution (D5).
 - **Android** : scoped storage et service d'arrière-plan ; un seul appareil testé ; disque externe à valider.
 - **SSD USB-C non visible des applications** : accès par le sélecteur Android, lecture `media_kit` à prototyper.
+- **Retrait du SSD pendant la lecture** : sans arrêt préalable du moteur, Android tue l'app (`vold` détecte un descripteur ouvert sur le volume et envoie `SIGINT`, environ 1 s après l'éjection). Mitigation (arrêt du moteur dès l'annonce d'éjection) essayée en spike seulement : 5 essais, un Pixel, un SSD ; marge sous charge non vérifiée (MPL-035).
 - **macOS** : sandbox et entitlements ; accès disque qui échoue silencieusement si mal configuré.
 - **Android Auto** : exige une architecture média native (service + session média), des critères de qualité Google pour être listé sur Google Play, et un test sur émulateur DHU ou en voiture.
 - **Publication du dépôt** : expose l'historique complet ; le dépôt est public depuis le 08/10/2026, audit fait (MPL-025).
