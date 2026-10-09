@@ -1,6 +1,6 @@
 # MusicPlayer
 
-**Version du document :** 0.2 · **Dernière MAJ :** 08/10/2026
+**Version du document :** 0.2 · **Dernière MAJ :** 09/10/2026
 
 Lecteur audio local, **libre, gratuit, sans publicité, sans compte, sans télémétrie**, avec l'expérience d'un service de streaming moderne.
 
@@ -17,9 +17,9 @@ Lecteur audio local, **libre, gratuit, sans publicité, sans compte, sans télé
 ## Stack
 
 - Flutter / Dart (codebase unique)
-- Moteur audio : `media_kit` (moteur unique) avec `just_audio` en repli Android — **provisoire**, voir `PRD.md` D2
+- Moteur audio : `media_kit` (libmpv/FFmpeg), moteur unique, derrière une interface indépendante du moteur — voir `PRD.md` D2
 - Contrôles système : `audio_service`
-- Base locale : SQLite (bibliothèque indexée, à venir)
+- Base locale : SQLite via Drift (bibliothèque indexée, à venir) ; gestion d'état : Riverpod — voir `PRD.md` D3
 
 ## Fonctionnalités visées
 
