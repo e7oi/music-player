@@ -1,28 +1,28 @@
-# ADR-001 — Flutter project at the repository root
+# ADR-001 — Projet Flutter à la racine du dépôt
 
-**Status:** Active (validated 2026-10-15) · **Date:** 2026-10-15 · **Ticket:** MPL-017 · **Decisions:** D2, D3, D7, D8, D10, D30
+**Statut :** Active (validée le 2026-10-15) · **Date :** 2026-10-15 · **Ticket :** MPL-017 · **Décisions :** D2, D3, D7, D8, D10, D30
 
-## Context
+## Contexte
 
-`CLAUDE.md` fixes a single Flutter package with a `lib/` ports-and-adapters layout, enforced by `test/architecture/`. `HOWTO.md` §2 still describes the prototype command, which created the app in a `musicplayer/` subdirectory.
+`CLAUDE.md` fixe un seul package Flutter, avec une organisation de `lib/` en ports et adaptateurs vérifiée par `test/architecture/`. `HOWTO.md` §2 décrit encore la commande du prototype, qui créait l'application dans un sous-dossier `musicplayer/`.
 
-## Decision
+## Décision
 
-- The production app is one Flutter package at the repository root (`pubspec.yaml`, `lib/`, `test/`, `integration_test/`, `android/`), created with `flutter create --org net.trtl3 --platforms=android` (D7). Windows and macOS are not generated while paused (D10, MPL-014).
-- Flutter is pinned to the latest stable release on the day the ticket starts, in `pubspec.yaml` (`environment.flutter`) and in CI; `pubspec.lock` is committed (D30). The exact version is recorded in the as-built section.
-- Dependencies at start: `flutter_riverpod` (hand-written providers, no code generation), `media_kit` and its Android libs, `meta`, `collection`; dev: `very_good_analysis`, `riverpod_lint`. Drift is not added before MPL-018 needs it.
-- `test/architecture/` checks the import rules of `CLAUDE.md` by scanning the `import` directives of `lib/`.
-- `HOWTO.md` §2 is updated to the root layout.
+- L'application de production est un seul package Flutter à la racine du dépôt (`pubspec.yaml`, `lib/`, `test/`, `integration_test/`, `android/`), créé avec `flutter create --org net.trtl3 --platforms=android` (D7). Windows et macOS ne sont pas générés tant qu'ils sont en pause (D10, MPL-014).
+- Flutter est épinglé sur la dernière version stable au jour du démarrage du ticket, dans `pubspec.yaml` (`environment.flutter`) et en CI ; `pubspec.lock` est versionné (D30). La version exacte est notée dans la section as-built.
+- Dépendances au départ : `flutter_riverpod` (providers écrits à la main, sans génération de code), `media_kit` et ses bibliothèques Android, `meta`, `collection` ; en développement : `very_good_analysis`, `riverpod_lint`. Drift n'est pas ajouté avant que MPL-018 en ait besoin.
+- `test/architecture/` vérifie les règles d'import de `CLAUDE.md` en analysant les directives `import` de `lib/`.
+- `HOWTO.md` §2 est mis à jour pour l'organisation à la racine.
 
-## Consequences
+## Conséquences
 
-- Root documents and the app share the root; `check-repo.sh` keeps working (it only checks documents and forbidden tracked files).
-- `.gitignore` gains the Flutter and Android entries (`build/`, `.dart_tool/`, `android/local.properties`, …).
+- Les documents racine et l'application partagent la racine ; `check-repo.sh` continue de fonctionner (il ne contrôle que les documents et les fichiers suivis interdits).
+- `.gitignore` reçoit les entrées Flutter et Android (`build/`, `.dart_tool/`, `android/local.properties`, …).
 
-## Alternatives considered
+## Alternatives examinées
 
-- App in `musicplayer/` (prototype layout): every CI step and command needs a working directory, and the paths of `CLAUDE.md` would be wrong. Rejected.
+- Application dans `musicplayer/` (organisation du prototype) : chaque étape de CI et chaque commande demande un dossier de travail, et les chemins de `CLAUDE.md` seraient faux. Écartée.
 
 ## As-built
 
-None (not implemented).
+Néant (non implémenté).
