@@ -14,8 +14,8 @@ Préfixe : MPL · Prochaine clé : MPL-037 · Dernière MAJ : 2026-10-15
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-016 | Tâche technique | P0 | Maquettes UI/UX dans Claude Design (note : prévoir l'état « sources indisponibles » sans écraser la liste de pistes, défaut observé dans le prototype MPL-003) | À faire | — | — |
-| MPL-017 | Tâche technique | P0 | Fondations du projet de production (D2, D3 tranchées le 09/10/2026). Inclut un job de CI minimale (format, analyse, tests) pour que du code puisse arriver sur `main` (décision du 2026-10-15) ; MPL-026 la complète. Périmètre (recadré le 2026-10-15) : projet Flutter, tests d'architecture, port `AudioEngine` et son contrat, adaptateur `media_kit`, `PlayerController` indépendant du moteur ; exigences issues de D23 : saut des pistes absentes avec message ; réaction à l'éjection derrière le port `VolumeEvents` (côté natif : MPL-035). Réassociation d'un disque : MPL-018 | En cours | — | — |
-| MPL-018 | Récit | P0 | Indexation : tags, pochettes, SQLite, test à 10 000 pistes (lié à D23 ; note : le modèle de données dépend de D23, disque + chemin relatif ; lecture des tags mesurée à ≈ 39 ms par fichier sur SAF, ≈ 100 s pour 2 600 fichiers, à faire en arrière-plan) ; inclut la réassociation d'un nouveau disque (D23), reprise de MPL-017 le 2026-10-15 | À faire | MPL-001 | — |
+| MPL-017 | Tâche technique | P0 | Fondations du projet de production (D2, D3 tranchées le 09/10/2026). Inclut un job de CI minimale (format, analyse, tests) pour que du code puisse arriver sur `main` (décision du 2026-10-15) ; MPL-026 la complète. Périmètre (recadré le 2026-10-15) : projet Flutter, tests d'architecture, port `AudioEngine` et son contrat, adaptateur `media_kit`, `PlayerController` indépendant du moteur, dont le retrait d'une piste de la file (FR-002) ; exigences issues de D23 : saut des pistes absentes avec message ; réaction à l'éjection derrière le port `VolumeEvents` (côté natif : MPL-035). Réassociation d'un disque : MPL-018 | En cours | — | — |
+| MPL-018 | Récit | P0 | Indexation : tags, pochettes, SQLite, test à 10 000 pistes (lié à D23 ; note : le modèle de données dépend de D23, disque + chemin relatif ; lecture des tags mesurée à ≈ 39 ms par fichier sur SAF, ≈ 100 s pour 2 600 fichiers, à faire en arrière-plan) ; inclut la réassociation d'un nouveau disque (D23), reprise de MPL-017 le 2026-10-15, et le retrait d'un disque externe de la bibliothèque (demande du propriétaire du 2026-10-15 ; sort des playlists, favoris et statistiques du disque à trancher au cadrage) | À faire | MPL-001 | — |
 | MPL-019 | Récit | P2 | Normalisation du volume (ReplayGain, préampli) | À faire | MPL-004 | — |
 | MPL-020 | Épique | P0 | Épique « Qualité, CI et documentation » | En cours | — | — |
 | MPL-026 | Tâche technique | P1 | CI code Flutter : format, analyse, tests, vulnérabilités, licences, **liste blanche des permissions** du manifest, vérification de l'empreinte de libmpv 🔗 | Bloqué | MPL-020 | MPL-017 |
@@ -38,7 +38,7 @@ Préfixe : MPL · Prochaine clé : MPL-037 · Dernière MAJ : 2026-10-15
 - Tests d'architecture (`test/architecture/`) pour les règles de dépendance de `CLAUDE.md`.
 - Job `code-checks` (format, analyse, tests) et Dependabot `pub` (ADR-003).
 - Ports `AudioEngine`, `VolumeEvents` et `TrackSourceOpener`, avec leurs fakes ; suite de contrat `AudioEngine` ; adaptateur `media_kit` (ADR-002).
-- `PlayerController` : commandes de FR-001, saut des pistes indisponibles (BR-001), éjection (BR-002), problèmes du moteur (BR-003).
+- `PlayerController` : commandes de FR-001, retrait d'une piste de la file (FR-002), saut des pistes indisponibles (BR-001), éjection (BR-002), problèmes du moteur (BR-003).
 
 **Exclusions.** Écouteur natif d'éjection et test de retrait sur le Pixel (MPL-035) ; réassociation d'un disque, base Drift, parcours et tags (MPL-018) ; ouverture réelle des pistes MediaStore et SAF (MPL-018, MPL-035) ; notification et arrière-plan (`audio_service`, MPL-036) ; interface (MPL-016) ; CI complète (MPL-026) ; Windows et macOS (MPL-014).
 
@@ -115,6 +115,22 @@ Fonctionnalité: Fondations du projet de production
     Quand "précédent" est demandé à moins de 3 s de lecture
     Alors A est chargée et lue
 
+  Scénario: Retrait d'une piste de la file
+    Soit une file A, B, C et la lecture de A
+    Quand B est retirée de la file
+    Alors la file devient A, C
+    Et A continue d'être lue
+
+  Scénario: Retrait de la piste en cours
+    Soit une file A, B, C et la lecture de B
+    Quand B est retirée de la file
+    Alors C est chargée et lue
+
+  Scénario: Retrait de la seule piste
+    Soit une file A et la lecture de A
+    Quand A est retirée de la file
+    Alors le moteur est arrêté et la file est vide
+
   Scénario: Avertissement du moteur
     Soit la lecture de A
     Quand le moteur signale un avertissement
@@ -124,10 +140,10 @@ Fonctionnalité: Fondations du projet de production
 
 **Test appareil (Pixel, release).** Suite de contrat contre l'adaptateur `media_kit` (`flutter test integration_test`) ; l'application se lance en build release.
 
-**Fiches liées.** FR-001, BR-001, BR-002, BR-003 (`docs/fonctionnel/`) ; ADR-001, ADR-002, ADR-003 (`docs/technique/decisions/`). Toutes `Active` (validées par le propriétaire le 2026-10-15).
+**Fiches liées.** FR-001, BR-001, BR-002, BR-003 (`docs/fonctionnel/`) ; ADR-001, ADR-002, ADR-003 (`docs/technique/decisions/`) : `Active` (validées par le propriétaire le 2026-10-15). FR-002 (retrait d'une piste de la file, ajoutée le 2026-10-15) : `Brouillon`.
 
 **À valider (PO).**
-- Aucun. Réponses du propriétaire (2026-10-15) reportées dans les fiches ; `code-checks` est un contrôle requis de `protect-main` depuis le 2026-10-15.
+- FR-002 (`Brouillon`). Réponses précédentes du propriétaire (2026-10-15) reportées dans les fiches ; `code-checks` est un contrôle requis de `protect-main` depuis le 2026-10-15.
 
 
 ### MPL-029
