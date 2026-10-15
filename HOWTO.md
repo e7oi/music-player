@@ -209,3 +209,23 @@ La suite `test/contract/audio_engine_contract.dart` tourne en CI contre le fake 
    L'application de test remplace l'application installée.
 3. Résultat attendu : `All tests passed.` (8 tests dont 2 ignorés : descripteurs, couverts par MPL-035).
 4. Consigner le résultat (OK / KO + sortie) ; ne rien coller de plus que la sortie du test.
+
+---
+
+## 11. Tester la bibliothèque du stockage interne (MPL-018)
+
+Build release (D14), Pixel branché ou en Wi-Fi, quelques fichiers audio dans `Music/` et au moins un autre dossier qui contient de l'audio (par exemple `Ringtones/`).
+
+1. Désinstaller l'application pour repartir d'un premier lancement : `adb uninstall net.trtl3.musicplayer`. Cela efface aussi la bibliothèque enregistrée.
+2. `flutter build apk --release && adb install build/app/outputs/flutter-apk/app-release.apk`, puis ouvrir l'application.
+3. **Autorisation refusée :** refuser l'accès. Attendu : message d'explication et bouton « Autoriser l'accès ». Le toucher, refuser encore. Attendu : le bouton devient « Ouvrir les réglages » et ouvre la fiche de l'application.
+4. **Autorisation accordée :** l'accorder dans les réglages et revenir. Attendu : la liste des dossiers, avec `Music` coché et le nombre de fichiers de chacun.
+5. **Indexation :** valider. Attendu : seules les pistes des dossiers cochés apparaissent, sans blocage de l'écran.
+6. **Lecture :** toucher une piste. Attendu : la lecture démarre ; la barre du bas montre la piste ; pause, suivante et précédente fonctionnent.
+7. **Ajout :** copier un fichier dans `Music/`, attendre quelques secondes (indexation de MediaStore), toucher « Actualiser ». Attendu : la piste apparaît.
+8. **Suppression :** supprimer ce fichier, toucher « Actualiser ». Attendu : la piste disparaît.
+9. **Dossiers :** toucher « Dossiers », cocher un autre dossier, valider. Attendu : ses pistes apparaissent ; le décocher : elles disparaissent.
+10. **Retrait de l'autorisation :** la retirer dans les réglages, revenir dans l'application. Attendu : le message d'explication, sans perte de la bibliothèque une fois l'accès rendu.
+
+Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
+

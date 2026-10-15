@@ -25,4 +25,9 @@ SSD, lecture des tags dans les fichiers et pochettes (MPL-037), recherche, test 
 
 ## As-built
 
-Néant (non implémenté).
+MPL-018, 2026-10-15. `LibraryIndexer` (`lib/domain/library/services/library_indexer.dart`), canal MediaStore (`android/.../MediaStoreChannel.kt`, `lib/platform/media_store_channel.dart`), base Drift (ADR-004). Tests : `test/domain/library/`, `test/data/db/`, `test/platform/`, `test/features/library/`.
+
+- Les dossiers proposés sont ceux du premier niveau du stockage interne (`Music`, `Download`, `Android`…), chacun avec ses sous-dossiers ; les fichiers posés à la racine forment une entrée « Racine du stockage ». Ce choix garde la liste courte, au prix de ne pas pouvoir séparer deux sous-dossiers d'un même dossier.
+- Une piste est mise à jour quand l'une de ses informations change, pas seulement sa taille ou sa date.
+- Un échec de l'indexation affiche un bandeau avec « Actualiser » ; la bibliothèque enregistrée reste affichée.
+- Non testé sur appareil.

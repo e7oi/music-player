@@ -23,4 +23,10 @@ FR-003 lit MediaStore ; FR-004 demande `READ_MEDIA_AUDIO` en natif. `CLAUDE.md` 
 
 ## As-built
 
-Néant (non implémenté).
+MPL-018, 2026-10-15.
+
+- Kotlin : `android/app/src/main/kotlin/net/trtl3/musicplayer/MediaStoreChannel.kt`, branché dans `MainActivity.kt`. Dart : `lib/platform/media_store_channel.dart` (`InternalAudioSource` et `AudioPermission`), `lib/platform/internal_storage.dart` (`InternalTrackSourceOpener`, `InternalVolumeEvents`).
+- Méthode ajoutée : `internalStorageRoot`, racine du stockage interne pour construire le chemin des fichiers.
+- Lecture de MediaStore : `<unknown>` et les valeurs vides deviennent absentes ; le numéro de piste encode le disque en milliers (2003 = disque 2, piste 3).
+- Câblage : `lib/app/providers/library_providers.dart` et `player_providers.dart` ; le `PlayerController` est démarré par son provider.
+- Manifest release : `READ_MEDIA_AUDIO`, `READ_EXTERNAL_STORAGE` (jusqu'à l'API 32) ; pas d'`INTERNET`.

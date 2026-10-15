@@ -20,4 +20,8 @@ Présentation définitive du dialogue et du bandeau (MPL-015, MPL-016).
 
 ## As-built
 
-Néant (non implémenté).
+MPL-018, 2026-10-15. `MediaStoreChannel.kt` (Kotlin) et `lib/platform/media_store_channel.dart` ; logique dans `LibraryController` (`lib/features/library/library_controller.dart`). Tests : `test/features/library/library_controller_test.dart`, `test/platform/`.
+
+- Android ne distingue « ne plus demander » de « jamais demandé » que si l'application se souvient d'avoir déjà demandé : un indicateur est gardé dans les préférences de l'application.
+- Android 11 et 12 (API 30 à 32) : l'autorisation demandée est `READ_EXTERNAL_STORAGE`.
+- Code Kotlin sans test unitaire (exception de `CLAUDE.md`) : procédure `HOWTO.md` §11. Non testé sur appareil.

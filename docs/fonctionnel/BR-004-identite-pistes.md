@@ -12,4 +12,4 @@
 
 ## As-built
 
-Néant (non implémenté).
+MPL-018, 2026-10-15. Identifiant fixe du stockage interne : `internal` (`internalDisk`, `lib/domain/library/model/library_track.dart`). Règles 1 à 3 dans `DriftLibraryRepository.applyIndex` (`lib/data/db/drift_library_repository.dart`), unicité (`disk_id`, `relative_path`) en base. Tests : `test/data/db/drift_library_repository_test.dart`.

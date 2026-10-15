@@ -29,4 +29,11 @@ D3 retient SQLite par Drift. D23 impose un modèle relationnel : disques, pistes
 
 ## As-built
 
-Néant (non implémenté).
+MPL-018, 2026-10-15.
+
+- `lib/data/db/library_database.dart` (tables), `library_database.g.dart` (généré, versionné), `drift_library_repository.dart` ; dump `drift_schemas/library/drift_schema_v1.json` ; configuration dans `build.yaml`.
+- `drift` 2.35.2, `drift_flutter` 0.3.1 ; développement : `drift_dev` 2.35.1, `build_runner` 2.16.2. `build_runner` 2.17 n'est pas retenu : il exige `build` 5, que `drift_dev` 2.35 n'accepte pas encore. `drift_flutter` tire `sqlite3_flutter_libs` 0.6.0+eol, version de fin de vie de ce paquet, remplacé par les *build hooks* de `sqlite3` 3.7.1.
+- Les clés étrangères sont activées à l'ouverture (`PRAGMA foreign_keys = ON`).
+- Le tri par titre se fait en Dart, car le titre affiché revient au nom du fichier quand le titre manque.
+- Tests de migration : `drift_dev make-migrations` ne les génère qu'à partir de deux versions du schéma. En attendant, la CI régénère le code et le dump et vérifie qu'ils n'ont pas changé : un changement de schéma sans nouvelle version réécrirait le dump v1.
+- L'APK release passe de 64,5 à 75,9 Mo (bibliothèques natives de SQLite).
