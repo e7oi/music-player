@@ -1,0 +1,61 @@
+name: code-ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: code-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Minimal job (MPL-017, ADR-003); MPL-026 adds vulnerabilities, licences,
+  # the permission allow-list and the libmpv checksum. No path filter: this
+  # check is required by protect-main, and a required check that never runs
+  # blocks the merge.
+  code-checks:
+    name: code-checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          # Same version as environment.flutter in pubspec.yaml.
+          flutter-version: 3.47.7
+          channel: stable
+          cache: true
+
+      - name: pub get
+        run: flutter pub get --enforce-lockfile
+
+      - name: format
+        run: dart format --set-exit-if-changed .
+
+      - name: localizations up to date
+        run: |
+          flutter gen-l10n
+          git diff --exit-code -- lib/l10n
+          # Written by gen-l10n (l10n.yaml); "{}" when every shipped locale
+          # has every key.
+          test "$(tr -d '[:space:]' < build/untranslated-messages.json)" = "{}"
+
+      - name: analyze
+        run: flutter analyze --fatal-infos
+
+      # flutter analyze does not run analyzer plugins; dart analyze runs
+      # riverpod_lint (analysis_options.yaml).
+      - name: analyze with plugins
+        run: dart analyze --fatal-infos
+
+      - name: test
+        run: flutter test
