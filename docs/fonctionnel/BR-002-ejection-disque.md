@@ -24,5 +24,6 @@ L'écouteur natif (`StorageVolumeCallback`), le canal d'événements et le test 
 MPL-017, 2026-10-15. `PlayerController._onVolume`, port `VolumeEvents` (`lib/domain/storage/ports/volume_events.dart`) ; signalement `PlaybackStoppedByEjection`. Tests : groupe « BR-002 », avec un fake ; l'écouteur natif reste à faire (MPL-035).
 
 - Un retrait sans annonce préalable (`VolumeRemoved`) est traité comme une éjection.
+- Adaptateur `media_kit` : si mpv n'est pas inactif 5 s après l'arrêt, `stop()` rend la main, mais le descripteur n'est libéré qu'une fois mpv inactif (ADR-002).
 - Limite : l'annonce d'éjection attend la fin de la commande en cours (par exemple l'ouverture d'une piste) avant d'arrêter le moteur. Marge non mesurée (MPL-035).
 - Non testé sur appareil.
