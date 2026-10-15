@@ -1,5 +1,5 @@
 # Backlog — MusicPlayer
-Préfixe : MPL · Prochaine clé : MPL-037 · Dernière MAJ : 2026-10-15
+Préfixe : MPL · Prochaine clé : MPL-039 · Dernière MAJ : 2026-10-15
 
 > Importé le 2026-10-14 depuis `docs/sprints/sprint-2/SPRINT-2-START.md` v5 (§3 snapshot du backlog, §4 registre des décisions), copie fidèle du tableau, des détails de MPL-029 et du registre : aucun libellé reformulé, seuls les icônes de type et de priorité sont remplacées par du texte. Le snapshot de sprint reste figé ; ce fichier est désormais la référence vivante, écrite par Claude Code, relue et validée par le propriétaire. Format : `backlog-methodology.md` §13 (dépôt AI-tools). MPL-032 est absent du snapshot : sa clé reste réservée.
 > Statuts : À faire → En cours → À tester → Terminé (+ Bloqué). Un ticket n'est « Terminé » que sur l'ordre « validé » du propriétaire, après un test réel en build release sur le Pixel (D14), et après le merge de sa PR.
@@ -14,7 +14,9 @@ Préfixe : MPL · Prochaine clé : MPL-037 · Dernière MAJ : 2026-10-15
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-016 | Tâche technique | P0 | Maquettes UI/UX dans Claude Design (note : prévoir l'état « sources indisponibles » sans écraser la liste de pistes, défaut observé dans le prototype MPL-003) | À faire | — | — |
-| MPL-018 | Récit | P0 | Indexation : tags, pochettes, SQLite, test à 10 000 pistes (lié à D23 ; note : le modèle de données dépend de D23, disque + chemin relatif ; lecture des tags mesurée à ≈ 39 ms par fichier sur SAF, ≈ 100 s pour 2 600 fichiers, à faire en arrière-plan) ; inclut la réassociation d'un nouveau disque (D23), reprise de MPL-017 le 2026-10-15, et le retrait d'un disque externe de la bibliothèque (demande du propriétaire du 2026-10-15 ; sort des playlists, favoris et statistiques du disque à trancher au cadrage) | À faire | MPL-001 | — |
+| MPL-018 | Récit | P0 | Bibliothèque du stockage interne (recadré le 2026-10-15) : base Drift (disques, pistes, D23), choix des dossiers et indexation par MediaStore sans lecture des tags, autorisation d'accès à l'audio, liste minimale et lecture d'une piste réelle avec le `PlayerController`. SSD et test à 10 000 pistes : MPL-037 ; réassociation et retrait d'un disque : MPL-038 | En cours | MPL-001 | — |
+| MPL-037 | Récit | P0 | Bibliothèque du SSD par SAF : choix du dossier, droit d'accès persistant, parcours, lecture des tags et des pochettes dans les fichiers en arrière-plan, pochettes du stockage interne aussi (décision du 2026-10-15) (≈ 39 ms par fichier mesurés sur SAF, ≈ 100 s pour 2 600 fichiers), ouverture `fd://`, test à 10 000 pistes. Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | MPL-018 |
+| MPL-038 | Récit | P1 | Réassociation d'un nouveau disque dont les chemins relatifs correspondent à ceux d'un disque absent (D23) et retrait d'un disque externe de la bibliothèque (demande du propriétaire du 2026-10-15 ; sort des playlists, favoris et statistiques du disque à trancher au cadrage). Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | MPL-037 |
 | MPL-019 | Récit | P2 | Normalisation du volume (ReplayGain, préampli) | À faire | MPL-004 | — |
 | MPL-020 | Épique | P0 | Épique « Qualité, CI et documentation » | En cours | — | — |
 | MPL-026 | Tâche technique | P1 | CI code Flutter : format, analyse, tests, vulnérabilités, licences, **liste blanche des permissions** du manifest, vérification de l'empreinte de libmpv 🔗 | À faire | MPL-020 | — |
@@ -29,6 +31,87 @@ Préfixe : MPL · Prochaine clé : MPL-037 · Dernière MAJ : 2026-10-15
 | MPL-036 | Tâche technique | P0 | Notification et lecture en arrière-plan dans l'application réelle (`audio_service`, écran verrouillé, contrôles système, touches média), branchées sur le `PlayerController` ; reprendre les acquis du prototype (`android/app/src/main/res/raw/keep.xml`, absent depuis MPL-017 faute d'`audio_service` ; permission de notification en natif dans `MainActivity`) | À faire | MPL-001 | — |
 
 ## Détails
+### MPL-018
+**Description.** Rendre la bibliothèque du stockage interne réelle : indexer les pistes du téléphone dans la base, les afficher dans une liste minimale et en lire une avec le `PlayerController` de MPL-017. Cadrage du 2026-10-15 : MPL-018 découpé en trois tickets (MPL-018, MPL-037, MPL-038), choix du propriétaire.
+
+**Inclus.**
+- Base Drift, schéma v1 (disques, pistes), port `LibraryRepository` (ADR-004).
+- Choix des dossiers du stockage interne à indexer, `Music/` proposé par défaut ; indexation par MediaStore de ces dossiers, au démarrage et sur demande, sans lecture des tags (FR-003, BR-004).
+- Autorisation `READ_MEDIA_AUDIO` en natif (FR-004).
+- Canal natif MediaStore, `TrackSourceOpener` et `VolumeEvents` du stockage interne, câblage du `PlayerController` dans `app/providers/` ; `minSdk` 30 (ADR-005).
+- Liste minimale des pistes et barre de lecture temporaire, textes en ARB (UC-001).
+
+**Exclusions.** SSD par SAF, tags lus dans les fichiers, pochettes, test à 10 000 pistes (MPL-037) ; réassociation et retrait d'un disque (MPL-038) ; recherche, tri, filtres ; écrans définitifs (MPL-016) ; notification et arrière-plan (MPL-036) ; éjection (MPL-035).
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Bibliothèque du stockage interne
+
+  Scénario: Premier lancement avec autorisation
+    Soit l'application installée pour la première fois et des fichiers audio dans le stockage interne
+    Quand l'utilisateur ouvre l'application et accepte l'accès aux fichiers audio
+    Alors l'indexation démarre en arrière-plan
+    Et la liste affiche les pistes du stockage interne
+
+  Scénario: Choix des dossiers au premier lancement
+    Soit l'accès accordé, un dossier "Music" et un dossier de messagerie contenant de l'audio
+    Quand la liste des dossiers s'affiche
+    Alors "Music" est coché et le dossier de messagerie ne l'est pas
+    Et seules les pistes des dossiers cochés sont indexées après confirmation
+
+  Scénario: Dossier décoché
+    Soit deux dossiers cochés et leurs pistes indexées
+    Quand l'utilisateur décoche l'un des deux
+    Alors les pistes de ce dossier disparaissent de la bibliothèque
+    Et celles de l'autre dossier restent, avec la même identité interne
+
+  Scénario: Autorisation refusée
+    Soit l'accès aux fichiers audio refusé
+    Quand l'application s'ouvre
+    Alors un message explique pourquoi l'accès est nécessaire
+    Et un bouton redemande l'accès, ou ouvre les réglages si Android ne le propose plus
+
+  Scénario: Lecture d'une piste de la liste
+    Soit la liste des pistes affichée
+    Quand l'utilisateur touche la troisième piste
+    Alors la lecture démarre sur cette piste
+    Et la file contient toute la liste dans l'ordre affiché
+
+  Scénario: Fichier ajouté
+    Soit une piste indexée et un nouveau fichier audio copié dans le stockage interne
+    Quand l'utilisateur actualise la bibliothèque
+    Alors la nouvelle piste apparaît
+    Et l'identité interne de la piste déjà indexée est inchangée
+
+  Scénario: Informations modifiées
+    Soit une piste indexée dont le fichier a été modifié
+    Quand la bibliothèque est réindexée
+    Alors ses informations sont mises à jour
+    Et son identité interne est inchangée
+
+  Scénario: Fichier supprimé
+    Soit une piste indexée dont le fichier a été supprimé
+    Quand la bibliothèque est réindexée
+    Alors la piste disparaît de la bibliothèque
+
+  Scénario: Titre absent
+    Soit un fichier sans titre dans MediaStore
+    Quand la liste s'affiche
+    Alors la piste apparaît sous le nom de son fichier
+
+  Scénario: Indexation sans blocage
+    Soit une indexation en cours
+    Quand l'utilisateur fait défiler la liste ou met la lecture en pause
+    Alors l'écran répond pendant l'indexation
+```
+
+**Test appareil (Pixel, release).** Premier lancement (autorisation accordée puis refusée), indexation de la bibliothèque réelle, lecture d'une piste, ajout et suppression d'un fichier puis « Actualiser ». Procédure à écrire dans `HOWTO.md`.
+
+**Fiches liées.** UC-001, FR-003, FR-004, BR-004 (`docs/fonctionnel/`) ; ADR-004, ADR-005 (`docs/technique/decisions/`). Toutes `Active` (validées par le propriétaire le 2026-10-15 ; FR-003, UC-001 et ADR-004 après révision pour le choix des dossiers). Utilise FR-001, BR-001 à BR-003 (`Active`).
+
+**À valider (PO).** Aucun. Réponses reportées (2026-10-15) : `minSdk` 30 accepté (ADR-005) ; pochettes rattachées à MPL-037.
+
 ### MPL-017
 **Description.** Poser le projet Flutter de production et le cœur de lecture indépendant du moteur, avec une CI minimale qui permet au code d'arriver sur `main`. Cadrage du 2026-10-15, périmètre découpé validé par le propriétaire.
 
@@ -213,4 +296,7 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | À numéroter | Découpage de MPL-017 : la réassociation d'un disque passe dans MPL-018 ; l'écouteur natif d'éjection et le test sur le Pixel restent dans MPL-035 ; MPL-017 livre les ports et la réaction du contrôleur | Tranchée 2026-10-15 | Réassociation dépendante du modèle de données de MPL-018 ; Kotlin vérifiable sur appareil seulement · MPL-017, MPL-018, MPL-035 |
 | À numéroter | Stockage amovible : la lecture arrêtée par une éjection reste arrêtée et ne reprend pas au rebranchement du disque | Tranchée 2026-10-15 | Répond à `SPRINT-2-START.md` §8.3 · BR-002, MPL-017, MPL-035 |
 | À numéroter | Identifiant Android de production : `net.trtl3.musicplayer`, le même que le prototype ; l'installation de l'une remplace l'autre sur l'appareil | Tranchée 2026-10-15 | Choix du propriétaire ; nom définitif toujours ouvert (D4) · MPL-017 |
+| À numéroter | Découpage de MPL-018 : MPL-018 (stockage interne, base, liste minimale), MPL-037 (SSD par SAF, tags dans les fichiers, test à 10 000 pistes), MPL-038 (réassociation et retrait d'un disque) | Tranchée 2026-10-15 | Ticket trop gros pour un test sur le Pixel en une fois ; MediaStore fournit déjà les tags du stockage interne · MPL-018, MPL-037, MPL-038 |
+| À numéroter | `minSdk` 30 au lieu de la valeur du gabarit Flutter (24), écart à D30 | Tranchée 2026-10-15 | `RELATIVE_PATH` de MediaStore (API 29), `StorageVolumeCallback` (API 30) ; seul appareil de test en Android 17 · ADR-005, MPL-018 |
+| À numéroter | Stockage interne : l'utilisateur choisit les dossiers à indexer (D23 appliquée au disque « Local »), par une liste tirée de MediaStore, `Music/` proposé par défaut | Tranchée 2026-10-15 | Ne pas indexer sonneries, notes vocales et sons reçus par les messageries ; remplace le choix « tout le stockage interne » du même jour · FR-003, MPL-018 |
 | D30 | Dépendances et versions : dernière version stable compatible avec le Flutter épinglé, tout épinglé, Dependabot hebdomadaire, avis de sécurité traités hors cycle, dérogations dans `docs/dependency-exceptions.md`. Détail : `CLAUDE.md` | Provisoire | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |
