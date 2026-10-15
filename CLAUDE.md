@@ -95,8 +95,8 @@ Règles de dépendance (vérifiées par `test/architecture/`, voir Outillage) :
 Les commandes ci-dessous existent une fois MPL-017 livré ; ne pas les supposer avant.
 
 - Format : `dart format --set-exit-if-changed .`
-- Analyse : `flutter analyze --fatal-infos`, avec `very_good_analysis`, `strict-casts`, `strict-inference`, `strict-raw-types` et le plugin d'analyse `riverpod_lint`.
-- Tests : `flutter test` (inclut `test/architecture/`) ; tests sur appareil avec `flutter test integration_test`.
+- Analyse : `flutter analyze --fatal-infos` puis `dart analyze --fatal-infos`, avec `very_good_analysis`, `strict-casts`, `strict-inference`, `strict-raw-types` et le plugin d'analyse `riverpod_lint`. `flutter analyze` n'exécute pas les plugins d'analyse : seul `dart analyze` lance `riverpod_lint`.
+- Tests : `flutter test` (inclut `test/architecture/`). Tests sur appareil en build release (D14) avec `flutter drive --release --driver=test_driver/integration_test.dart --target=integration_test/<fichier>_test.dart` ; `flutter test integration_test` ne compile qu'en debug (procédure : `HOWTO.md` §10).
 - Code généré : Drift seulement (`dart run build_runner build --delete-conflicting-outputs`) ; les fichiers `*.g.dart` sont versionnés, marqués `linguist-generated`, exclus de l'analyse, et la CI vérifie qu'ils sont à jour avec `git diff --exit-code` après régénération. Les providers Riverpod sont écrits à la main : pas de génération de code Riverpod, pas de `freezed`.
 - Localisation : `flutter gen-l10n` ; fichiers générés versionnés sous `lib/l10n/` ; la CI échoue si une clé manque dans une langue livrée.
 
@@ -142,7 +142,7 @@ Tout ticket non trivial commence par `/cadrer` (`.claude/commands/cadrer.md`), e
 
 1. Besoin compris (fiches `Active` lues).
 2. Implémenté, test d'abord pour `domain/` et la logique d'état.
-3. Vérification au vert et scénarios Gherkin du ticket au vert ; citer la commande et le résultat. Avant MPL-017 : `.github/scripts/check-repo.sh`. Ensuite : `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && flutter test`. Ce qui ne se vérifie que sur appareil reste « non testé » jusqu'à la confirmation du propriétaire (D14).
+3. Vérification au vert et scénarios Gherkin du ticket au vert ; citer la commande et le résultat. Avant MPL-017 : `.github/scripts/check-repo.sh`. Ensuite : `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && dart analyze --fatal-infos && flutter test`. Ce qui ne se vérifie que sur appareil reste « non testé » jusqu'à la confirmation du propriétaire (D14).
 4. Documentation as-built des fiches touchées mise à jour dans le même commit.
 5. Revue QA ✅ (ci-dessous), ou non requise.
 
