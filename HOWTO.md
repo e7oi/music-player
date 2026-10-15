@@ -205,5 +205,5 @@ La suite `test/contract/audio_engine_contract.dart` tourne en CI contre le fake 
    ```
 
    L'application de test remplace l'application installée.
-3. Résultat attendu : `All tests passed!` (6 tests, 2 ignorés : descripteurs, couverts par MPL-035).
+3. Résultat attendu : `All tests passed!` (8 tests dont 2 ignorés : descripteurs, couverts par MPL-035).
 4. Consigner le résultat (OK / KO + sortie) ; ne rien coller de plus que la sortie du test.

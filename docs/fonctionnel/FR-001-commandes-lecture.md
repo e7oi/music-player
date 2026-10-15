@@ -26,5 +26,5 @@ MPL-017, 2026-10-15. `lib/domain/playback/services/player_controller.dart` (`Pla
 
 - `setQueue` remplace la file et place l'index de départ sans rien charger (état « arrêté ») ; `play` charge la piste courante et lance la lecture.
 - « Suivant » sur la dernière piste arrête la lecture, comme la fin de file.
-- « Précédent » sur la première piste, ou quand aucune piste disponible ne précède, reprend la piste courante au début.
+- « Précédent » sur la première piste, ou quand aucune piste disponible ne précède, reprend la piste courante au début. Si une piste précédente a été tentée sans succès (échec d'ouverture) et qu'aucune autre ne la précède, la lecture s'arrête.
 - Les commandes et les événements du moteur sont traités un par un, dans l'ordre d'arrivée ; un événement du moteur qui arrive après un changement de piste est ignoré.
