@@ -20,7 +20,10 @@ import 'package:musicplayer/domain/storage/model/media_source.dart';
 /// - [completedStream] emits once per track.
 /// - [stop] returns only after the engine has stopped reading and released
 ///   every resource, descriptors included (`DescriptorMediaSource.release`).
-///   It is idempotent.
+///   It is idempotent. One exception (BR-002 rule 7): if the engine has not
+///   closed the file within its timeout, [stop] returns with the descriptor
+///   still open and releases it later, because a descriptor the engine may
+///   still read is never closed.
 abstract interface class AudioEngine {
   EngineState get state;
 

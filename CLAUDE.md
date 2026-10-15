@@ -65,7 +65,7 @@ Règles de dépendance (vérifiées par `test/architecture/`, voir Outillage) :
 - `open` charge sans démarrer la lecture et peut rendre la main avant que la durée soit connue ; la durée arrive sur `durationStream`. L'état `loading` n'est pas garanti.
 - `play()` rend la main dès que la lecture est demandée. `playing` est l'intention et reste vrai d'une piste à l'autre.
 - `completed` est émis une fois par piste.
-- `stop()` ne rend la main qu'une fois que le moteur a cessé de lire et libéré toutes ses ressources, descripteurs de fichiers compris. Il est idempotent.
+- `stop()` ne rend la main qu'une fois que le moteur a cessé de lire et libéré toutes ses ressources, descripteurs de fichiers compris. Il est idempotent. Seule exception (BR-002, règle 7) : si le moteur n'a pas fermé le fichier dans le délai, `stop()` rend la main et le descripteur est libéré plus tard, jamais pendant que le moteur peut le lire.
 - Les problèmes du moteur sont typés : `sealed class EngineIssue` avec `EngineFailure` (fatal pour la piste en cours : le contrôleur saute ou signale) et `EngineWarning` (ne change jamais l'état, journalisé et compté). Les adaptateurs classent ; le contrôleur traite tous les cas (`switch` exhaustif). Un `end-file` avec une raison d'erreur est toujours un échec ; les messages non classés sont des avertissements de type `unclassified`. Les tests de classement utilisent des messages réels enregistrés (MPL-010).
 
 ## Stockage et volumes amovibles (D25, D23)
