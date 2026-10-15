@@ -49,6 +49,15 @@ jobs:
           # has every key.
           test "$(tr -d '[:space:]' < build/untranslated-messages.json)" = "{}"
 
+      # ADR-004: generated Drift code and the schema dump are committed; a
+      # schema change without a new version would rewrite the v1 dump.
+      - name: drift code and schema up to date
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          dart run drift_dev make-migrations
+          git diff --exit-code -- lib drift_schemas test
+          test -z "$(git status --porcelain -- lib drift_schemas test)"
+
       - name: analyze
         run: flutter analyze --fatal-infos
 
