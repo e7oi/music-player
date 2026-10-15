@@ -1,23 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:musicplayer/app/app.dart';
+import 'package:musicplayer/app/providers/library_providers.dart';
+import 'package:musicplayer/app/providers/player_providers.dart';
+import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
+import 'package:musicplayer/platform/internal_storage.dart';
+
+import '../fakes/fake_audio_engine.dart';
+import '../fakes/fake_library.dart';
+import '../fakes/fake_storage.dart';
 
 void main() {
-  testWidgets('shows the localized placeholder in French', (tester) async {
-    tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+  Future<void> pumpApp(WidgetTester tester, Locale locale) async {
+    tester.platformDispatcher.localesTestValue = [locale];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    final permission = FakeAudioPermission(AudioPermissionStatus.denied)
+      ..answer = AudioPermissionStatus.denied;
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          libraryRepositoryProvider.overrideWithValue(FakeLibraryRepository()),
+          internalAudioSourceProvider.overrideWithValue(
+            FakeInternalAudioSource(),
+          ),
+          audioPermissionProvider.overrideWithValue(permission),
+          audioEngineProvider.overrideWithValue(FakeAudioEngine()),
+          trackSourceOpenerProvider.overrideWithValue(FakeTrackSourceOpener()),
+          volumeEventsProvider.overrideWithValue(InternalVolumeEvents()),
+        ],
+        child: const MusicPlayerApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
 
-    await tester.pumpWidget(const MusicPlayerApp());
+  testWidgets('speaks French', (tester) async {
+    await pumpApp(tester, const Locale('fr'));
 
-    expect(find.text('La bibliothèque apparaîtra ici.'), findsOneWidget);
+    expect(find.text("Autoriser l'accès"), findsOneWidget);
   });
 
   testWidgets('falls back to English for other locales', (tester) async {
-    tester.platformDispatcher.localesTestValue = const [Locale('de')];
-    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    await pumpApp(tester, const Locale('de'));
 
-    await tester.pumpWidget(const MusicPlayerApp());
-
-    expect(find.text('The library will appear here.'), findsOneWidget);
+    expect(find.text('Allow access'), findsOneWidget);
   });
 }

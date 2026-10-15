@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musicplayer/features/home/home_page.dart';
+import 'package:musicplayer/features/library/library_page.dart';
 import 'package:musicplayer/l10n/generated/app_localizations.dart';
 
 class MusicPlayerApp extends StatelessWidget {
@@ -15,6 +15,6 @@ class MusicPlayerApp extends StatelessWidget {
       colorSchemeSeed: Colors.teal,
       brightness: Brightness.dark,
     ),
-    home: const HomePage(),
+    home: const LibraryPage(),
   );
 }

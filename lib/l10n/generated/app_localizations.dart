@@ -104,11 +104,143 @@ abstract class AppLocalizations {
   /// **'MusicPlayer'**
   String get appTitle;
 
-  /// Temporary home screen text until the library screens exist (MPL-016).
+  /// Shown instead of the library when the audio permission is refused (FR-004).
   ///
   /// In en, this message translates to:
-  /// **'The library will appear here.'**
-  String get homePlaceholder;
+  /// **'Access to the audio files is needed to show and play the music on this phone.'**
+  String get permissionExplanation;
+
+  /// Button that asks for the audio permission again.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access'**
+  String get permissionRetry;
+
+  /// Button that opens the app settings when Android no longer shows the permission dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get permissionOpenSettings;
+
+  /// Title of the folder choice screen (FR-003).
+  ///
+  /// In en, this message translates to:
+  /// **'Music folders'**
+  String get foldersTitle;
+
+  /// Explains the folder choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the folders that hold your music. Ringtones and audio from messaging apps stay out unless their folder is checked.'**
+  String get foldersExplanation;
+
+  /// Name shown for audio files placed directly at the root of the internal storage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage root'**
+  String get foldersRoot;
+
+  /// Number of audio files in a folder.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 file} other{{count} files}}'**
+  String folderFileCount(int count);
+
+  /// Confirms the folder choice and starts indexing.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get foldersConfirm;
+
+  /// Folder choice when MediaStore finds no audio.
+  ///
+  /// In en, this message translates to:
+  /// **'No folder of this phone holds audio.'**
+  String get foldersNone;
+
+  /// Action that reindexes the library.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get libraryRefresh;
+
+  /// Action that reopens the folder choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Folders'**
+  String get libraryFolders;
+
+  /// Empty library because no folder is checked.
+  ///
+  /// In en, this message translates to:
+  /// **'No folder chosen.'**
+  String get libraryNoFolders;
+
+  /// Empty library after indexing the chosen folders.
+  ///
+  /// In en, this message translates to:
+  /// **'No track found in the chosen folders.'**
+  String get libraryEmpty;
+
+  /// Button to the folder choice from an empty library.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folders'**
+  String get libraryChooseFolders;
+
+  /// Shown when indexing failed; the stored library stays visible.
+  ///
+  /// In en, this message translates to:
+  /// **'The library could not be refreshed.'**
+  String get libraryIndexFailed;
+
+  /// Tooltip of the play button.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get playerPlay;
+
+  /// Tooltip of the pause button.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get playerPause;
+
+  /// Tooltip of the next button.
+  ///
+  /// In en, this message translates to:
+  /// **'Next track'**
+  String get playerNext;
+
+  /// Tooltip of the previous button.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous track'**
+  String get playerPrevious;
+
+  /// BR-001: tracks of an unavailable disk were skipped.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 track skipped: disk missing} other{{count} tracks skipped: disk missing}}'**
+  String noticeTracksSkipped(int count);
+
+  /// BR-003: a track could not be played.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot play {title}'**
+  String noticeTrackFailed(String title);
+
+  /// BR-003: too many consecutive failures.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback stopped after {count} failures in a row'**
+  String noticeStoppedAfterFailures(int count);
+
+  /// BR-002: the disk of the current track was ejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback stopped: disk removed'**
+  String get noticeStoppedByEjection;
 }
 
 class _AppLocalizationsDelegate

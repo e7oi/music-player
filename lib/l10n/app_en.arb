@@ -4,8 +4,116 @@
   "@appTitle": {
     "description": "Application name shown in the app bar and the task switcher."
   },
-  "homePlaceholder": "The library will appear here.",
-  "@homePlaceholder": {
-    "description": "Temporary home screen text until the library screens exist (MPL-016)."
+  "permissionExplanation": "Access to the audio files is needed to show and play the music on this phone.",
+  "@permissionExplanation": {
+    "description": "Shown instead of the library when the audio permission is refused (FR-004)."
+  },
+  "permissionRetry": "Allow access",
+  "@permissionRetry": {
+    "description": "Button that asks for the audio permission again."
+  },
+  "permissionOpenSettings": "Open settings",
+  "@permissionOpenSettings": {
+    "description": "Button that opens the app settings when Android no longer shows the permission dialog."
+  },
+  "foldersTitle": "Music folders",
+  "@foldersTitle": {
+    "description": "Title of the folder choice screen (FR-003)."
+  },
+  "foldersExplanation": "Choose the folders that hold your music. Ringtones and audio from messaging apps stay out unless their folder is checked.",
+  "@foldersExplanation": {
+    "description": "Explains the folder choice."
+  },
+  "foldersRoot": "Storage root",
+  "@foldersRoot": {
+    "description": "Name shown for audio files placed directly at the root of the internal storage."
+  },
+  "folderFileCount": "{count, plural, =1{1 file} other{{count} files}}",
+  "@folderFileCount": {
+    "description": "Number of audio files in a folder.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "foldersConfirm": "Confirm",
+  "@foldersConfirm": {
+    "description": "Confirms the folder choice and starts indexing."
+  },
+  "foldersNone": "No folder of this phone holds audio.",
+  "@foldersNone": {
+    "description": "Folder choice when MediaStore finds no audio."
+  },
+  "libraryRefresh": "Refresh",
+  "@libraryRefresh": {
+    "description": "Action that reindexes the library."
+  },
+  "libraryFolders": "Folders",
+  "@libraryFolders": {
+    "description": "Action that reopens the folder choice."
+  },
+  "libraryNoFolders": "No folder chosen.",
+  "@libraryNoFolders": {
+    "description": "Empty library because no folder is checked."
+  },
+  "libraryEmpty": "No track found in the chosen folders.",
+  "@libraryEmpty": {
+    "description": "Empty library after indexing the chosen folders."
+  },
+  "libraryChooseFolders": "Choose folders",
+  "@libraryChooseFolders": {
+    "description": "Button to the folder choice from an empty library."
+  },
+  "libraryIndexFailed": "The library could not be refreshed.",
+  "@libraryIndexFailed": {
+    "description": "Shown when indexing failed; the stored library stays visible."
+  },
+  "playerPlay": "Play",
+  "@playerPlay": {
+    "description": "Tooltip of the play button."
+  },
+  "playerPause": "Pause",
+  "@playerPause": {
+    "description": "Tooltip of the pause button."
+  },
+  "playerNext": "Next track",
+  "@playerNext": {
+    "description": "Tooltip of the next button."
+  },
+  "playerPrevious": "Previous track",
+  "@playerPrevious": {
+    "description": "Tooltip of the previous button."
+  },
+  "noticeTracksSkipped": "{count, plural, =1{1 track skipped: disk missing} other{{count} tracks skipped: disk missing}}",
+  "@noticeTracksSkipped": {
+    "description": "BR-001: tracks of an unavailable disk were skipped.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noticeTrackFailed": "Cannot play {title}",
+  "@noticeTrackFailed": {
+    "description": "BR-003: a track could not be played.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeStoppedAfterFailures": "Playback stopped after {count} failures in a row",
+  "@noticeStoppedAfterFailures": {
+    "description": "BR-003: too many consecutive failures.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noticeStoppedByEjection": "Playback stopped: disk removed",
+  "@noticeStoppedByEjection": {
+    "description": "BR-002: the disk of the current track was ejected."
   }
 }

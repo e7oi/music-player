@@ -1,5 +1,27 @@
 {
   "@@locale": "fr",
   "appTitle": "MusicPlayer",
-  "homePlaceholder": "La bibliothèque apparaîtra ici."
+  "permissionExplanation": "L'accès aux fichiers audio est nécessaire pour afficher et lire la musique du téléphone.",
+  "permissionRetry": "Autoriser l'accès",
+  "permissionOpenSettings": "Ouvrir les réglages",
+  "foldersTitle": "Dossiers de musique",
+  "foldersExplanation": "Choisir les dossiers qui contiennent la musique. Les sonneries et les sons des messageries restent hors de la bibliothèque si leur dossier n'est pas coché.",
+  "foldersRoot": "Racine du stockage",
+  "folderFileCount": "{count, plural, =1{1 fichier} other{{count} fichiers}}",
+  "foldersConfirm": "Valider",
+  "foldersNone": "Aucun dossier du téléphone ne contient d'audio.",
+  "libraryRefresh": "Actualiser",
+  "libraryFolders": "Dossiers",
+  "libraryNoFolders": "Aucun dossier choisi.",
+  "libraryEmpty": "Aucune piste trouvée dans les dossiers choisis.",
+  "libraryChooseFolders": "Choisir les dossiers",
+  "libraryIndexFailed": "L'actualisation de la bibliothèque a échoué.",
+  "playerPlay": "Lecture",
+  "playerPause": "Pause",
+  "playerNext": "Piste suivante",
+  "playerPrevious": "Piste précédente",
+  "noticeTracksSkipped": "{count, plural, =1{1 piste ignorée : disque absent} other{{count} pistes ignorées : disque absent}}",
+  "noticeTrackFailed": "Lecture impossible : {title}",
+  "noticeStoppedAfterFailures": "Lecture arrêtée après {count} échecs de suite",
+  "noticeStoppedByEjection": "Lecture arrêtée : disque retiré"
 }
