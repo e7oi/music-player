@@ -14,7 +14,7 @@ Sans arrêt préalable du moteur, Android tue l'application environ 1 s après l
 4. Au retour d'un disque, le contrôleur le marque disponible. La lecture ne reprend pas d'elle-même (validé par le propriétaire le 2026-10-15).
 5. Après l'arrêt dû à l'éjection, la lecture reste arrêtée sur la piste éjectée, avec un signalement ; elle ne passe pas à une piste d'un autre disque (validé par le propriétaire le 2026-10-15).
 6. Le contrôleur ne ferme jamais lui-même un descripteur que le moteur lit encore ; le côté natif non plus.
-7. Si le moteur n'a pas fermé le fichier 5 s après l'arrêt, l'arrêt rend la main sans libérer le descripteur, qui est libéré après l'arrêt suivant confirmé ou à la fermeture du moteur : la règle 6 prime sur le risque qu'Android tue l'application au démontage (validé par le propriétaire le 2026-10-15).
+7. Si le moteur n'a pas fermé le fichier 5 s après l'arrêt, l'arrêt rend la main sans libérer le descripteur, qui est libéré après l'arrêt suivant confirmé ou à la fermeture du moteur . La règle 6 prime : fermer un descripteur encore lu peut faire lire un autre fichier à mpv, si le numéro du descripteur est réattribué. Pendant une éjection, ce délai ne joue pas : Android tue l'application vers 1 s si le fichier n'est pas fermé, d'où l'importance d'un arrêt rapide (MPL-035) (validé par le propriétaire le 2026-10-15 ; justification précisée le même jour).
 
 ## Hors périmètre
 
