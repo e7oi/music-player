@@ -96,7 +96,7 @@ Les commandes ci-dessous existent une fois MPL-017 livré ; ne pas les supposer 
 
 - Format : `dart format --set-exit-if-changed .`
 - Analyse : `flutter analyze --fatal-infos` puis `dart analyze --fatal-infos`, avec `very_good_analysis`, `strict-casts`, `strict-inference`, `strict-raw-types` et le plugin d'analyse `riverpod_lint`. `flutter analyze` n'exécute pas les plugins d'analyse : seul `dart analyze` lance `riverpod_lint`.
-- Tests : `flutter test` (inclut `test/architecture/`). Tests sur appareil en build release (D14) avec `flutter drive --release --driver=test_driver/integration_test.dart --target=integration_test/<fichier>_test.dart` ; `flutter test integration_test` ne compile qu'en debug (procédure : `HOWTO.md` §10).
+- Tests : `flutter test` (inclut `test/architecture/`). Tests sur appareil avec `flutter drive --profile --driver=test_driver/integration_test.dart --target=integration_test/<fichier>_test.dart` : `flutter drive` refuse la release, et le profile est compilé en natif (AOT) comme elle ; `flutter test integration_test` ne compile qu'en debug. Le test réel de l'application reste en build release (D14). Procédure : `HOWTO.md` §10.
 - Code généré : Drift seulement (`dart run build_runner build --delete-conflicting-outputs`) ; les fichiers `*.g.dart` sont versionnés, marqués `linguist-generated`, exclus de l'analyse, et la CI vérifie qu'ils sont à jour avec `git diff --exit-code` après régénération. Les providers Riverpod sont écrits à la main : pas de génération de code Riverpod, pas de `freezed`.
 - Localisation : `flutter gen-l10n` ; fichiers générés versionnés sous `lib/l10n/` ; la CI échoue si une clé manque dans une langue livrée.
 

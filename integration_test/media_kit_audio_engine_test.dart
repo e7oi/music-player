@@ -9,7 +9,7 @@ import 'package:musicplayer/domain/storage/model/media_source.dart';
 
 import '../test/contract/audio_engine_contract.dart';
 
-/// Runs the AudioEngine contract against media_kit on a device, in release
+/// Runs the AudioEngine contract against media_kit on a device, in profile
 /// mode through `flutter drive` (procedure in HOWTO.md §10).
 ///
 /// The audio is generated here, so no personal file is needed (D27).
