@@ -1,6 +1,6 @@
 # FR-002 — Retirer une piste de la file de lecture
 
-**Statut :** Brouillon · **Créée le :** 2026-10-15 · **Ticket :** MPL-017 · **Lié :** FR-001, BR-001
+**Statut :** Active (validée le 2026-10-15) · **Créée le :** 2026-10-15 · **Ticket :** MPL-017 · **Lié :** FR-001, BR-001
 
 ## Besoin
 
