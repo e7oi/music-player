@@ -197,13 +197,15 @@ Consigner les résultats (OK / KO / non testé, voir §6) et signaler les échec
 La suite `test/contract/audio_engine_contract.dart` tourne en CI contre le fake ; sur appareil, elle tourne contre l'adaptateur `media_kit`. Le test génère lui-même un fichier WAV d'une seconde et un fichier illisible : aucun fichier personnel n'est nécessaire (D27).
 
 1. Brancher le Pixel (ou `adb connect` en Wi-Fi) ; `ANDROID_SERIAL=<id>` s'il y a plusieurs appareils (`flutter devices`).
-2. Depuis la racine du dépôt, en build release (D14 ; `flutter test integration_test` ne compile qu'en debug) :
+2. Depuis la racine du dépôt, en mode profile, compilé en natif (AOT) comme la release. `flutter drive` refuse la release (« Flutter Driver (non-web) does not support running in release mode ») et `flutter test integration_test` ne compile qu'en debug. Le lancement de l'application elle-même se valide à part, en build release (D14, §7).
 
    ```bash
-   flutter drive --release --driver=test_driver/integration_test.dart \
+   flutter drive --profile --driver=test_driver/integration_test.dart \
      --target=integration_test/media_kit_audio_engine_test.dart
    ```
 
+   Avec plusieurs appareils, ajouter `-d <id>` (`flutter devices`).
+
    L'application de test remplace l'application installée.
-3. Résultat attendu : `All tests passed!` (8 tests dont 2 ignorés : descripteurs, couverts par MPL-035).
+3. Résultat attendu : `All tests passed.` (8 tests dont 2 ignorés : descripteurs, couverts par MPL-035).
 4. Consigner le résultat (OK / KO + sortie) ; ne rien coller de plus que la sortie du test.

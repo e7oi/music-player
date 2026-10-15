@@ -50,4 +50,4 @@ MPL-017, 2026-10-15.
 - Limite connue : un événement de position de la piste précédente arrivé après le chargement de la suivante peut encore fausser « précédent » (non couvert par un test).
 - `DescriptorMediaSource` (`fd://N`) est géré par l'adaptateur, mais aucun code ne l'utilise encore. Le contrat le vérifie sur le fake, pas sur appareil (MPL-035).
 - Les journaux de mpv vont dans le journal local de l'appareil (`dart:developer`), jamais dans un fichier versionné (D27).
-- Exécution du contrat sur appareil : `HOWTO.md` §10, en build release via `flutter drive` (`test_driver/integration_test.dart`). Non testé.
+- Exécution du contrat sur appareil : `HOWTO.md` §10, en mode profile via `flutter drive` (`test_driver/integration_test.dart`), car `flutter drive` refuse la release. Passé sur le Pixel 10 Pro le 2026-10-15 (`All tests passed.`, 6 tests exécutés, 2 ignorés : descripteurs). Le cas d'un fichier illisible est donc couvert sur appareil pour ce fichier de test ; le chemin `fd://` ne l'est pas (MPL-035).
