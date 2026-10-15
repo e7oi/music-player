@@ -14,11 +14,18 @@ import 'package:musicplayer/domain/storage/model/media_source.dart';
 /// (set by `media_kit`) mpv stays on a file that played to its end and only
 /// goes idle when the file is unloaded or could not be played. Going idle
 /// again after a file started loading, with no stop requested, is the
-/// `end-file` with an error reason, always a failure. Before the file is
-/// ready, error logs that announce an unreadable file are failures too,
-/// because mpv may go busy and idle again too fast for the property change
-/// to be seen; every other log message of level `warn` or `error` is an
-/// unclassified warning until MPL-010 classifies recorded real messages.
+/// `end-file` with an error reason, always a failure. Until the duration of
+/// the file is known, error logs that announce an unreadable file are
+/// failures too, because mpv may go busy and idle again too fast for the
+/// property change to be seen; every other log message of level `warn` or
+/// `error` is an unclassified warning until MPL-010 classifies recorded real
+/// messages.
+///
+/// `idle-active` turns true as soon as a stop is requested, before mpv closes
+/// the file (`stop_play == PT_STOP` in mpv's `command.c`), so [stop] waits
+/// for the `path` property instead: mpv clears it only after the demuxer,
+/// and the stream it reads, are closed (`play_current_file` in
+/// `loadfile.c`).
 ///
 /// @decision D2
 class MediaKitAudioEngine implements AudioEngine {
@@ -32,10 +39,12 @@ class MediaKitAudioEngine implements AudioEngine {
   /// Must run once before the first engine is created.
   static void ensureInitialized() => MediaKit.ensureInitialized();
 
-  /// How long [stop] waits for mpv to report that it is idle. Beyond it
-  /// [stop] returns so that later commands are not blocked, but a descriptor
-  /// is only released once mpv is idle (BR-002).
-  static const idleTimeout = Duration(seconds: 5);
+  /// How long [stop] waits for mpv to close the file. Beyond it [stop]
+  /// returns so that later commands are not blocked, but a descriptor is only
+  /// released once mpv has closed the file (BR-002).
+  static const unloadTimeout = Duration(seconds: 5);
+
+  static const _unloadPollInterval = Duration(milliseconds: 10);
 
   final Player _player;
   late final Future<void> _ready;
@@ -61,9 +70,12 @@ class MediaKitAudioEngine implements AudioEngine {
 
   /// mpv reported busy since the current file started loading.
   bool _sawBusy = false;
-  Completer<void>? _idleWaiter;
 
-  /// Descriptors of sources mpv had not finished with when [stop] returned.
+  /// The duration of the current file is known: mpv has opened it.
+  bool _started = false;
+
+  /// Descriptors of sources mpv had not closed when [stop] returned; released
+  /// after the next confirmed unload, or on [dispose].
   final List<DescriptorMediaSource> _pendingRelease = [];
 
   @override
@@ -95,9 +107,11 @@ class MediaKitAudioEngine implements AudioEngine {
     _subscriptions.addAll([
       stream.completed.listen(_onCompleted),
       stream.position.listen(_position.add),
-      stream.duration.listen(
-        (d) => _duration.add(d > Duration.zero ? d : null),
-      ),
+      stream.duration.listen((d) {
+        final known = d > Duration.zero;
+        if (known && _source != null) _started = true;
+        _duration.add(known ? d : null);
+      }),
       stream.log.listen(_onLog),
     ]);
   }
@@ -111,6 +125,7 @@ class MediaKitAudioEngine implements AudioEngine {
     _failureReported = false;
     _lastError = '';
     _sawBusy = false;
+    _started = false;
     _opening = true;
     _emit(EngineProcessing.loading);
     _duration.add(null);
@@ -176,46 +191,40 @@ class MediaKitAudioEngine implements AudioEngine {
   /// source.
   ///
   /// @implements BR-002: a descriptor is never released while mpv may still
-  /// read it; if mpv is not idle in time, the release waits for idle.
+  /// read it; if mpv has not closed the file in time, the release waits.
   Future<void> _unload() async {
     final source = _source;
     if (source == null && !_loaded) return;
     _stopping = true;
-    var idle = false;
+    var unloaded = false;
     try {
       await _player.stop();
-      idle = await _waitUntilIdle();
+      unloaded = await _waitUntilUnloaded();
     } finally {
       _source = null;
       _loaded = false;
       _stopping = false;
     }
+    // A file closed now means every earlier one is closed too.
+    if (unloaded) await _releasePending();
     if (source is! DescriptorMediaSource) return;
-    if (idle) {
+    if (unloaded) {
       await source.release();
     } else {
-      _log('mpv not idle ${idleTimeout.inSeconds} s after stop');
+      _log('mpv still has a file open ${unloadTimeout.inSeconds} s after stop');
       _pendingRelease.add(source);
     }
   }
 
-  /// Asks mpv directly rather than trusting the last property change, which
-  /// may not have arrived yet.
-  Future<bool> _waitUntilIdle() async {
-    final waiter = _idleWaiter ??= Completer<void>();
-    if (await _isIdleNow()) return true;
-    try {
-      await waiter.future.timeout(idleTimeout);
-      return true;
-    } on TimeoutException {
-      return await _isIdleNow();
-    }
-  }
-
-  Future<bool> _isIdleNow() async {
+  Future<bool> _waitUntilUnloaded() async {
     final platform = _player.platform;
     if (platform is! NativePlayer) return true;
-    return await platform.getProperty('idle-active') == 'yes';
+    final deadline = DateTime.now().add(unloadTimeout);
+    while (await platform.getProperty('path') != '') {
+      if (DateTime.now().isAfter(deadline)) return false;
+      await Future<void>.delayed(_unloadPollInterval);
+    }
+    return true;
   }
 
   Future<void> _onIdleActive(String value) async {
@@ -223,9 +232,6 @@ class MediaKitAudioEngine implements AudioEngine {
       _sawBusy = true;
       return;
     }
-    _idleWaiter?.complete();
-    _idleWaiter = null;
-    await _releasePending();
     final current = _opening || _loaded;
     if (_sawBusy && current && !_stopping) {
       _reportFailure(
@@ -259,7 +265,7 @@ class MediaKitAudioEngine implements AudioEngine {
       return;
     }
     if (log.level != 'warn') _lastError = text;
-    final loading = _source != null && !_loaded && !_stopping;
+    final loading = _source != null && !_started && !_stopping;
     if (loading && log.level != 'warn' && _announcesUnreadableFile(log)) {
       _reportFailure(EngineFailureKind.openFailed, text);
       return;
