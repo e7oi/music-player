@@ -103,4 +103,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noticeStoppedByEjection => 'Lecture arrêtée : disque retiré';
+
+  @override
+  String get libraryLoadFailed =>
+      'Les dossiers du téléphone n\'ont pas pu être lus.';
+
+  @override
+  String get libraryRetry => 'Réessayer';
 }

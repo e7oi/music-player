@@ -60,9 +60,9 @@ class MediaStoreChannel(private val activity: Activity) : MethodChannel.MethodCa
             "queryInternalAudio" -> executor.execute {
                 try {
                     val rows = queryInternalAudio()
-                    activity.runOnUiThread { result.success(rows) }
+                    reply { result.success(rows) }
                 } catch (e: Exception) {
-                    activity.runOnUiThread { result.error("query_failed", e.message, null) }
+                    reply { result.error("query_failed", e.message, null) }
                 }
             }
             else -> result.notImplemented()
@@ -77,7 +77,14 @@ class MediaStoreChannel(private val activity: Activity) : MethodChannel.MethodCa
     }
 
     fun close() {
-        executor.shutdown()
+        executor.shutdownNow()
+    }
+
+    /** Replies on the main thread, unless the activity is already gone. */
+    private fun reply(action: () -> Unit) {
+        activity.runOnUiThread {
+            if (!activity.isDestroyed) action()
+        }
     }
 
     private fun permissionStatus(): String {
@@ -86,10 +93,12 @@ class MediaStoreChannel(private val activity: Activity) : MethodChannel.MethodCa
         }
         val asked = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getBoolean(ASKED_KEY, false)
-        return if (asked && !activity.shouldShowRequestPermissionRationale(permission)) {
-            "permanentlyDenied"
-        } else {
-            "denied"
+        return when {
+            !asked -> "notRequested"
+            // Also true after the dialog was dismissed on Android 11+: the
+            // Dart side tries the dialog once more before the settings.
+            !activity.shouldShowRequestPermissionRationale(permission) -> "permanentlyDenied"
+            else -> "denied"
         }
     }
 

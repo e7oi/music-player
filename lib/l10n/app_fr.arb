@@ -23,5 +23,7 @@
   "noticeTracksSkipped": "{count, plural, =1{1 piste ignorée : disque absent} other{{count} pistes ignorées : disque absent}}",
   "noticeTrackFailed": "Lecture impossible : {title}",
   "noticeStoppedAfterFailures": "Lecture arrêtée après {count} échecs de suite",
-  "noticeStoppedByEjection": "Lecture arrêtée : disque retiré"
+  "noticeStoppedByEjection": "Lecture arrêtée : disque retiré",
+  "libraryLoadFailed": "Les dossiers du téléphone n'ont pas pu être lus.",
+  "libraryRetry": "Réessayer"
 }

@@ -241,6 +241,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Playback stopped: disk removed'**
   String get noticeStoppedByEjection;
+
+  /// Shown when MediaStore cannot be queried.
+  ///
+  /// In en, this message translates to:
+  /// **'The folders of this phone could not be read.'**
+  String get libraryLoadFailed;
+
+  /// Retries reading the folders.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get libraryRetry;
 }
 
 class _AppLocalizationsDelegate

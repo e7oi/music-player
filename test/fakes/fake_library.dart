@@ -38,8 +38,10 @@ class FakeLibraryRepository implements LibraryRepository {
   Future<Set<String>> chosenFolders(DiskId disk) async => {...?_folders[disk]};
 
   @override
-  Future<void> setChosenFolders(DiskId disk, Set<String> folders) async =>
-      _folders[disk] = {...folders};
+  Future<void> setChosenFolders(Disk disk, Set<String> folders) async {
+    _disks.putIfAbsent(disk.id, () => disk);
+    _folders[disk.id] = {...folders};
+  }
 
   @override
   Stream<List<LibraryTrack>> watchTracks() async* {
@@ -100,6 +102,9 @@ class FakeAudioPermission implements AudioPermission {
 
   /// What the Android dialog answers to the next [request].
   AudioPermissionStatus answer = AudioPermissionStatus.granted;
+
+  /// The next [request] fails, as when a request is already running.
+  bool failNextRequest = false;
   int requests = 0;
   int settingsOpened = 0;
 
@@ -108,6 +113,10 @@ class FakeAudioPermission implements AudioPermission {
 
   @override
   Future<AudioPermissionStatus> request() async {
+    if (failNextRequest) {
+      failNextRequest = false;
+      throw Exception('request_pending');
+    }
     requests++;
     return current = answer;
   }

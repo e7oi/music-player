@@ -102,4 +102,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noticeStoppedByEjection => 'Playback stopped: disk removed';
+
+  @override
+  String get libraryLoadFailed =>
+      'The folders of this phone could not be read.';
+
+  @override
+  String get libraryRetry => 'Retry';
 }

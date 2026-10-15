@@ -41,6 +41,13 @@ void main() {
       expect(LibraryIndexer.defaultSelection(folders), {'Music'});
     });
 
+    test('proposes Music whatever its case', () async {
+      source.files = [info('music/a.mp3')];
+      final folders = await indexer.availableFolders();
+
+      expect(LibraryIndexer.defaultSelection(folders), {'music'});
+    });
+
     test('proposes nothing when there is no Music folder', () async {
       source.files = [info('Download/a.mp3')];
       final folders = await indexer.availableFolders();
@@ -73,12 +80,14 @@ void main() {
       expect(repository.tracks.map((t) => t.disk).toSet(), {internalDisk});
     });
 
+    /// @verifies FR-003
     test('the root folder only holds files directly at the root', () async {
       await indexer.chooseFolders({''});
 
       expect(repository.tracks.map((t) => t.info.relativePath), ['root.mp3']);
     });
 
+    /// @verifies FR-003
     test('a folder name is not a prefix match', () async {
       source.files = [info('Music/a.mp3'), info('Musicals/b.mp3')];
 
@@ -162,6 +171,22 @@ void main() {
       );
     });
 
+    /// @verifies BR-004
+    test(
+      'an empty MediaStore keeps the library instead of emptying it',
+      () async {
+        await indexer.chooseFolders({'Music'});
+        source.files = [];
+
+        await expectLater(
+          indexer.index(),
+          throwsA(isA<EmptySourceException>()),
+        );
+
+        expect(repository.tracks, hasLength(3));
+      },
+    );
+
     test('index does nothing before the folder choice', () async {
       final result = await indexer.index();
 
@@ -169,6 +194,7 @@ void main() {
       expect(source.queries, 0);
     });
 
+    /// @verifies FR-003
     test('concurrent indexing runs one after the other', () async {
       await indexer.chooseFolders({'Music'});
 

@@ -45,6 +45,7 @@ class MediaStoreChannel implements InternalAudioSource, AudioPermission {
   static AudioPermissionStatus _status(String? value) => switch (value) {
     'granted' => AudioPermissionStatus.granted,
     'permanentlyDenied' => AudioPermissionStatus.permanentlyDenied,
+    'notRequested' => AudioPermissionStatus.notRequested,
     _ => AudioPermissionStatus.denied,
   };
 

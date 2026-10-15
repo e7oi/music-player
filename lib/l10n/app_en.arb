@@ -115,5 +115,13 @@
   "noticeStoppedByEjection": "Playback stopped: disk removed",
   "@noticeStoppedByEjection": {
     "description": "BR-002: the disk of the current track was ejected."
+  },
+  "libraryLoadFailed": "The folders of this phone could not be read.",
+  "@libraryLoadFailed": {
+    "description": "Shown when MediaStore cannot be queried."
+  },
+  "libraryRetry": "Retry",
+  "@libraryRetry": {
+    "description": "Retries reading the folders."
   }
 }

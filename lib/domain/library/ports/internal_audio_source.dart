@@ -10,6 +10,9 @@ abstract interface class InternalAudioSource {
 enum AudioPermissionStatus {
   granted,
 
+  /// Never asked: the first launch asks once (FR-004).
+  notRequested,
+
   /// Not granted yet; asking again shows the Android dialog.
   denied,
 

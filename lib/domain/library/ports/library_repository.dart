@@ -28,7 +28,9 @@ abstract interface class LibraryRepository {
   /// Folders of [disk] chosen by the user, relative to the disk (FR-003).
   Future<Set<String>> chosenFolders(DiskId disk);
 
-  Future<void> setChosenFolders(DiskId disk, Set<String> folders);
+  /// Registers [disk] if needed and stores [folders] in one transaction, so
+  /// that a first choice is never half saved.
+  Future<void> setChosenFolders(Disk disk, Set<String> folders);
 
   /// Every track, sorted by display title. Emits on every change.
   Stream<List<LibraryTrack>> watchTracks();

@@ -32,6 +32,19 @@ void main() {
       expect(await repository.disk(const DiskId('other')), isNull);
     });
 
+    test('choosing folders registers the disk in the same step', () async {
+      const other = Disk(
+        id: DiskId('other'),
+        label: 'SSD',
+        kind: DiskKind.removable,
+      );
+
+      await repository.setChosenFolders(other, {'Music'});
+
+      expect(await repository.disk(other.id), isNotNull);
+      expect(await repository.chosenFolders(other.id), {'Music'});
+    });
+
     test('ensureDisk keeps the stored disk', () async {
       await repository.ensureDisk(Disk.internal);
 
@@ -42,8 +55,8 @@ void main() {
 
     /// @verifies FR-003
     test('chosen folders are replaced, not merged', () async {
-      await repository.setChosenFolders(internalDisk, {'Music', 'Podcasts'});
-      await repository.setChosenFolders(internalDisk, {'Music'});
+      await repository.setChosenFolders(Disk.internal, {'Music', 'Podcasts'});
+      await repository.setChosenFolders(Disk.internal, {'Music'});
 
       expect(await repository.chosenFolders(internalDisk), {'Music'});
     });

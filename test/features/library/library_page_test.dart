@@ -90,6 +90,15 @@ void main() {
       'internal/Music/c.mp3',
     );
     expect(engine.state.playing, isTrue);
+    final player = ProviderScope.containerOf(
+      tester.element(find.byType(LibraryPage)),
+    ).read(playerControllerProvider);
+    expect(player.state.queue.map((t) => t.relativePath), [
+      'Music/a.mp3',
+      'Music/b.mp3',
+      'Music/c.mp3',
+    ]);
+    expect(player.state.currentIndex, 2);
     expect(find.byTooltip('Pause'), findsOneWidget);
     expect(
       find.descendant(
@@ -100,9 +109,27 @@ void main() {
     );
   });
 
+  testWidgets('the playback bar stays while the folders are open', (
+    tester,
+  ) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Alpha'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Folders'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Music folders'), findsOneWidget);
+    expect(find.byType(PlayerBar), findsOneWidget);
+  });
+
   /// @verifies FR-004
   testWidgets('a permanent refusal offers the settings', (tester) async {
-    permission.current = AudioPermissionStatus.permanentlyDenied;
+    permission
+      ..current = AudioPermissionStatus.permanentlyDenied
+      ..answer = AudioPermissionStatus.permanentlyDenied;
     await pumpPage(tester);
 
     await tester.tap(find.text('Open settings'));

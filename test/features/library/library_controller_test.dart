@@ -33,7 +33,7 @@ void main() {
         info('Music/b.mp3'),
         info('Ringtones/r.ogg'),
       ];
-    permission = FakeAudioPermission(AudioPermissionStatus.denied);
+    permission = FakeAudioPermission(AudioPermissionStatus.notRequested);
     container = create();
   });
 
@@ -46,6 +46,16 @@ void main() {
 
       expect(permission.requests, 1);
       expect(state(), isA<LibraryFolderChoice>());
+    });
+
+    /// @verifies FR-004
+    test('later launches do not ask again after a refusal', () async {
+      permission.current = AudioPermissionStatus.denied;
+
+      await controller().start();
+
+      expect(permission.requests, 0);
+      expect(state(), isA<LibraryPermissionNeeded>());
     });
 
     /// @verifies FR-004
@@ -91,9 +101,35 @@ void main() {
         ),
       );
 
+      permission.answer = AudioPermissionStatus.permanentlyDenied;
       await controller().requestPermission();
 
       expect(permission.settingsOpened, 1);
+    });
+
+    /// @verifies FR-004
+    test(
+      'a dismissed dialog that Android still shows needs no settings',
+      () async {
+        permission.current = AudioPermissionStatus.permanentlyDenied;
+        await controller().start();
+        permission.answer = AudioPermissionStatus.granted;
+
+        await controller().requestPermission();
+
+        expect(permission.settingsOpened, 0);
+        expect(state(), isA<LibraryFolderChoice>());
+      },
+    );
+
+    test('a request already running is ignored', () async {
+      permission.current = AudioPermissionStatus.denied;
+      await controller().start();
+      permission.failNextRequest = true;
+
+      await controller().requestPermission();
+
+      expect(state(), isA<LibraryPermissionNeeded>());
     });
 
     /// @verifies FR-004
@@ -205,6 +241,7 @@ void main() {
       );
     });
 
+    /// @verifies FR-003
     test('indexing is visible while it runs', () async {
       await controller().start();
       final states = <LibraryViewState>[];
@@ -229,6 +266,32 @@ void main() {
       await controller().openFolderChoice();
 
       expect((state() as LibraryFolderChoice).selected, {'Music', 'Ringtones'});
+    });
+
+    /// @verifies UC-001
+    test('a failing folder query on first launch offers a retry', () async {
+      container.dispose();
+      container = ProviderContainer(
+        overrides: [
+          libraryRepositoryProvider.overrideWithValue(repository),
+          internalAudioSourceProvider.overrideWithValue(FailingAudioSource()),
+          audioPermissionProvider.overrideWithValue(permission),
+        ],
+      );
+
+      await controller().start();
+
+      expect(state(), isA<LibraryLoadFailed>());
+    });
+
+    test('the folder choice does not open while indexing', () async {
+      await controller().start();
+      final confirming = controller().confirmFolders({'Music'});
+
+      await controller().openFolderChoice();
+      await confirming;
+
+      expect(state(), isA<LibraryReady>());
     });
 
     test('a failing index leaves the library usable', () async {

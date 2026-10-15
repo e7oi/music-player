@@ -39,9 +39,10 @@ class DriftLibraryRepository implements LibraryRepository {
   }
 
   @override
-  Future<void> setChosenFolders(DiskId disk, Set<String> folders) =>
+  Future<void> setChosenFolders(Disk disk, Set<String> folders) =>
       _db.transaction(() async {
-        final row = await _requireDisk(disk);
+        await ensureDisk(disk);
+        final row = await _requireDisk(disk.id);
         await (_db.delete(
           _db.diskFolders,
         )..where((f) => f.diskId.equals(row.id))).go();

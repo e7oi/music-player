@@ -20,6 +20,12 @@ final class LibraryPermissionNeeded extends LibraryViewState {
   final bool permanent;
 }
 
+/// The folders of the phone could not be read; [LibraryController.start]
+/// retries.
+final class LibraryLoadFailed extends LibraryViewState {
+  const new();
+}
+
 /// FR-003: the user picks the folders to index.
 @immutable
 final class LibraryFolderChoice extends LibraryViewState {
@@ -61,22 +67,31 @@ class LibraryController extends Notifier<LibraryViewState> {
 
   AudioPermission get _permission => ref.read(audioPermissionProvider);
 
-  /// First launch asks for access once (FR-004.1), then offers the folders;
-  /// later launches show the library and reindex (FR-003).
+  /// The first launch asks for access once (FR-004.1), then offers the
+  /// folders; later launches show the library and reindex (FR-003).
   Future<void> start() async {
     var status = await _permission.status();
-    if (status == AudioPermissionStatus.denied) {
+    if (status == AudioPermissionStatus.notRequested) {
       status = await _permission.request();
     }
     await _continueWith(status);
   }
 
+  /// FR-004.3 and .4. Android also reports "permanently denied" after a
+  /// dismissed dialog that it would still show, so the dialog is tried
+  /// first; the settings open only if it did not grant access.
   Future<void> requestPermission() async {
-    if (await _permission.status() == AudioPermissionStatus.permanentlyDenied) {
-      await _permission.openAppSettings();
-      return;
+    try {
+      final before = await _permission.status();
+      final after = await _permission.request();
+      if (before == AudioPermissionStatus.permanentlyDenied &&
+          after != AudioPermissionStatus.granted) {
+        await _permission.openAppSettings();
+      }
+      await _continueWith(after);
+    } on Exception {
+      // A request is already running: its own result will update the state.
     }
-    await _continueWith(await _permission.request());
   }
 
   /// FR-004.5: access may have changed in the settings while away.
@@ -97,11 +112,19 @@ class LibraryController extends Notifier<LibraryViewState> {
     hasFolders: folders.isNotEmpty,
   );
 
+  /// Ignored while indexing: the end of the index would replace the choice
+  /// being edited.
   Future<void> openFolderChoice() async {
-    state = LibraryFolderChoice(
-      folders: await _indexer.availableFolders(),
-      selected: await _indexer.chosenFolders(),
-    );
+    final current = state;
+    if (current is LibraryReady && current.indexing) return;
+    try {
+      state = LibraryFolderChoice(
+        folders: await _indexer.availableFolders(),
+        selected: await _indexer.chosenFolders(),
+      );
+    } on Exception {
+      state = const LibraryLoadFailed();
+    }
   }
 
   Future<void> refresh() async {
@@ -117,11 +140,15 @@ class LibraryController extends Notifier<LibraryViewState> {
       return;
     }
     if (await _indexer.needsFolderChoice()) {
-      final folders = await _indexer.availableFolders();
-      state = LibraryFolderChoice(
-        folders: folders,
-        selected: LibraryIndexer.defaultSelection(folders),
-      );
+      try {
+        final folders = await _indexer.availableFolders();
+        state = LibraryFolderChoice(
+          folders: folders,
+          selected: LibraryIndexer.defaultSelection(folders),
+        );
+      } on Exception {
+        state = const LibraryLoadFailed();
+      }
       return;
     }
     await refresh();

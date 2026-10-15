@@ -62,7 +62,9 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
             IconButton(
               tooltip: l10n.libraryFolders,
               icon: const Icon(Icons.folder_outlined),
-              onPressed: () => unawaited(_controller.openFolderChoice()),
+              onPressed: state.indexing
+                  ? null
+                  : () => unawaited(_controller.openFolderChoice()),
             ),
             IconButton(
               tooltip: l10n.libraryRefresh,
@@ -83,6 +85,11 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
               : l10n.permissionRetry,
           onAction: () => unawaited(_controller.requestPermission()),
         ),
+        LibraryLoadFailed() => _Message(
+          text: l10n.libraryLoadFailed,
+          action: l10n.libraryRetry,
+          onAction: () => unawaited(_controller.start()),
+        ),
         LibraryFolderChoice() => FolderChoiceView(
           key: ValueKey(state),
           choice: state,
@@ -91,7 +98,10 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
         ),
         LibraryReady() => _TrackList(state: state),
       },
-      bottomNavigationBar: ready ? const PlayerBar() : null,
+      // Playback goes on while the folders are open.
+      bottomNavigationBar: ready || state is LibraryFolderChoice
+          ? const PlayerBar()
+          : null,
     );
   }
 

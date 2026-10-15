@@ -15,6 +15,18 @@ final class FolderSummary {
   final int fileCount;
 }
 
+/// MediaStore returned no audio at all while the library holds tracks.
+///
+/// Applying such a result would delete every track and its identity
+/// (BR-004), with what will hang on it (playlists, favourites); a media
+/// rescan after a system update can briefly look like this.
+final class EmptySourceException implements Exception {
+  const new();
+
+  @override
+  String toString() => 'EmptySourceException';
+}
+
 /// Indexes the folders of the internal storage chosen by the user.
 ///
 /// Folders are offered at the top level only: choosing one includes all its
@@ -34,7 +46,7 @@ class LibraryIndexer {
 
   static Set<String> defaultSelection(List<FolderSummary> folders) => {
     for (final folder in folders)
-      if (folder.path == defaultFolder) folder.path,
+      if (folder.path.toLowerCase() == defaultFolder.toLowerCase()) folder.path,
   };
 
   /// True until the user has confirmed a folder choice once, even an empty
@@ -59,8 +71,7 @@ class LibraryIndexer {
 
   /// Stores [folders] as the choice for the internal storage, then indexes.
   Future<IndexResult> chooseFolders(Set<String> folders) => _serial(() async {
-    await _repository.ensureDisk(Disk.internal);
-    await _repository.setChosenFolders(internalDisk, folders);
+    await _repository.setChosenFolders(Disk.internal, folders);
     return await _index();
   });
 
@@ -72,8 +83,15 @@ class LibraryIndexer {
       return const IndexResult(added: 0, updated: 0, removed: 0);
     }
     final folders = await _repository.chosenFolders(internalDisk);
+    final all = await _source.queryAudio();
+    if (all.isEmpty) {
+      final stored = await _repository.watchTracks().first;
+      if (stored.any((t) => t.disk == internalDisk)) {
+        throw const EmptySourceException();
+      }
+    }
     final found = [
-      for (final file in await _source.queryAudio())
+      for (final file in all)
         if (folders.contains(_topFolder(file.relativePath))) file,
     ];
     return await _repository.applyIndex(internalDisk, found);
