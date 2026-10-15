@@ -109,6 +109,8 @@ class PlayerController {
       case PlayerStatus.ready:
         await _engine.play();
       case PlayerStatus.stopped:
+        // A new start by the user: earlier failures no longer count.
+        _consecutiveFailures = 0;
         await _loadFrom(index, 1);
       case PlayerStatus.loading:
       case PlayerStatus.idle:
@@ -234,16 +236,19 @@ class PlayerController {
         continue;
       }
       await _engine.open(source);
-      _emit(_state.copyWith(status: PlayerStatus.ready));
+      // A late position of the previous track must not count for "previous".
+      _emit(
+        _state.copyWith(status: PlayerStatus.ready, position: Duration.zero),
+      );
       if (_state.playing) await _engine.play();
       return;
     }
     _reportSkipped(skipped);
-    if (step < 0) {
-      // Nothing playable before: stay on the current track.
-      if (_state.status == PlayerStatus.ready) {
-        await _engine.seek(Duration.zero);
-      }
+    if (step < 0 && _state.status == PlayerStatus.ready) {
+      // Nothing playable before and nothing attempted: restart the current
+      // track. Once a load was attempted, the engine may still be playing
+      // another track than the state says, so playback stops instead.
+      await _engine.seek(Duration.zero);
       return;
     }
     await _stopPlayback();

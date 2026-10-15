@@ -57,6 +57,7 @@ void main() {
 
   tearDown(() => controller.dispose());
 
+  /// @verifies FR-001
   group('FR-001 playback commands', () {
     test('setQueue keeps nothing loaded until play is requested', () async {
       await controller.setQueue([a, b]);
@@ -218,6 +219,22 @@ void main() {
 
         expect(controller.state.currentIndex, 0);
         expect(engine.calls.last, 'seek');
+      });
+
+      /// @verifies FR-001
+      /// @verifies BR-003
+      test('stops when the previous track cannot be opened', () async {
+        opener.failing.add(a);
+        await controller.setQueue([a, b], startIndex: 1);
+        await controller.play();
+
+        await controller.previous();
+        await settle();
+
+        expect(controller.state.status, PlayerStatus.stopped);
+        expect(controller.state.playing, isFalse);
+        expect(engine.calls.last, 'stop');
+        expect(notices, [isA<TrackFailed>()]);
       });
 
       test('skips unavailable tracks backwards', () async {
@@ -473,6 +490,52 @@ void main() {
       expect(engine.opened, isEmpty);
       expect(notices.whereType<TrackFailed>(), hasLength(3));
       expect(notices.last, isA<PlaybackStoppedAfterFailures>());
+    });
+
+    /// @verifies BR-003
+    test('stops after 3 consecutive engine failures', () async {
+      await controller.setQueue([a, b, c, d]);
+      await controller.play();
+
+      for (var i = 0; i < 3; i++) {
+        engine.emitIssue(
+          const EngineFailure(EngineFailureKind.playbackFailed, 'x'),
+        );
+        await settle();
+      }
+
+      expect(controller.state.status, PlayerStatus.stopped);
+      expect(controller.state.currentIndex, 2);
+      expect(notices.whereType<TrackFailed>(), hasLength(3));
+      expect(notices.last, isA<PlaybackStoppedAfterFailures>());
+    });
+
+    /// @verifies BR-003
+    test('a failure while the track loads moves on like any failure', () async {
+      engine.failNextOpen = true;
+      await controller.setQueue([a, b]);
+      await controller.play();
+      await settle();
+
+      expect(notices, [isA<TrackFailed>().having((n) => n.track, 'track', a)]);
+      expect(controller.state.currentIndex, 1);
+      expect(loadedPath(), pathOf(b));
+      expect(controller.state.playing, isTrue);
+    });
+
+    /// @verifies BR-003
+    test('play after an end-of-queue stop resets the failure count', () async {
+      opener.failing.addAll([b, c]);
+      await controller.setQueue([a, b, c]);
+      await controller.play();
+      engine.completeTrack();
+      await settle();
+      expect(controller.state.status, PlayerStatus.stopped);
+
+      await controller.play();
+      await settle();
+
+      expect(notices.whereType<PlaybackStoppedAfterFailures>(), isEmpty);
     });
 
     /// @verifies BR-003
