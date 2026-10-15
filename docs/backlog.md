@@ -110,7 +110,7 @@ Fonctionnalité: Bibliothèque du stockage interne
 
 **Fiches liées.** UC-001, FR-003, FR-004, BR-004 (`docs/fonctionnel/`) ; ADR-004, ADR-005 (`docs/technique/decisions/`). Toutes `Active` (validées par le propriétaire le 2026-10-15 ; FR-003, UC-001 et ADR-004 après révision pour le choix des dossiers). Utilise FR-001, BR-001 à BR-003 (`Active`).
 
-**À valider (PO).** Aucun. Réponses reportées (2026-10-15) : `minSdk` 30 accepté (ADR-005) ; pochettes rattachées à MPL-037.
+**À valider (PO).** FR-003 : garde-fou contre un résultat vide de MediaStore, déjà codé alors qu'il écarte l'exigence 8 dans ce cas (à accepter ou à retirer) ; FR-004 : « dialogue d'abord, puis réglages » pour l'exigence 4. Réponses reportées (2026-10-15) : `minSdk` 30 accepté (ADR-005) ; pochettes rattachées à MPL-037.
 
 ### MPL-017
 **Description.** Poser le projet Flutter de production et le cœur de lecture indépendant du moteur, avec une CI minimale qui permet au code d'arriver sur `main`. Cadrage du 2026-10-15, périmètre découpé validé par le propriétaire.

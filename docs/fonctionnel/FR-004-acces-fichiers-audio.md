@@ -18,6 +18,10 @@ Android exige une autorisation pour lire les fichiers audio du téléphone. L'ap
 
 Présentation définitive du dialogue et du bandeau (MPL-015, MPL-016).
 
+## À valider
+
+- Exigence 4 : quand Android signale « ne plus demander », le bouton tente d'abord la demande d'Android, car ce signal arrive aussi après une demande simplement fermée ; il n'ouvre les réglages que si l'accès n'est toujours pas accordé. Conséquence : un refus explicite à ce moment ouvre aussitôt les réglages. À confirmer.
+
 ## As-built
 
 MPL-018, 2026-10-15. `MediaStoreChannel.kt` (Kotlin) et `lib/platform/media_store_channel.dart` ; logique dans `LibraryController` (`lib/features/library/library_controller.dart`). Tests : `test/features/library/library_controller_test.dart`, `test/platform/`.

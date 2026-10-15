@@ -35,5 +35,6 @@ L'utilisateur veut voir les pistes de musique de son téléphone, sans les sonne
 
 MPL-018, 2026-10-15. Écran temporaire `lib/features/library/library_page.dart` et barre de lecture `player_bar.dart`, en attendant les maquettes de MPL-016 ; état dans `library_controller.dart`. Tests : `test/features/library/`.
 
+- « Réessayer » après un échec de lecture des dossiers rouvre le choix des dossiers si l'échec venait de là, sinon relance le démarrage.
 - Les signalements du lecteur (pistes sautées, échec, arrêt) s'affichent dans une barre de message en bas de l'écran.
 - Non testé sur appareil.

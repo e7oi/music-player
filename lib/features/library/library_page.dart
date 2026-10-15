@@ -88,7 +88,7 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
         LibraryLoadFailed() => _Message(
           text: l10n.libraryLoadFailed,
           action: l10n.libraryRetry,
-          onAction: () => unawaited(_controller.start()),
+          onAction: () => unawaited(_controller.retry()),
         ),
         LibraryFolderChoice() => FolderChoiceView(
           key: ValueKey(state),

@@ -122,6 +122,7 @@ void main() {
       },
     );
 
+    /// @verifies FR-004
     test('a request already running is ignored', () async {
       permission.current = AudioPermissionStatus.denied;
       await controller().start();
@@ -284,6 +285,7 @@ void main() {
       expect(state(), isA<LibraryLoadFailed>());
     });
 
+    /// @verifies FR-003
     test('the folder choice does not open while indexing', () async {
       await controller().start();
       final confirming = controller().confirmFolders({'Music'});
@@ -292,6 +294,52 @@ void main() {
       await confirming;
 
       expect(state(), isA<LibraryReady>());
+    });
+
+    /// @verifies UC-001
+    test(
+      'retry after a failed folder list reopens the folder choice',
+      () async {
+        await controller().start();
+        await controller().confirmFolders({'Music'});
+        container.dispose();
+        container = ProviderContainer(
+          overrides: [
+            libraryRepositoryProvider.overrideWithValue(repository),
+            internalAudioSourceProvider.overrideWithValue(FailingAudioSource()),
+            audioPermissionProvider.overrideWithValue(permission),
+          ],
+        );
+        await controller().openFolderChoice();
+        expect(
+          state(),
+          isA<LibraryLoadFailed>().having(
+            (s) => s.whileChoosingFolders,
+            'folders',
+            true,
+          ),
+        );
+      },
+    );
+
+    test('resume and request continuing together run once', () async {
+      permission.current = AudioPermissionStatus.denied;
+      await controller().start();
+      permission
+        ..answer = AudioPermissionStatus.granted
+        ..current = AudioPermissionStatus.granted;
+      final states = <LibraryViewState>[];
+      container.listen(
+        libraryControllerProvider,
+        (_, next) => states.add(next),
+      );
+
+      await Future.wait([
+        controller().requestPermission(),
+        controller().onResumed(),
+      ]);
+
+      expect(states.whereType<LibraryFolderChoice>(), hasLength(1));
     });
 
     test('a failing index leaves the library usable', () async {

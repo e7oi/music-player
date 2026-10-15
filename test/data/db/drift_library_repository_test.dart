@@ -32,6 +32,7 @@ void main() {
       expect(await repository.disk(const DiskId('other')), isNull);
     });
 
+    /// @verifies FR-003
     test('choosing folders registers the disk in the same step', () async {
       const other = Disk(
         id: DiskId('other'),

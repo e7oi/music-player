@@ -23,7 +23,10 @@ final class LibraryPermissionNeeded extends LibraryViewState {
 /// The folders of the phone could not be read; [LibraryController.start]
 /// retries.
 final class LibraryLoadFailed extends LibraryViewState {
-  const new();
+  const new({this.whileChoosingFolders = false});
+
+  /// Retry reopens the folder choice rather than restarting.
+  final bool whileChoosingFolders;
 }
 
 /// FR-003: the user picks the folders to index.
@@ -64,6 +67,10 @@ class LibraryController extends Notifier<LibraryViewState> {
   LibraryViewState build() => const LibraryStarting();
 
   LibraryIndexer get _indexer => ref.read(libraryIndexerProvider);
+
+  /// The permission dialog pauses and resumes the app: [onResumed] and
+  /// [requestPermission] may both continue at once. They share this run.
+  Future<void>? _continuing;
 
   AudioPermission get _permission => ref.read(audioPermissionProvider);
 
@@ -123,7 +130,16 @@ class LibraryController extends Notifier<LibraryViewState> {
         selected: await _indexer.chosenFolders(),
       );
     } on Exception {
-      state = const LibraryLoadFailed();
+      state = const LibraryLoadFailed(whileChoosingFolders: true);
+    }
+  }
+
+  Future<void> retry() async {
+    final current = state;
+    if (current is LibraryLoadFailed && current.whileChoosingFolders) {
+      await openFolderChoice();
+    } else {
+      await start();
     }
   }
 
@@ -132,7 +148,15 @@ class LibraryController extends Notifier<LibraryViewState> {
     await _runIndex(_indexer.index, hasFolders: folders.isNotEmpty);
   }
 
-  Future<void> _continueWith(AudioPermissionStatus status) async {
+  Future<void> _continueWith(AudioPermissionStatus status) {
+    final running = _continuing;
+    if (running != null) return running;
+    final run = _continueOnce(status);
+    _continuing = run;
+    return run.whenComplete(() => _continuing = null);
+  }
+
+  Future<void> _continueOnce(AudioPermissionStatus status) async {
     if (status != AudioPermissionStatus.granted) {
       state = LibraryPermissionNeeded(
         permanent: status == AudioPermissionStatus.permanentlyDenied,

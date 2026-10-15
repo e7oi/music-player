@@ -41,6 +41,7 @@ void main() {
       expect(LibraryIndexer.defaultSelection(folders), {'Music'});
     });
 
+    /// @verifies FR-003
     test('proposes Music whatever its case', () async {
       source.files = [info('music/a.mp3')];
       final folders = await indexer.availableFolders();
