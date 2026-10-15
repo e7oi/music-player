@@ -23,6 +23,10 @@ La bibliothèque contient les pistes du stockage interne, avec leurs information
 
 SSD, lecture des tags dans les fichiers et pochettes (MPL-037), recherche, test à 10 000 pistes (MPL-037), réindexation automatique pendant que l'application tourne.
 
+## À valider
+
+- Garde-fou contre un résultat vide de MediaStore (voir as-built) : il empêche aussi de vider la bibliothèque quand tous les fichiers audio du téléphone ont vraiment été supprimés. À confirmer.
+
 ## As-built
 
 MPL-018, 2026-10-15. `LibraryIndexer` (`lib/domain/library/services/library_indexer.dart`), canal MediaStore (`android/.../MediaStoreChannel.kt`, `lib/platform/media_store_channel.dart`), base Drift (ADR-004). Tests : `test/domain/library/`, `test/data/db/`, `test/platform/`, `test/features/library/`.
@@ -30,4 +34,7 @@ MPL-018, 2026-10-15. `LibraryIndexer` (`lib/domain/library/services/library_inde
 - Les dossiers proposés sont ceux du premier niveau du stockage interne (`Music`, `Download`, `Android`…), chacun avec ses sous-dossiers ; les fichiers posés à la racine forment une entrée « Racine du stockage ». Ce choix garde la liste courte, au prix de ne pas pouvoir séparer deux sous-dossiers d'un même dossier.
 - Une piste est mise à jour quand l'une de ses informations change, pas seulement sa taille ou sa date.
 - Un échec de l'indexation affiche un bandeau avec « Actualiser » ; la bibliothèque enregistrée reste affichée.
+- Garde-fou : si MediaStore ne renvoie aucun fichier audio alors que la bibliothèque contient des pistes du stockage interne, l'indexation échoue au lieu de tout supprimer (exigence 8 non appliquée dans ce cas). Une réanalyse des médias après une mise à jour d'Android peut donner ce résultat un court moment, et supprimer les pistes ferait perdre leur identité (BR-004). Voir « À valider ».
+- Le bouton « Dossiers » est désactivé pendant une indexation ; la barre de lecture reste visible pendant le choix des dossiers.
+- Une lecture impossible de la liste des dossiers affiche un message avec « Réessayer ».
 - Non testé sur appareil.

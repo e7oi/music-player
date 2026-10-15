@@ -24,4 +24,7 @@ MPL-018, 2026-10-15. `MediaStoreChannel.kt` (Kotlin) et `lib/platform/media_stor
 
 - Android ne distingue « ne plus demander » de « jamais demandé » que si l'application se souvient d'avoir déjà demandé : un indicateur est gardé dans les préférences de l'application.
 - Android 11 et 12 (API 30 à 32) : l'autorisation demandée est `READ_EXTERNAL_STORAGE`.
+- Les lancements suivants ne redemandent pas l'accès d'eux-mêmes : seul le premier lancement le fait (état « jamais demandé »).
+- Android signale aussi « ne plus demander » quand l'utilisateur a seulement fermé la demande sans répondre. Le bouton tente donc d'abord la demande d'Android, et n'ouvre les réglages que si l'accès n'est toujours pas accordé.
+- Retirer l'autorisation dans les réglages redémarre l'application (comportement d'Android) : l'exigence 5 se constate au redémarrage, avec le message d'explication et sans nouvelle demande.
 - Code Kotlin sans test unitaire (exception de `CLAUDE.md`) : procédure `HOWTO.md` §11. Non testé sur appareil.
