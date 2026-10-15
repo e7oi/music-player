@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "appTitle": "MusicPlayer",
+  "@appTitle": {
+    "description": "Application name shown in the app bar and the task switcher."
+  },
+  "homePlaceholder": "The library will appear here.",
+  "@homePlaceholder": {
+    "description": "Temporary home screen text until the library screens exist (MPL-016)."
+  }
+}
