@@ -22,4 +22,9 @@ Lecture aléatoire, répétition, gapless, fondu enchaîné, persistance de la f
 
 ## As-built
 
-Néant (non implémenté).
+MPL-017, 2026-10-15. `lib/domain/playback/services/player_controller.dart` (`PlayerController`), état dans `lib/domain/playback/model/player_state.dart` ; tests : `test/domain/playback/player_controller_test.dart`.
+
+- `setQueue` remplace la file et place l'index de départ sans rien charger (état « arrêté ») ; `play` charge la piste courante et lance la lecture.
+- « Suivant » sur la dernière piste arrête la lecture, comme la fin de file.
+- « Précédent » sur la première piste, ou quand aucune piste disponible ne précède, reprend la piste courante au début.
+- Les commandes et les événements du moteur sont traités un par un, dans l'ordre d'arrivée ; un événement du moteur qui arrive après un changement de piste est ignoré.

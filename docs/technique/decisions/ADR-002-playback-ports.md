@@ -41,4 +41,12 @@ La suite tourne contre `FakeAudioEngine` en CI et contre l'adaptateur `media_kit
 
 ## As-built
 
-Néant (non implémenté).
+MPL-017, 2026-10-15.
+
+- Fichiers : `lib/domain/playback/ports/audio_engine.dart`, `lib/domain/storage/ports/volume_events.dart`, `lib/domain/storage/ports/track_source_opener.dart` ; modèle dans `lib/domain/*/model/` ; contrôleur dans `lib/domain/playback/services/player_controller.dart` ; adaptateur dans `lib/data/audio/media_kit_audio_engine.dart` ; fakes dans `test/fakes/`.
+- `DiskId` est un *extension type* sur `String` (égalité de chaîne, utilisable en constante).
+- `media_kit` n'expose pas l'événement `end-file` de mpv. L'adaptateur observe la propriété `idle-active` : avec `keep-open=yes`, mpv ne passe à l'état inactif que lorsqu'un fichier est déchargé ou n'a pas pu être lu. Un passage à l'état inactif sans arrêt demandé vaut donc `end-file` avec erreur, et devient un échec. Les journaux d'erreur des préfixes `file`, `stream` et `cplayer` (« Failed to… ») signalent aussi un échec d'ouverture, au cas où le passage à l'état inactif serait trop bref pour être observé. Les autres messages `warn` et `error` sont des avertissements `unclassified` (MPL-010).
+- `stop()` attend que mpv soit inactif, 5 s au plus (dépassement journalisé), avant de libérer la source.
+- `DescriptorMediaSource` (`fd://N`) est géré par l'adaptateur, mais aucun code ne l'utilise encore. Le contrat le vérifie sur le fake, pas sur appareil (MPL-035).
+- Les journaux de mpv vont dans le journal local de l'appareil (`dart:developer`), jamais dans un fichier versionné (D27).
+- Exécution du contrat sur appareil : `HOWTO.md` §10, en build release via `flutter drive` (`test_driver/integration_test.dart`). Non testé.

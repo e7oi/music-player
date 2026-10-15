@@ -24,4 +24,6 @@
 
 ## As-built
 
-Néant (non implémenté).
+MPL-017, 2026-10-15. `.github/workflows/code-ci.yml`, job `code-checks` : `flutter pub get --enforce-lockfile`, `dart format --set-exit-if-changed .`, `flutter gen-l10n` suivi de `git diff --exit-code -- lib/l10n` et d'une vérification que `build/untranslated-messages.json` vaut `{}` (clé manquante dans une langue livrée), `flutter analyze --fatal-infos`, `dart analyze --fatal-infos` (plugin `riverpod_lint`), `flutter test`. Action `subosito/flutter-action` v2.23.0 épinglée par SHA. Dependabot : écosystème `pub` hebdomadaire, correctifs et versions mineures groupés.
+
+Première exécution : à la création de la pull request de MPL-017.
