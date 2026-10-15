@@ -1,0 +1,3 @@
+# Generated code, committed (CLAUDE.md, Tooling).
+*.g.dart linguist-generated=true
+lib/l10n/generated/** linguist-generated=true
