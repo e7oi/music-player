@@ -1,5 +1,5 @@
 # Backlog — MusicPlayer
-Préfixe : MPL · Prochaine clé : MPL-036 · Dernière MAJ : 2026-10-15
+Préfixe : MPL · Prochaine clé : MPL-037 · Dernière MAJ : 2026-10-15
 
 > Importé le 2026-10-14 depuis `docs/sprints/sprint-2/SPRINT-2-START.md` v5 (§3 snapshot du backlog, §4 registre des décisions), copie fidèle du tableau, des détails de MPL-029 et du registre : aucun libellé reformulé, seuls les icônes de type et de priorité sont remplacées par du texte. Le snapshot de sprint reste figé ; ce fichier est désormais la référence vivante, écrite par Claude Code, relue et validée par le propriétaire. Format : `backlog-methodology.md` §13 (dépôt AI-tools). MPL-032 est absent du snapshot : sa clé reste réservée.
 > Statuts : À faire → En cours → À tester → Terminé (+ Bloqué). Un ticket n'est « Terminé » que sur l'ordre « validé » du propriétaire, après un test réel en build release sur le Pixel (D14), et après le merge de sa PR.
@@ -14,8 +14,8 @@ Préfixe : MPL · Prochaine clé : MPL-036 · Dernière MAJ : 2026-10-15
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-016 | Tâche technique | P0 | Maquettes UI/UX dans Claude Design (note : prévoir l'état « sources indisponibles » sans écraser la liste de pistes, défaut observé dans le prototype MPL-003) | À faire | — | — |
-| MPL-017 | Tâche technique | P0 | Fondations du projet de production (D2, D3 tranchées le 09/10/2026). Inclut un job de CI minimale (format, analyse, tests) pour que du code puisse arriver sur `main` (décision du 2026-10-15) ; MPL-026 la complète. Périmètre : `PlayerController` indépendant du moteur, avec l'intégration de MPL-035 ; exigences issues de D23 : saut des pistes absentes avec message, réassociation d'un nouveau disque | À faire | — | — |
-| MPL-018 | Récit | P0 | Indexation : tags, pochettes, SQLite, test à 10 000 pistes (lié à D23 ; note : le modèle de données dépend de D23, disque + chemin relatif ; lecture des tags mesurée à ≈ 39 ms par fichier sur SAF, ≈ 100 s pour 2 600 fichiers, à faire en arrière-plan) | À faire | MPL-001 | — |
+| MPL-017 | Tâche technique | P0 | Fondations du projet de production (D2, D3 tranchées le 09/10/2026). Inclut un job de CI minimale (format, analyse, tests) pour que du code puisse arriver sur `main` (décision du 2026-10-15) ; MPL-026 la complète. Périmètre (recadré le 2026-10-15) : projet Flutter, tests d'architecture, port `AudioEngine` et son contrat, adaptateur `media_kit`, `PlayerController` indépendant du moteur ; exigences issues de D23 : saut des pistes absentes avec message ; réaction à l'éjection derrière le port `VolumeEvents` (côté natif : MPL-035). Réassociation d'un disque : MPL-018 | En cours | — | — |
+| MPL-018 | Récit | P0 | Indexation : tags, pochettes, SQLite, test à 10 000 pistes (lié à D23 ; note : le modèle de données dépend de D23, disque + chemin relatif ; lecture des tags mesurée à ≈ 39 ms par fichier sur SAF, ≈ 100 s pour 2 600 fichiers, à faire en arrière-plan) ; inclut la réassociation d'un nouveau disque (D23), reprise de MPL-017 le 2026-10-15 | À faire | MPL-001 | — |
 | MPL-019 | Récit | P2 | Normalisation du volume (ReplayGain, préampli) | À faire | MPL-004 | — |
 | MPL-020 | Épique | P0 | Épique « Qualité, CI et documentation » | En cours | — | — |
 | MPL-026 | Tâche technique | P1 | CI code Flutter : format, analyse, tests, vulnérabilités, licences, **liste blanche des permissions** du manifest, vérification de l'empreinte de libmpv 🔗 | Bloqué | MPL-020 | MPL-017 |
@@ -26,9 +26,110 @@ Préfixe : MPL · Prochaine clé : MPL-036 · Dernière MAJ : 2026-10-15
 | MPL-031 | Tâche technique | P2 | Test négatif de la CI dans un dépôt privé jetable | À faire | MPL-020 | — |
 | MPL-033 | Récit | P2 | Lecture de web-radio (France Info, Radio-Canada, France Inter, Radio Nova, CBC...), Phase 2 🔗 | Bloqué | MPL-004 | D26 |
 | MPL-034 | Tâche technique | P2 | Auto-test : davantage de MP3 dans l'échantillon (92 % de la bibliothèque), un MP3 illisible gardé comme témoin, pistes en erreur signalées (« flaggées ») dans l'interface — (possible depuis MPL-003) | À faire | MPL-001 | — |
-| MPL-035 | Tâche technique | P2 | Retrait du stockage amovible pendant la lecture : écouteur natif d'éjection puis `stop()` et fermeture du descripteur dans `PlayerController` (indépendant du moteur) ; vérifier la marge sous charge et avec d'autres descripteurs ouverts ; retirer le récepteur `ACTION_MEDIA_*` ; décider de la reprise au rebranchement ; descripteur proxy gardé comme alternative non testée. Voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.3 🔗 MPL-017, D25 | À faire | MPL-001 | — |
+| MPL-035 | Tâche technique | P2 | Retrait du stockage amovible pendant la lecture : écouteur natif d'éjection puis `stop()` et fermeture du descripteur dans `PlayerController` (indépendant du moteur) ; vérifier la marge sous charge et avec d'autres descripteurs ouverts ; retirer le récepteur `ACTION_MEDIA_*` ; pas de reprise au rebranchement (décidé le 2026-10-15) ; descripteur proxy gardé comme alternative non testée. Voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.3 🔗 MPL-017, D25. Depuis le 2026-10-15 : MPL-017 livre le port `VolumeEvents` et la réaction du contrôleur (BR-002) ; ce ticket livre l'adaptateur natif et le test sur le Pixel | Bloqué | MPL-001 | MPL-017 |
+| MPL-036 | Tâche technique | P0 | Notification et lecture en arrière-plan dans l'application réelle (`audio_service`, écran verrouillé, contrôles système, touches média), branchées sur le `PlayerController` ; reprendre les acquis du prototype (`keep.xml`, permission de notification en natif dans `MainActivity`) | Bloqué | MPL-001 | MPL-017 |
 
 ## Détails
+### MPL-017
+**Description.** Poser le projet Flutter de production et le cœur de lecture indépendant du moteur, avec une CI minimale qui permet au code d'arriver sur `main`. Cadrage du 2026-10-15, périmètre découpé validé par le propriétaire.
+
+**Inclus.**
+- Projet Flutter à la racine, Android seulement, versions épinglées, `.gitignore`, `HOWTO.md` §2 mis à jour (ADR-001).
+- Tests d'architecture (`test/architecture/`) pour les règles de dépendance de `CLAUDE.md`.
+- Job `code-checks` (format, analyse, tests) et Dependabot `pub` (ADR-003).
+- Ports `AudioEngine`, `VolumeEvents` et `TrackSourceOpener`, avec leurs fakes ; suite de contrat `AudioEngine` ; adaptateur `media_kit` (ADR-002).
+- `PlayerController` : commandes de FR-001, saut des pistes indisponibles (BR-001), éjection (BR-002), problèmes du moteur (BR-003).
+
+**Exclusions.** Écouteur natif d'éjection et test de retrait sur le Pixel (MPL-035) ; réassociation d'un disque, base Drift, parcours et tags (MPL-018) ; ouverture réelle des pistes MediaStore et SAF (MPL-018, MPL-035) ; notification et arrière-plan (`audio_service`, MPL-036) ; interface (MPL-016) ; CI complète (MPL-026) ; Windows et macOS (MPL-014).
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Fondations du projet de production
+
+  Scénario: Le code ne peut pas arriver sur main sans contrôles
+    Soit une pull request qui modifie du code Dart
+    Quand la CI s'exécute
+    Alors le job "code-checks" lance le format, l'analyse stricte et les tests
+    Et il échoue si l'une de ces étapes échoue
+
+  Scénario: Une règle de dépendance est violée
+    Soit un fichier de "lib/domain/" qui importe "package:flutter"
+    Quand les tests d'architecture s'exécutent
+    Alors ils échouent en citant le fichier et l'import interdit
+
+  Scénario: Le moteur respecte son contrat
+    Soit la suite de contrat AudioEngine
+    Quand elle s'exécute contre le fake en CI et contre l'adaptateur media_kit sur le Pixel
+    Alors open ne démarre pas la lecture
+    Et completed est émis une seule fois par piste
+    Et stop rend la main après la libération des ressources et peut être rappelé sans effet
+
+  Scénario: Enchaînement des pistes
+    Soit une file de trois pistes disponibles et la lecture lancée sur la première
+    Quand la première piste se termine
+    Alors la deuxième piste est chargée et lue
+    Et l'intention de lecture reste vraie
+
+  Scénario: Pistes d'un disque absent sautées
+    Soit une file A, B, C, D où B et C sont sur un disque indisponible
+    Quand A se termine
+    Alors D est chargée et lue
+    Et un seul signalement indique 2 pistes ignorées et le disque concerné
+    Et le moteur n'a jamais reçu B ni C
+
+  Scénario: Aucune piste disponible
+    Soit une file dont toutes les pistes sont sur un disque indisponible
+    Quand la lecture est demandée
+    Alors rien n'est chargé et la lecture reste arrêtée
+    Et le signalement indique le nombre de pistes ignorées
+
+  Scénario: Éjection du disque de la piste en cours
+    Soit une piste du disque S en cours de lecture
+    Quand l'éjection du disque S est annoncée
+    Alors le moteur est arrêté et son arrêt terminé
+    Et seulement ensuite le disque S est marqué indisponible
+    Et la lecture reste arrêtée sur la piste éjectée, avec un signalement
+
+  Scénario: Éjection d'un autre disque
+    Soit une piste du stockage interne en cours de lecture et un disque S présent
+    Quand l'éjection du disque S est annoncée
+    Alors la lecture continue
+    Et les pistes de S seront sautées
+
+  Scénario: Échec du moteur sur une piste
+    Soit une file A, B et la lecture de A
+    Quand le moteur signale un échec sur A
+    Alors l'échec est signalé avec la piste concernée
+    Et B est chargée et lue
+
+  Scénario: Échecs consécutifs
+    Soit une file dont les 3 premières pistes échouent
+    Quand le moteur signale le 3e échec consécutif
+    Alors la lecture s'arrête avec un signalement
+
+  Scénario: Piste précédente
+    Soit la lecture de B dans une file A, B
+    Quand "précédent" est demandé à plus de 3 s de lecture
+    Alors B reprend au début
+    Quand "précédent" est demandé à moins de 3 s de lecture
+    Alors A est chargée et lue
+
+  Scénario: Avertissement du moteur
+    Soit la lecture de A
+    Quand le moteur signale un avertissement
+    Alors l'état du lecteur ne change pas
+    Et l'avertissement est compté
+```
+
+**Test appareil (Pixel, release).** Suite de contrat contre l'adaptateur `media_kit` (`flutter test integration_test`) ; l'application se lance en build release.
+
+**Fiches liées.** FR-001, BR-001, BR-002, BR-003 (`docs/fonctionnel/`) ; ADR-001, ADR-002, ADR-003 (`docs/technique/decisions/`). Toutes `Active` (validées par le propriétaire le 2026-10-15).
+
+**À valider (PO).**
+- Aucun. Réponses du propriétaire (2026-10-15) reportées dans les fiches ; `code-checks` est un contrôle requis de `protect-main` depuis le 2026-10-15.
+
+
 ### MPL-029
 **Détails — MPL-029.** Désactivé par défaut, opt-in par fonction (pochettes, paroles) ; cache local ; variante de build séparée (`offline` sans `INTERNET`, `enrichi` avec) ; objectif 4 du PRD reformulé. Risques : une requête révèle l'écoute à un tiers ; conditions d'usage et licences des sources (MusicBrainz, Cover Art Archive, LRCLIB, Wikimedia) **non vérifiées** ; le gabarit Flutter déclare `INTERNET` en debug/profile, donc une fonction en ligne ne se valide qu'en build release (D14). API Spotify/Deezer écartées (D9).
 
@@ -82,4 +183,6 @@ Préfixe : MPL · Prochaine clé : MPL-036 · Dernière MAJ : 2026-10-15
 | D27 | Les exports d'essai (CSV, journaux, logcat) contiennent des titres, des chemins et des identifiants de volume : ils sont analysés par Claude Code dans un dossier hors dépôt, jamais versionnés ; Claude (chat) ne reçoit que des extraits ou des synthèses | Provisoire | |
 | D28 | Langue : tout ce qui fait partie du code et de son historique est en anglais (identifiants, commentaires, commits, branches, PR, tests, logs) ; la prose produit et processus que lit le propriétaire reste en français (`PRD.md`, `README.md`, `CHANGELOG.md`, `HOWTO.md`, `docs/`) ; textes visibles en fichiers ARB. Table complète : `CLAUDE.md` | Tranchée | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |
 | D29 | À compléter par le propriétaire | — | Numéro cité nulle part dans le dépôt ; réservé |
+| À numéroter | Découpage de MPL-017 : la réassociation d'un disque passe dans MPL-018 ; l'écouteur natif d'éjection et le test sur le Pixel restent dans MPL-035 ; MPL-017 livre les ports et la réaction du contrôleur | Tranchée 2026-10-15 | Réassociation dépendante du modèle de données de MPL-018 ; Kotlin vérifiable sur appareil seulement · MPL-017, MPL-018, MPL-035 |
+| À numéroter | Stockage amovible : la lecture arrêtée par une éjection reste arrêtée et ne reprend pas au rebranchement du disque | Tranchée 2026-10-15 | Répond à `SPRINT-2-START.md` §8.3 · BR-002, MPL-017, MPL-035 |
 | D30 | Dépendances et versions : dernière version stable compatible avec le Flutter épinglé, tout épinglé, Dependabot hebdomadaire, avis de sécurité traités hors cycle, dérogations dans `docs/dependency-exceptions.md`. Détail : `CLAUDE.md` | Provisoire | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |
