@@ -1,27 +1,27 @@
-# ADR-003 — Minimal code CI job
+# ADR-003 — Job de CI code minimal
 
-**Status:** Active (validated 2026-10-15) · **Date:** 2026-10-15 · **Ticket:** MPL-017 · **Decisions:** D17, D30 · **Completed by:** MPL-026
+**Statut :** Active (validée le 2026-10-15) · **Date :** 2026-10-15 · **Ticket :** MPL-017 · **Décisions :** D17, D30 · **Complété par :** MPL-026
 
-## Context
+## Contexte
 
-`main` is protected by the `protect-main` ruleset (D17) with the required checks of `docs-ci`. No application code may reach `main` without a code CI job (decision of 2026-10-15).
+`main` est protégée par le ruleset `protect-main` (D17), avec les contrôles requis de `docs-ci`. Aucun code applicatif ne peut arriver sur `main` sans job de CI code (décision du 2026-10-15).
 
-## Decision
+## Décision
 
-- New workflow `.github/workflows/code-ci.yml`, triggered like `docs-ci` (pull requests and pushes to `main`, manual dispatch), `permissions: contents: read`, actions pinned by commit SHA.
-- One job `code-checks` on `ubuntu-24.04`, Flutter pinned to the version of ADR-001:
-  1. `flutter pub get` with the committed `pubspec.lock` (`--enforce-lockfile`);
-  2. `dart format --set-exit-if-changed .`;
-  3. `flutter analyze --fatal-infos`;
-  4. `flutter test` (includes `test/architecture/` and the contract suite against the fake).
-- No Android build, no vulnerability, licence or permission check in this job: MPL-026.
-- Dependabot gains the `pub` ecosystem (weekly, patch and minor grouped, D30).
+- Nouveau workflow `.github/workflows/code-ci.yml`, déclenché comme `docs-ci` (pull requests et push sur `main`, lancement manuel), `permissions: contents: read`, actions épinglées par SHA de commit.
+- Un job `code-checks` sur `ubuntu-24.04`, Flutter épinglé sur la version d'ADR-001 :
+  1. `flutter pub get` avec le `pubspec.lock` versionné (`--enforce-lockfile`) ;
+  2. `dart format --set-exit-if-changed .` ;
+  3. `flutter analyze --fatal-infos` ;
+  4. `flutter test` (inclut `test/architecture/` et la suite de contrat contre le fake).
+- Pas de build Android, ni de contrôle des vulnérabilités, des licences ou des permissions dans ce job : MPL-026.
+- Dependabot reçoit l'écosystème `pub` (hebdomadaire, correctifs et versions mineures groupés, D30).
 
-## Consequences
+## Conséquences
 
-- `code-checks` is a required check of `protect-main` since 2026-10-15, before the workflow exists. Until `code-ci.yml` reaches `main`, a pull request merges only if it brings the workflow itself: the cadrage documents of MPL-017 therefore travel on the MPL-017 branch.
-- The job uses GitHub Actions minutes on every PR, documentation PRs included. Path filters are not used, because a required check that never runs blocks the merge.
+- `code-checks` est un contrôle requis de `protect-main` depuis le 2026-10-15, avant que le workflow existe. Tant que `code-ci.yml` n'est pas sur `main`, une pull request ne peut être fusionnée que si elle apporte elle-même le workflow : les documents de cadrage de MPL-017 voyagent donc sur la branche de MPL-017.
+- Le job consomme des minutes GitHub Actions à chaque PR, PR de documentation comprises. Pas de filtre de chemins, car un contrôle requis qui ne s'exécute jamais bloque le merge.
 
 ## As-built
 
-None (not implemented).
+Néant (non implémenté).
