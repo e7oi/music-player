@@ -18,6 +18,7 @@ Le moteur classe chaque problème en échec ou en avertissement (ADR-002) ; le c
 ## À valider
 
 - Remise à zéro du compteur d'échecs consécutifs quand l'utilisateur donne une nouvelle file ou relance la lecture après un arrêt : implémentée, à confirmer. Sans elle, deux échecs en fin de file suivis d'un nouvel échec après « lecture » arrêteraient tout de suite la lecture.
+- « Précédent » vers une piste qui ne s'ouvre pas, sans autre piste disponible avant elle : la lecture s'arrête (FR-001, as-built), alors que la règle 1 dit de passer à la piste disponible suivante. À confirmer.
 
 ## As-built
 
