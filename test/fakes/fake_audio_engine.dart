@@ -26,6 +26,9 @@ class FakeAudioEngine implements AudioEngine {
 
   int releasedSources = 0;
 
+  /// The next [open] reports a failure while the track is still loading.
+  bool failNextOpen = false;
+
   final _state = StreamController<EngineState>.broadcast();
   final _position = StreamController<Duration>.broadcast();
   final _duration = StreamController<Duration?>.broadcast();
@@ -87,7 +90,11 @@ class FakeAudioEngine implements AudioEngine {
         playing: _current.playing,
       ),
     );
-    if (source is FileMediaSource && source.path == unreadablePath) {
+    final unreadable =
+        failNextOpen ||
+        (source is FileMediaSource && source.path == unreadablePath);
+    failNextOpen = false;
+    if (unreadable) {
       await _release(source);
       _setState(
         EngineState(
