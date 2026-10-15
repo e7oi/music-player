@@ -25,4 +25,15 @@
 
 ## As-built
 
-Néant (non implémenté).
+MPL-017, 2026-10-15.
+
+- Flutter 3.47.7 (Dart 3.13.5), épinglé dans `pubspec.yaml` (`environment.flutter: 3.47.7`) et dans `code-ci.yml`.
+- Android : Gradle 9.3.1 (wrapper avec `distributionSha256Sum`), Kotlin 2.4.0, AGP 9.1.1, `compileSdk` et `targetSdk` 36, `minSdk` 24, NDK 28.2.13676358 (valeurs du gabarit). AGP 9.2.x existe, mais la table de compatibilité de Flutter 3.47.7 s'arrête à AGP 9.1 avec Gradle 9.3.1 (maximum connu) : 9.1.1 est la dernière version couverte.
+- Identifiant Android `net.trtl3.musicplayer`, le même que le prototype (choix du propriétaire, 2026-10-15) : l'une remplace l'autre sur l'appareil.
+- Dépendances : `flutter_riverpod` 3.4.3, `media_kit` 1.2.6, `media_kit_libs_audio` 1.0.7, `intl` 0.20.3 (imposé par `flutter_localizations`), `meta`, `collection` ; développement : `very_good_analysis` 11.0.0, `riverpod_lint` 3.1.9. Le plugin `riverpod_lint` est déclaré dans `analysis_options.yaml` avec sa version : elle est à tenir alignée sur la dépendance de développement.
+- `flutter analyze` n'exécute pas les plugins d'analyse : `dart analyze --fatal-infos` est lancé en plus, en local et en CI.
+- `public_member_api_docs` est désactivée : la dartdoc est écrite là où elle explique un contrat ou une raison, pas sur chaque membre.
+- La syntaxe de constructeur `new(...)` de Dart 3.13 est imposée par la règle `unnecessary_type_name_in_constructor`.
+- Localisation : `lib/l10n/app_en.arb` (modèle) et `app_fr.arb` ; code généré dans `lib/l10n/generated/`, versionné, exclu de l'analyse et des tests d'architecture.
+- `ProviderScope` en place, aucun provider : le câblage du `PlayerController` attend les adaptateurs `VolumeEvents` et `TrackSourceOpener` (MPL-035, MPL-018).
+- Build release : APK multi-ABI de 64,5 Mo ; aucune permission `INTERNET`. Le build télécharge libmpv depuis GitHub sans vérifier d'empreinte (MPL-026).

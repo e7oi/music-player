@@ -17,4 +17,8 @@ Le moteur classe chaque problème en échec ou en avertissement (ADR-002) ; le c
 
 ## As-built
 
-Néant (non implémenté).
+MPL-017, 2026-10-15. `PlayerController._onIssue`, `_fail` ; signalements `TrackFailed` et `PlaybackStoppedAfterFailures` ; compteur d'avertissements dans `PlayerState.warningCount`. Tests : groupe « BR-003 ».
+
+- Une piste qu'on ne peut pas ouvrir (`TrackSourceException`) compte comme un échec de type `openFailed`.
+- Le compteur d'échecs consécutifs repart aussi de zéro quand une nouvelle file est donnée (`setQueue`).
+- Les avertissements sont journalisés par l'adaptateur `media_kit` (journal local de l'appareil) et comptés par le contrôleur.

@@ -24,12 +24,23 @@ Procédures pratiques. Ajouter une section à chaque nouvelle procédure validé
 
 ## 2. Créer le projet
 
+Le projet de production est un seul package Flutter **à la racine du dépôt** (ADR-001, MPL-017) ; il a été créé avec :
+
 ```bash
-flutter create --org net.trtl3 --platforms=android,windows,macos musicplayer
-cd musicplayer
+flutter create --org net.trtl3 --platforms=android --project-name musicplayer <dossier temporaire>
 ```
 
-> L'identifiant d'organisation `net.trtl3` est acté (D7). Il est difficile à changer après publication.
+puis seuls `android/` et `.metadata` ont été repris à la racine. Les commandes se lancent depuis la racine du dépôt :
+
+```bash
+flutter --version      # doit afficher la version épinglée dans pubspec.yaml (environment.flutter)
+flutter pub get --enforce-lockfile
+flutter gen-l10n       # après toute modification des fichiers ARB de lib/l10n/
+```
+
+Avant un commit : `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && dart analyze --fatal-infos && flutter test`. `dart analyze` exécute en plus le plugin `riverpod_lint`, que `flutter analyze` ignore.
+
+> L'identifiant d'organisation `net.trtl3` est acté (D7). Il est difficile à changer après publication. L'identifiant Android est `net.trtl3.musicplayer`, le même que le prototype : installer l'une des deux applications remplace l'autre sur l'appareil.
 
 ---
 
@@ -95,7 +106,6 @@ Toujours valider un item en build release (`flutter run --release`) avant de le 
 ## 7. Compiler et installer une build release (Android)
 
 ```bash
-cd musicplayer
 flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk
 ```
@@ -108,7 +118,7 @@ Vérifier les permissions de l'APK (la build release ne doit pas déclarer `INTE
 $ANDROID_HOME/build-tools/36.0.0/aapt2 dump permissions build/app/outputs/flutter-apk/app-release.apk
 ```
 
-Note : la build release est actuellement signée avec la clé debug (TODO dans `musicplayer/android/app/build.gradle.kts`). Le keystore de production ne sera **jamais** commité.
+Note : la build release est actuellement signée avec la clé debug (TODO dans `android/app/build.gradle.kts`). Le keystore de production ne sera **jamais** commité.
 
 ---
 
@@ -168,7 +178,7 @@ Consigner les résultats (OK / KO / non testé, voir §6) et signaler les échec
 
 - **Branches de travail :** push libre ; un correctif = un commit annulable.
 - **`main` :** protégée, uniquement par pull request avec contrôles au vert (D17). Jamais de push direct.
-- **Contrôles requis** *(mise en place progressive : CI documentaire MPL-024 **en place** — workflow `docs-ci`, jobs `markdown-lint`, `links`, `secrets`, `repo-checks`, voir `.github/workflows/docs-ci.yml` ; ruleset `protect-main` actif depuis le 08/10/2026 : PR obligatoire, contrôles `markdown-lint`, `links`, `secrets`, `repo-checks`, push forcé et suppression bloqués ; CI code MPL-026 à mettre en place)* :
+- **Contrôles requis** *(mise en place progressive : CI documentaire MPL-024 **en place** — workflow `docs-ci`, jobs `markdown-lint`, `links`, `secrets`, `repo-checks`, voir `.github/workflows/docs-ci.yml` ; ruleset `protect-main` actif depuis le 08/10/2026 : PR obligatoire, contrôles `markdown-lint`, `links`, `secrets`, `repo-checks`, push forcé et suppression bloqués ; CI code minimale en place depuis MPL-017 — workflow `code-ci`, job `code-checks` (format, traductions à jour, analyse, tests), contrôle requis de `protect-main` ; MPL-026 la complète)* :
   1. `dart format --set-exit-if-changed .`
   2. `flutter analyze` sans avertissement
   3. `flutter test`
@@ -179,3 +189,21 @@ Consigner les résultats (OK / KO / non testé, voir §6) et signaler les échec
 - **Tests fonctionnels :** sur appareil réel, en build release (§6), avant la fermeture d'un item.
 - **Snapshots de sprint :** dans `docs/sprints/`.
 - **Méthodologies :** dans le dépôt privé `ai-tools`, hors de ce dépôt.
+
+---
+
+## 10. Tester le contrat du moteur audio sur appareil (MPL-017)
+
+La suite `test/contract/audio_engine_contract.dart` tourne en CI contre le fake ; sur appareil, elle tourne contre l'adaptateur `media_kit`. Le test génère lui-même un fichier WAV d'une seconde et un fichier illisible : aucun fichier personnel n'est nécessaire (D27).
+
+1. Brancher le Pixel (ou `adb connect` en Wi-Fi) ; `ANDROID_SERIAL=<id>` s'il y a plusieurs appareils (`flutter devices`).
+2. Depuis la racine du dépôt, en build release (D14 ; `flutter test integration_test` ne compile qu'en debug) :
+
+   ```bash
+   flutter drive --release --driver=test_driver/integration_test.dart \
+     --target=integration_test/media_kit_audio_engine_test.dart
+   ```
+
+   L'application de test remplace l'application installée.
+3. Résultat attendu : `All tests passed!` (6 tests, 2 ignorés : descripteurs, couverts par MPL-035).
+4. Consigner le résultat (OK / KO + sortie) ; ne rien coller de plus que la sortie du test.

@@ -19,6 +19,12 @@ L'utilisateur retire une piste de la file de lecture en cours, sans toucher à l
 
 Retrait de plusieurs pistes en une fois, déplacement d'une piste dans la file, annulation du retrait, interface.
 
+## À valider
+
+- Retrait de la piste courante quand la lecture est arrêtée (fin de file, éjection, arrêt) : implémenté sans chargement (la suivante devient courante, la lecture reste arrêtée). À confirmer.
+
 ## As-built
 
-Néant (non implémenté).
+MPL-017, 2026-10-15. `PlayerController.removeAt(index)`, qui renvoie `false` pour une position hors de la file ; tests : groupe « FR-002 » de `test/domain/playback/player_controller_test.dart`.
+
+- Retrait de la piste courante alors que la lecture est arrêtée (rien de chargé) : la piste suivante devient la piste courante, rien n'est chargé. Cas non décrit par la fiche, voir « À valider ».

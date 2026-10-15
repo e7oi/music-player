@@ -16,4 +16,6 @@ Chaque série de pistes sautées d'affilée produit un seul signalement typé : 
 
 ## As-built
 
-Néant (non implémenté).
+MPL-017, 2026-10-15. `PlayerController._loadFrom` ; signalement `TracksSkipped` (nombre, disques) dans `lib/domain/playback/model/playback_notice.dart` ; la liste des disques disponibles est dans `PlayerState.availableDisks`, tenue en mémoire (persistance : MPL-018). Tests : groupe « BR-001 ».
+
+- Le saut s'applique aussi en marche arrière (« précédent »).
