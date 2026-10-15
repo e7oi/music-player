@@ -1,5 +1,5 @@
 # Backlog — MusicPlayer
-Préfixe : MPL · Prochaine clé : MPL-036 · Dernière MAJ : 2026-10-14
+Préfixe : MPL · Prochaine clé : MPL-036 · Dernière MAJ : 2026-10-15
 
 > Importé le 2026-10-14 depuis `docs/sprints/sprint-2/SPRINT-2-START.md` v5 (§3 snapshot du backlog, §4 registre des décisions), copie fidèle du tableau, des détails de MPL-029 et du registre : aucun libellé reformulé, seuls les icônes de type et de priorité sont remplacées par du texte. Le snapshot de sprint reste figé ; ce fichier est désormais la référence vivante, écrite par Claude Code, relue et validée par le propriétaire. Format : `backlog-methodology.md` §13 (dépôt AI-tools). MPL-032 est absent du snapshot : sa clé reste réservée.
 > Statuts : À faire → En cours → À tester → Terminé (+ Bloqué). Un ticket n'est « Terminé » que sur l'ordre « validé » du propriétaire, après un test réel en build release sur le Pixel (D14), et après le merge de sa PR.
@@ -14,7 +14,7 @@ Préfixe : MPL · Prochaine clé : MPL-036 · Dernière MAJ : 2026-10-14
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-016 | Tâche technique | P0 | Maquettes UI/UX dans Claude Design (note : prévoir l'état « sources indisponibles » sans écraser la liste de pistes, défaut observé dans le prototype MPL-003) | À faire | — | — |
-| MPL-017 | Tâche technique | P0 | Fondations du projet de production (D2, D3 tranchées le 09/10/2026). Périmètre : `PlayerController` indépendant du moteur, avec l'intégration de MPL-035 ; exigences issues de D23 : saut des pistes absentes avec message, réassociation d'un nouveau disque | À faire | — | — |
+| MPL-017 | Tâche technique | P0 | Fondations du projet de production (D2, D3 tranchées le 09/10/2026). Inclut un job de CI minimale (format, analyse, tests) pour que du code puisse arriver sur `main` (décision du 2026-10-15) ; MPL-026 la complète. Périmètre : `PlayerController` indépendant du moteur, avec l'intégration de MPL-035 ; exigences issues de D23 : saut des pistes absentes avec message, réassociation d'un nouveau disque | À faire | — | — |
 | MPL-018 | Récit | P0 | Indexation : tags, pochettes, SQLite, test à 10 000 pistes (lié à D23 ; note : le modèle de données dépend de D23, disque + chemin relatif ; lecture des tags mesurée à ≈ 39 ms par fichier sur SAF, ≈ 100 s pour 2 600 fichiers, à faire en arrière-plan) | À faire | MPL-001 | — |
 | MPL-019 | Récit | P2 | Normalisation du volume (ReplayGain, préampli) | À faire | MPL-004 | — |
 | MPL-020 | Épique | P0 | Épique « Qualité, CI et documentation » | En cours | — | — |
@@ -80,3 +80,6 @@ Préfixe : MPL · Prochaine clé : MPL-036 · Dernière MAJ : 2026-10-14
 | D25 | Android : MediaStore pour le stockage interne, sélecteur Android (SAF) pour le stockage amovible USB ; remplace D11. Accès SSD par SAF vérifié sur le Pixel 10 Pro (MPL-003) ; risque du retrait pendant la lecture traité par le spike (MPL-035) | Tranchée 09/10/2026 | |
 | D26 | Toute fonction en ligne (dont la web-radio et l'enrichissement de D20) n'existe que dans une variante de build qui déclare `INTERNET` ; la variante « offline » n'a pas de réseau | Provisoire | |
 | D27 | Les exports d'essai (CSV, journaux, logcat) contiennent des titres, des chemins et des identifiants de volume : ils sont analysés par Claude Code dans un dossier hors dépôt, jamais versionnés ; Claude (chat) ne reçoit que des extraits ou des synthèses | Provisoire | |
+| D28 | Langue : tout ce qui fait partie du code et de son historique est en anglais (identifiants, commentaires, commits, branches, PR, tests, logs) ; la prose produit et processus que lit le propriétaire reste en français (`PRD.md`, `README.md`, `CHANGELOG.md`, `HOWTO.md`, `docs/`) ; textes visibles en fichiers ARB. Table complète : `CLAUDE.md` | Tranchée | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |
+| D29 | À compléter par le propriétaire | — | Numéro cité nulle part dans le dépôt ; réservé |
+| D30 | Dépendances et versions : dernière version stable compatible avec le Flutter épinglé, tout épinglé, Dependabot hebdomadaire, avis de sécurité traités hors cycle, dérogations dans `docs/dependency-exceptions.md`. Détail : `CLAUDE.md` | Provisoire | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |
