@@ -1,6 +1,6 @@
 # ADR-006 — `audio_service` et `audio_session` pour la lecture en arrière-plan
 
-**Statut :** Brouillon · **Date :** 2026-10-21 · **Ticket :** MPL-036 · **Décisions :** D2, D12, D30 · **Fiches :** FR-005, BR-005, UC-002
+**Statut :** Active (validée le 2026-10-21) · **Date :** 2026-10-21 · **Ticket :** MPL-036 · **Décisions :** D2, D12, D30 · **Fiches :** FR-005, BR-005, UC-002
 
 ## Contexte
 

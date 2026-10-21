@@ -1,6 +1,6 @@
 # UC-002 — Écouter et commander la lecture hors de l'application
 
-**Statut :** Brouillon · **Créée le :** 2026-10-21 · **Ticket :** MPL-036 · **Décisions :** D2, D12 · **Lié :** FR-001, FR-005, BR-005, UC-001
+**Statut :** Active (validée le 2026-10-21) · **Créée le :** 2026-10-21 · **Ticket :** MPL-036 · **Décisions :** D2, D12 · **Lié :** FR-001, FR-005, BR-005, UC-001
 
 ## Acteur et but
 
