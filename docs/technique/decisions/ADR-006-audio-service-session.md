@@ -31,10 +31,11 @@ FR-005 demande un service au premier plan, une session média (notification, éc
 
 MPL-036, 2026-10-21.
 
-- `MainActivity` hérite d'`AudioServiceActivity` ; un objet `Shared` ne garde plus que le moteur sur lequel le canal MediaStore est enregistré et ce canal (ADR-005). `shouldDestroyEngineWithHost()` reste forcé à `false`.
+- `MainActivity` hérite d'`AudioServiceActivity` et ne fait que se rattacher au canal MediaStore et s'en détacher ; `shouldDestroyEngineWithHost()` reste forcé à `false`.
+- `MusicPlayerApplication` (`android:name` du manifeste) crée au démarrage du processus le moteur mis en cache par `audio_service` et y enregistre le canal MediaStore (ADR-005) et l'écouteur de fin du processus, avant que Dart puisse appeler. Le processus peut en effet démarrer sans activité, par le service (touche média, navigateur de médias) : le moteur exécutait alors `main()` sans canal, et la bibliothèque restait sur l'écran de chargement à l'ouverture de l'application (constaté sur le Pixel le 2026-10-21, HOWTO §12, étape 12).
 - `lib/main.dart` crée le `ProviderContainer`, appelle `startSystemPlayback` (`lib/app/system_playback.dart`) puis lance l'interface avec `UncontrolledProviderScope`.
 - Nom et description du canal de notification : ARB (`notificationChannelName`, `notificationChannelDescription`), dans la langue du téléphone au démarrage du processus.
 - APK release : 77,8 Mo ; permissions `WAKE_LOCK`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`, `POST_NOTIFICATIONS` ajoutées, pas d'`INTERNET` ; les 7 icônes `audio_service_*` présentes.
-- Fin du processus avec le moteur : `audio_service` détruit son moteur quand son service s'arrête sans activité attachée ; un écouteur du cycle de vie du moteur termine alors le processus (`MainActivity.kt`), pour que mpv ne survive pas à l'isolat Dart.
+- Fin du processus avec le moteur : `audio_service` détruit son moteur quand son service s'arrête sans activité attachée ; un écouteur du cycle de vie du moteur termine alors le processus (`MusicPlayerApplication.kt`), pour que mpv ne survive pas à l'isolat Dart.
 - Dépendances transitives ajoutées par `audio_service` : `flutter_cache_manager` (avec `http`), `sqflite` et `js`, pour les pochettes distantes, inutilisées ici. Aucune permission `INTERNET` fusionnée. À examiner par MPL-026 (licences, vulnérabilités).
-- Limites connues de la fin du processus : un moteur créé par `audio_service` sans activité (touche média qui réveille un processus mort) n'a ni l'écouteur ni le canal MediaStore, sans effet tant que la file n'est pas conservée ; si l'utilisateur rouvre l'application à l'instant où le service s'arrête, l'application peut se fermer au lancement (fenêtre étroite).
+- Limite connue de la fin du processus : si l'utilisateur rouvre l'application à l'instant où le service s'arrête, l'application peut se fermer au lancement (fenêtre étroite).
