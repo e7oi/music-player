@@ -1,5 +1,5 @@
 # Backlog — MusicPlayer
-Préfixe : MPL · Prochaine clé : MPL-039 · Dernière MAJ : 2026-10-15
+Préfixe : MPL · Prochaine clé : MPL-039 · Dernière MAJ : 2026-10-21
 
 > Importé le 2026-10-14 depuis `docs/sprints/sprint-2/SPRINT-2-START.md` v5 (§3 snapshot du backlog, §4 registre des décisions), copie fidèle du tableau, des détails de MPL-029 et du registre : aucun libellé reformulé, seuls les icônes de type et de priorité sont remplacées par du texte. Le snapshot de sprint reste figé ; ce fichier est désormais la référence vivante, écrite par Claude Code, relue et validée par le propriétaire. Format : `backlog-methodology.md` §13 (dépôt AI-tools). MPL-032 est absent du snapshot : sa clé reste réservée.
 > Statuts : À faire → En cours → À tester → Terminé (+ Bloqué). Un ticket n'est « Terminé » que sur l'ordre « validé » du propriétaire, après un test réel en build release sur le Pixel (D14), et après le merge de sa PR.
@@ -14,7 +14,6 @@ Préfixe : MPL · Prochaine clé : MPL-039 · Dernière MAJ : 2026-10-15
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-016 | Tâche technique | P0 | Maquettes UI/UX dans Claude Design (note : prévoir l'état « sources indisponibles » sans écraser la liste de pistes, défaut observé dans le prototype MPL-003) | À faire | — | — |
-| MPL-018 | Récit | P0 | Bibliothèque du stockage interne (recadré le 2026-10-15) : base Drift (disques, pistes, D23), choix des dossiers et indexation par MediaStore sans lecture des tags, autorisation d'accès à l'audio, liste minimale et lecture d'une piste réelle avec le `PlayerController`. SSD et test à 10 000 pistes : MPL-037 ; réassociation et retrait d'un disque : MPL-038 | À tester | MPL-001 | — |
 | MPL-037 | Récit | P0 | Bibliothèque du SSD par SAF : choix du dossier, droit d'accès persistant, parcours, lecture des tags et des pochettes dans les fichiers en arrière-plan, pochettes du stockage interne aussi (décision du 2026-10-15) (≈ 39 ms par fichier mesurés sur SAF, ≈ 100 s pour 2 600 fichiers), ouverture `fd://`, test à 10 000 pistes. Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | MPL-018 |
 | MPL-038 | Récit | P1 | Réassociation d'un nouveau disque dont les chemins relatifs correspondent à ceux d'un disque absent (D23) et retrait d'un disque externe de la bibliothèque (demande du propriétaire du 2026-10-15 ; sort des playlists, favoris et statistiques du disque à trancher au cadrage). Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | MPL-037 |
 | MPL-019 | Récit | P2 | Normalisation du volume (ReplayGain, préampli) | À faire | MPL-004 | — |
@@ -258,6 +257,7 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 |---|---|---|---|
 | MPL-002 | Prototype audio Android | 07/10/2026 | Clos (07/10/2026) |
 | MPL-017 | Fondations du projet de production : projet Flutter, CI minimale, `PlayerController`, adaptateur `media_kit` | 15/10/2026 | Validé par le propriétaire, PR #7 fusionnée (15/10/2026). Pixel 10 Pro : application lancée en build release ; contrat `media_kit` passé en mode profile. Non testés sur appareil : éjection et descripteurs `fd://` (MPL-035) |
+| MPL-018 | Bibliothèque du stockage interne : base Drift, choix des dossiers et indexation par MediaStore, autorisation `READ_MEDIA_AUDIO`, liste et barre de lecture minimales, moteur Flutter unique par processus | 21/10/2026 | Validé par le propriétaire, PR #9 fusionnée (21/10/2026). Pixel 10 Pro, Android 17, release : `HOWTO.md` §11, étapes 1 à 11 OK ; plantages de mpv à la fermeture de l'activité corrigés |
 | MPL-003 | Sources de bibliothèque : stockage amovible (SSD USB-C), test Pixel (titre proposé) 🔗 ⚠️ | 08/10/2026 | Terminé avec réserves (08/10/2026) : SSD lu par SAF avec les deux moteurs ; tags non lus pendant le parcours (≈ 39 ms par fichier mesurés) ; retrait pendant la lecture traité en spike seulement (MPL-035) ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4 |
 | MPL-006 | Auto-test sur échantillon, isolé, exporté | 07/10/2026 | Clos (07/10/2026) : 13 pistes par moteur ; élargissement de l'échantillon MP3 : MPL-034 |
 | MPL-007 | Console de test : recherche, tri, filtre par format | 07/10/2026 | Clos (07/10/2026) |
