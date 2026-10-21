@@ -63,8 +63,9 @@ class InterruptionPolicy {
       state.status == PlayerStatus.loading ||
       state.status == PlayerStatus.ready;
 
+  /// An error of one action never stops the following ones.
   void _serial(Future<void> Function() action) {
-    _tail = _tail.then((_) => action());
+    _tail = _tail.then((_) => action()).then<void>((_) {}, onError: (_) {});
   }
 
   Future<void> _onState(PlayerState state) async {
@@ -87,8 +88,14 @@ class InterruptionPolicy {
   }
 
   Future<void> _activate() async {
-    if (_mayNotHoldFocus) await _interruptions.deactivate();
-    final granted = await _interruptions.activate();
+    bool granted;
+    try {
+      if (_mayNotHoldFocus) await _interruptions.deactivate();
+      granted = await _interruptions.activate();
+    } on Exception {
+      // Unknown answer: never play over a call because a channel failed.
+      granted = false;
+    }
     _mayNotHoldFocus = !granted;
     if (!granted) await _controller.pause();
   }

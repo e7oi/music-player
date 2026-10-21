@@ -11,6 +11,9 @@ class FakeAudioInterruptions implements AudioInterruptions {
   /// What the system answers to the next real request.
   bool grant = true;
 
+  /// The next request throws, as a failing platform channel would.
+  bool failNext = false;
+
   /// Requests that reached the system.
   int requests = 0;
   int deactivations = 0;
@@ -18,6 +21,10 @@ class FakeAudioInterruptions implements AudioInterruptions {
 
   @override
   Future<bool> activate() async {
+    if (failNext) {
+      failNext = false;
+      throw Exception('channel failure');
+    }
     if (_requested) return true;
     _requested = true;
     requests++;

@@ -37,4 +37,4 @@ MPL-036, 2026-10-21.
 - APK release : 77,8 Mo ; permissions `WAKE_LOCK`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`, `POST_NOTIFICATIONS` ajoutées, pas d'`INTERNET` ; les 7 icônes `audio_service_*` présentes.
 - Fin du processus avec le moteur : `audio_service` détruit son moteur quand son service s'arrête sans activité attachée ; un écouteur du cycle de vie du moteur termine alors le processus (`MainActivity.kt`), pour que mpv ne survive pas à l'isolat Dart.
 - Dépendances transitives ajoutées par `audio_service` : `flutter_cache_manager` (avec `http`), `sqflite` et `js`, pour les pochettes distantes, inutilisées ici. Aucune permission `INTERNET` fusionnée. À examiner par MPL-026 (licences, vulnérabilités).
-
+- Limites connues de la fin du processus : un moteur créé par `audio_service` sans activité (touche média qui réveille un processus mort) n'a ni l'écouteur ni le canal MediaStore, sans effet tant que la file n'est pas conservée ; si l'utilisateur rouvre l'application à l'instant où le service s'arrête, l'application peut se fermer au lancement (fenêtre étroite).

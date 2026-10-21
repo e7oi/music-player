@@ -109,11 +109,16 @@ void main() {
 
     /// @verifies BR-005
     test('choosing another track keeps the audio output', () async {
+      await policy.dispose();
+      policy = InterruptionPolicy(
+        controller: controller,
+        interruptions: system,
+        stopGrace: const Duration(hours: 1),
+      )..start();
       await playing();
 
       await controller.setQueue([t('b'), t('a')]);
       await controller.play();
-      await Future<void>.delayed(const Duration(milliseconds: 50));
       await settle();
 
       expect(system.deactivations, 0);
@@ -122,6 +127,18 @@ void main() {
   });
 
   group('BR-005 interruptions', () {
+    /// @verifies BR-005
+    test('a failing request does not stop later interruptions', () async {
+      system.failNext = true;
+      await controller.play();
+      await settle();
+
+      system.emit(const BecameNoisy());
+      await settle();
+
+      expect(state().playing, isFalse);
+    });
+
     /// @verifies BR-005
     test('a loss that ends before the pause completes still resumes', () async {
       await playing();

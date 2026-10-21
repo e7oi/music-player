@@ -22,7 +22,7 @@ MPL-036, 2026-10-21. `InterruptionPolicy` (`lib/domain/playback/services/interru
 - Règle 1 : le focus est demandé quand l'intention de lecture passe à vrai ; s'il est refusé, le contrôleur est mis en pause aussitôt. Le chargement de la piste a pu commencer ; un son très bref est possible.
 - `audio_session` 0.2.4 garde sa dernière demande de focus, même refusée, et répond ensuite « accordé » sans interroger Android. Après un refus ou pendant une perte passagère, la politique rend donc le focus avant de le redemander : un second « lecture » pendant un appel est refusé lui aussi.
 - Le focus est rendu quand le lecteur reste « arrêté » ou « inactif » plus de 0,5 s, pas à la pause : choisir une autre piste passe un instant par « arrêté » sans rendre le focus.
-- Événements du système et changements d'état sont traités un par un, dans l'ordre : une perte passagère très brève reprend quand même, et une reprise ne reste pas en attente pour une interruption suivante.
+- Événements du système et changements d'état sont traités un par un, dans l'ordre : une perte passagère très brève reprend quand même, et une reprise ne reste pas en attente pour une interruption suivante. Une erreur n'arrête pas le traitement des événements suivants ; une demande de focus qui échoue compte comme un refus.
 - Règle 3 : une commande de l'utilisateur pendant l'interruption est détectée par l'état du contrôleur (lecture relancée, autre piste, arrêt) ; elle annule la reprise.
 - Règle 3 vérifiée sur l'émulateur (Android 16, release) : le préviseur audio de YouTube Music prend un focus passager, la lecture se met en pause puis reprend à sa fermeture. Règles 2, 4 et 5 et l'appel : Pixel, non testé.
 

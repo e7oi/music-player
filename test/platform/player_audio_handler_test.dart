@@ -131,6 +131,13 @@ void main() {
 
     /// @verifies FR-005
     test('choosing another track keeps the session', () async {
+      await handler.dispose();
+      handler = PlayerAudioHandler(
+        controller,
+        describe: (track) => known[track],
+        clock: () => now,
+        stopGrace: const Duration(hours: 1),
+      );
       await controller.play();
       await settle();
       final states = <AudioProcessingState>[];
@@ -138,7 +145,7 @@ void main() {
 
       await controller.setQueue([b.track, a.track]);
       await controller.play();
-      await stopped();
+      await settle();
 
       expect(states, isNot(contains(AudioProcessingState.idle)));
       expect(handler.mediaItem.value!.title, 'b.mp3');
