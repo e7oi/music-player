@@ -1,6 +1,6 @@
 # FR-003 — Indexation du stockage interne
 
-**Statut :** Active (validée le 2026-10-15) · **Créée le :** 2026-10-15 · **Ticket :** MPL-018 · **Décisions :** D3, D23, D25 · **Lié :** BR-004, UC-001 · **Révisée le 2026-10-15 :** choix des dossiers (demande du propriétaire)
+**Statut :** Active (validée le 2026-10-15) · **Créée le :** 2026-10-15 · **Ticket :** MPL-018 · **Décisions :** D3, D23, D25 · **Lié :** BR-004, UC-001 · **Révisée le 2026-10-15 :** choix des dossiers (demande du propriétaire) · **Révisée le 2026-10-21 :** garde-fou de l'exigence 8 (validé par le propriétaire)
 
 ## Besoin
 
@@ -15,17 +15,13 @@ La bibliothèque contient les pistes du stockage interne, avec leurs information
 5. Informations conservées par piste : chemin relatif (identité, BR-004), titre, artiste, album, artiste de l'album, numéro de piste, numéro de disque, année, genre, durée, taille, date de modification. Une information absente reste vide ; le titre absent est remplacé à l'affichage par le nom du fichier.
 6. Les informations viennent de MediaStore, sans lecture des tags dans les fichiers.
 7. L'indexation a lieu à chaque démarrage et sur demande de l'utilisateur (« Actualiser »). Elle compare le résultat à la base : pistes ajoutées, modifiées (date de modification ou taille changée), supprimées.
-8. Une piste dont le fichier a disparu du stockage interne est retirée de la bibliothèque. Ce n'est pas un disque absent : le stockage interne est toujours présent (BR-004).
+8. Une piste dont le fichier a disparu du stockage interne est retirée de la bibliothèque. Ce n'est pas un disque absent : le stockage interne est toujours présent (BR-004). Exception : si MediaStore ne renvoie aucun fichier audio alors que la bibliothèque contient des pistes du stockage interne, l'indexation échoue et la bibliothèque est gardée ; elle ne peut donc pas être vidée par une indexation.
 9. L'indexation se fait hors du fil de l'interface : l'écran reste utilisable et la liste se met à jour quand elle se termine.
 10. Le stockage interne est enregistré comme un disque (D23), nommé « Local » dans l'interface.
 
 ## Hors périmètre
 
 SSD, lecture des tags dans les fichiers et pochettes (MPL-037), recherche, test à 10 000 pistes (MPL-037), réindexation automatique pendant que l'application tourne.
-
-## À valider
-
-- Garde-fou contre un résultat vide de MediaStore (voir as-built) : il empêche aussi de vider la bibliothèque quand tous les fichiers audio du téléphone ont vraiment été supprimés. À confirmer.
 
 ## As-built
 
@@ -34,7 +30,7 @@ MPL-018, 2026-10-15. `LibraryIndexer` (`lib/domain/library/services/library_inde
 - Les dossiers proposés sont ceux du premier niveau du stockage interne (`Music`, `Download`, `Android`…), chacun avec ses sous-dossiers ; les fichiers posés à la racine forment une entrée « Racine du stockage ». Ce choix garde la liste courte, au prix de ne pas pouvoir séparer deux sous-dossiers d'un même dossier.
 - Une piste est mise à jour quand l'une de ses informations change, pas seulement sa taille ou sa date.
 - Un échec de l'indexation affiche un bandeau avec « Actualiser » ; la bibliothèque enregistrée reste affichée.
-- Garde-fou : si MediaStore ne renvoie aucun fichier audio alors que la bibliothèque contient des pistes du stockage interne, l'indexation échoue au lieu de tout supprimer (exigence 8 non appliquée dans ce cas). Une réanalyse des médias après une mise à jour d'Android peut donner ce résultat un court moment, et supprimer les pistes ferait perdre leur identité (BR-004). Voir « À valider ».
+- Garde-fou : si MediaStore ne renvoie aucun fichier audio alors que la bibliothèque contient des pistes du stockage interne, l'indexation échoue au lieu de tout supprimer (exception de l'exigence 8). Une réanalyse des médias après une mise à jour d'Android peut donner ce résultat un court moment, et supprimer les pistes ferait perdre leur identité (BR-004). Validé par le propriétaire le 2026-10-21.
 - Le bouton « Dossiers » est désactivé pendant une indexation ; la barre de lecture reste visible pendant le choix des dossiers.
 - Une lecture impossible de la liste des dossiers affiche un message avec « Réessayer ».
-- Non testé sur appareil.
+- Testé sur le Pixel 10 Pro (Android 17, build release) le 2026-10-21, avec environ 2 600 pistes : choix des dossiers, indexation, ajout et suppression d'un fichier puis « Actualiser », cocher et décocher un second dossier : OK. Un fichier copié par `adb push` n'est marqué comme musique qu'après une analyse de MediaStore (`HOWTO.md` §11).
