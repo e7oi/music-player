@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:musicplayer/data/db/drift_library_repository.dart';
 import 'package:musicplayer/data/db/library_database.dart';
 import 'package:musicplayer/domain/library/model/library_track.dart';
+import 'package:musicplayer/domain/library/model/track.dart';
 import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
 import 'package:musicplayer/domain/library/ports/library_repository.dart';
 import 'package:musicplayer/domain/library/services/library_indexer.dart';
@@ -39,3 +40,10 @@ final libraryIndexerProvider = Provider<LibraryIndexer>(
 final libraryTracksProvider = StreamProvider<List<LibraryTrack>>(
   (ref) => ref.watch(libraryRepositoryProvider).watchTracks(),
 );
+
+/// The library tracks by identity, for the system media session (FR-005).
+final libraryTrackIndexProvider = Provider<Map<Track, LibraryTrack>>((ref) {
+  final tracks =
+      ref.watch(libraryTracksProvider).value ?? const <LibraryTrack>[];
+  return {for (final t in tracks) t.track: t};
+});

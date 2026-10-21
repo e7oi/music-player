@@ -26,3 +26,12 @@ FR-005 demande un service au premier plan, une session média (notification, éc
 - **Service et session média écrits en Kotlin** : aucune dépendance, mais une quantité de code natif sans test unitaire, à réécrire pour Android Auto. Écarté.
 - **Garder l'objet `Shared` et ajouter `audio_service`** : `audio_service` détecte un moteur qui n'est pas le sien et ne fonctionne plus. Écarté.
 - **Focus audio en Kotlin dans le canal existant** : possible, mais `audio_session` couvre déjà focus et débranchement avec des événements typés. Écarté.
+
+## As-built
+
+MPL-036, 2026-10-21.
+
+- `MainActivity` hérite d'`AudioServiceActivity` ; un objet `Shared` ne garde plus que le moteur sur lequel le canal MediaStore est enregistré et ce canal (ADR-005). `shouldDestroyEngineWithHost()` reste forcé à `false`.
+- `lib/main.dart` crée le `ProviderContainer`, appelle `startSystemPlayback` (`lib/app/system_playback.dart`) puis lance l'interface avec `UncontrolledProviderScope`.
+- Nom et description du canal de notification : ARB (`notificationChannelName`, `notificationChannelDescription`), dans la langue du téléphone au démarrage du processus.
+- APK release : 77,8 Mo ; permissions `WAKE_LOCK`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`, `POST_NOTIFICATIONS` ajoutées, pas d'`INTERNET` ; les 7 icônes `audio_service_*` présentes.

@@ -30,3 +30,7 @@ L'utilisateur lance sa musique puis range le téléphone, le verrouille ou passe
 ## Hors périmètre
 
 Pochettes (MPL-037), Android Auto (MPL-005, D12), reprise de la file après un redémarrage de l'application, écrans définitifs (MPL-016).
+
+## As-built
+
+MPL-036, 2026-10-21. Scénario porté par FR-005 et BR-005 (voir leurs as-built). Procédure sur le Pixel : `HOWTO.md` §12. Non testé sur le Pixel.

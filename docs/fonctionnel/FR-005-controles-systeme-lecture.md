@@ -23,3 +23,14 @@ La lecture continue quand l'application n'est plus à l'écran, et Android la co
 ## Hors périmètre
 
 Pochettes dans la notification (MPL-037), Android Auto et navigation dans la bibliothèque depuis le système (MPL-005, D12), lecture aléatoire et répétition, reprise de la file après un redémarrage de l'application.
+
+## As-built
+
+MPL-036, 2026-10-21. `PlayerAudioHandler` (`lib/platform/media_session/player_audio_handler.dart`), initialisé par `startSystemPlayback` (`lib/app/system_playback.dart`) ; Android : `AudioServiceActivity`, service et récepteur dans le manifeste, `keep.xml`. Tests : `test/platform/player_audio_handler_test.dart`.
+
+- L'arrêt (exigence 7) passe par l'état « inactif » de la session : `audio_service` arrête alors le service et retire la notification. L'état « arrêté » du contrôleur (fin de file, éjection, échecs) y mène aussi.
+- La position n'est envoyée au système que si elle s'écarte de plus de 1,5 s de celle qu'il extrapole (déplacement, changement de piste) : la progression régulière ne réveille pas la session à chaque tic.
+- Le lecteur compact (notification repliée, écran verrouillé) montre précédent, lecture/pause et suivant ; « arrêt » est dans la notification dépliée.
+- Les informations de la piste viennent de la bibliothèque (`libraryTrackIndexProvider`) ; une piste inconnue montre son nom de fichier.
+- Exigence 8 : en pause, retirer l'application des récentes arrête le contrôleur et le service ; Android arrête ensuite le processus quand il veut.
+- Vérifié sur l'émulateur (Android 16, release) : service au premier plan de type `mediaPlayback`, notification sur le canal « Lecture », session `PLAYING` avec titre et commande d'arrêt, touches média, retour arrière, retrait des récentes, arrêt. Pixel : non testé.

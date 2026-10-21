@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  audio_service looks its notification/lock-screen control icons up by NAME at runtime
+  (Resources.getIdentifier("audio_service_play_arrow", "drawable", ...)), which the
+  resource shrinker cannot see. Without this file the 7 icons are stripped from release
+  builds, CustomAction.Builder throws "You must specify an icon resource id", and the
+  service never reaches the foreground (no channel, no notification, no controls).
+  Only these icons are kept, not every drawable.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/audio_service_*" />

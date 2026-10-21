@@ -230,3 +230,20 @@ Build release (D14), Pixel branché ou en Wi-Fi, quelques fichiers audio dans `M
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
 
+
+## 12. Tester la lecture en arrière-plan et les contrôles du système (MPL-036)
+
+Build release (D14), installée par-dessus la précédente (`adb install -r`), bibliothèque déjà indexée. Téléphone **débranché** pour les étapes 2 et 9 (`adb` en Wi-Fi si besoin). Un casque Bluetooth et un second téléphone pour l'appel.
+
+1. **Notification :** lancer une piste. Attendu : notification « Lecture » avec titre, artiste ou album, précédent, pause, suivant, arrêt et barre de progression ; même lecteur dans les réglages rapides.
+2. **Écran verrouillé :** verrouiller le téléphone 15 minutes. Attendu : la lecture continue et enchaîne les pistes ; l'écran verrouillé montre la piste et ses commandes, qui fonctionnent.
+3. **Commandes du système :** depuis la notification, toucher suivant, précédent (avant puis après 3 s de lecture), pause, lecture, et déplacer la barre de progression. Attendu : l'écran de l'application suit (FR-001).
+4. **Touches média :** avec le casque Bluetooth, lecture/pause, piste suivante, piste précédente. Attendu : comme à l'étape 3.
+5. **Appel :** se faire appeler pendant la lecture, décrocher, raccrocher sans rien toucher. Attendu : pause pendant l'appel, reprise à la fin. Recommencer en mettant la lecture en pause pendant l'appel : pas de reprise.
+6. **Autre application :** lancer une vidéo ou une autre application de musique. Attendu : pause, sans reprise à la fermeture de l'autre application.
+7. **Atténuation :** lancer un guidage GPS (Google Maps) pendant la lecture. Attendu : le volume baisse pendant l'annonce, la lecture continue (BR-005, règle 4). Si le volume ne baisse pas, le noter : la règle 4 devient une ligne « À valider ».
+8. **Casque :** débrancher ou déconnecter le casque pendant la lecture. Attendu : pause, sans reprise au rebranchement.
+9. **Fermeture :** pendant la lecture, geste de retour, puis retirer l'application des applications récentes. Attendu : la lecture continue, la notification reste ; la toucher rouvre l'application sur la piste en cours. Mettre en pause, retirer encore l'application des récentes : la notification disparaît.
+10. **Arrêt :** relancer une piste, toucher arrêt dans la notification. Attendu : la lecture s'arrête et la notification disparaît. Laisser la file arriver à sa fin : même résultat.
+
+Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27). Vérifications par adb : `dumpsys activity services <paquet>` (`isForeground=true`, type `0x2`), `dumpsys media_session` (état de la session), `dumpsys audio` (« Audio Focus stack »).

@@ -109,4 +109,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryRetry => 'Retry';
+
+  @override
+  String get notificationChannelName => 'Playback';
+
+  @override
+  String get notificationChannelDescription =>
+      'Playback controls: previous, pause, next.';
 }
