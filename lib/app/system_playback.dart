@@ -12,7 +12,8 @@ import 'package:musicplayer/platform/media_session/player_audio_handler.dart';
 
 /// Hands the player controller of [container] to Android: audio focus
 /// (BR-005) and the media session with its notification (FR-005). Runs once
-/// per process: the Flutter engine outlives the activity (ADR-006).
+/// per process: the Flutter engine outlives the activity, and the process
+/// ends with it (MainActivity, ADR-006).
 Future<void> startSystemPlayback(ProviderContainer container) async {
   final controller = container.read(playerControllerProvider);
   InterruptionPolicy(

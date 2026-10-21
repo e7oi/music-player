@@ -17,7 +17,15 @@ void main() {
   final a = LibraryTrack(
     id: 1,
     disk: internalDisk,
-    info: info('Music/a.flac', title: 'A'),
+    info: TrackInfo(
+      relativePath: 'Music/a.flac',
+      size: 1000,
+      modifiedAt: DateTime(2026),
+      title: 'A',
+      artist: 'Artist',
+      album: 'Album',
+      duration: const Duration(minutes: 3),
+    ),
   );
   final b = LibraryTrack(id: 2, disk: internalDisk, info: info('Music/b.mp3'));
   final known = {
@@ -25,6 +33,12 @@ void main() {
   };
 
   Future<void> settle() => pumpEventQueue();
+
+  /// Past the grace period of a stop.
+  Future<void> stopped() async {
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    await settle();
+  }
 
   PlaybackState playback() => handler.playbackState.value;
 
@@ -41,6 +55,7 @@ void main() {
       controller,
       describe: (track) => known[track],
       clock: () => now,
+      stopGrace: const Duration(milliseconds: 20),
     );
     await controller.setQueue([a.track, b.track]);
   });
@@ -58,6 +73,9 @@ void main() {
 
       final item = handler.mediaItem.value!;
       expect(item.title, 'A');
+      expect(item.artist, 'Artist');
+      expect(item.album, 'Album');
+      expect(item.duration, const Duration(minutes: 3));
       expect(playback().playing, isTrue);
       expect(playback().processingState, AudioProcessingState.ready);
       expect(playback().queueIndex, 0);
@@ -90,14 +108,40 @@ void main() {
     });
 
     /// @verifies FR-005
+    test('the duration found by the engine replaces the stored one', () async {
+      await controller.play();
+      await settle();
+
+      engine.emitDuration(const Duration(minutes: 2));
+      await settle();
+
+      expect(handler.mediaItem.value!.duration, const Duration(minutes: 2));
+    });
+
+    /// @verifies FR-005
     test('a stopped player releases the system controls', () async {
       await controller.play();
       await settle();
 
       await controller.stop();
-      await settle();
+      await stopped();
 
       expect(playback().processingState, AudioProcessingState.idle);
+    });
+
+    /// @verifies FR-005
+    test('choosing another track keeps the session', () async {
+      await controller.play();
+      await settle();
+      final states = <AudioProcessingState>[];
+      handler.playbackState.listen((s) => states.add(s.processingState));
+
+      await controller.setQueue([b.track, a.track]);
+      await controller.play();
+      await stopped();
+
+      expect(states, isNot(contains(AudioProcessingState.idle)));
+      expect(handler.mediaItem.value!.title, 'b.mp3');
     });
 
     /// @verifies FR-005
@@ -147,7 +191,7 @@ void main() {
       await settle();
 
       await handler.stop();
-      await settle();
+      await stopped();
 
       expect(controller.state.playing, isFalse);
       expect(playback().processingState, AudioProcessingState.idle);
@@ -172,7 +216,7 @@ void main() {
       await settle();
 
       await handler.onTaskRemoved();
-      await settle();
+      await stopped();
 
       expect(playback().processingState, AudioProcessingState.idle);
     });

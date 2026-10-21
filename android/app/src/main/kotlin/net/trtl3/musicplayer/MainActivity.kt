@@ -1,5 +1,6 @@
 package net.trtl3.musicplayer
 
+import android.os.Process
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -12,6 +13,19 @@ import io.flutter.plugin.common.MethodChannel
  * next engine.
  */
 class MainActivity : AudioServiceActivity() {
+    /**
+     * audio_service destroys its engine when its service stops while no
+     * activity is attached (stop from the notification after a back gesture,
+     * for instance). mpv cannot be released from here and would outlive the
+     * Dart isolate, as in the crash of MPL-018: the process ends with the
+     * engine, and the next launch starts afresh.
+     */
+    private object EndProcessWithEngine : FlutterEngine.EngineLifecycleListener {
+        override fun onPreEngineRestart() = Unit
+
+        override fun onEngineWillDestroy() = Process.killProcess(Process.myPid())
+    }
+
     private object Shared {
         var engine: FlutterEngine? = null
         lateinit var mediaStore: MediaStoreChannel
@@ -29,6 +43,7 @@ class MainActivity : AudioServiceActivity() {
                 flutterEngine.dartExecutor.binaryMessenger,
                 MediaStoreChannel.NAME,
             ).setMethodCallHandler(Shared.mediaStore)
+            flutterEngine.addEngineLifecycleListener(EndProcessWithEngine)
             Shared.engine = flutterEngine
         }
         Shared.mediaStore.attach(this)

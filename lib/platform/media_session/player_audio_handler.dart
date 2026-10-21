@@ -16,7 +16,12 @@ typedef TrackDescriber = LibraryTrack? Function(Track track);
 ///
 /// @implements FR-005
 class PlayerAudioHandler extends BaseAudioHandler with SeekHandler {
-  new(this._controller, {required this._describe, this._clock = DateTime.now}) {
+  new(
+    this._controller, {
+    required this._describe,
+    this._clock = DateTime.now,
+    this._stopGrace = const Duration(milliseconds: 500),
+  }) {
     _subscription = _controller.states.listen(_show);
     _show(_controller.state);
   }
@@ -28,7 +33,14 @@ class PlayerAudioHandler extends BaseAudioHandler with SeekHandler {
   final PlayerController _controller;
   final TrackDescriber _describe;
   final DateTime Function() _clock;
+
+  /// Choosing another track goes through "stopped" for an instant: the
+  /// session is released only when the player stays stopped this long, so
+  /// that the notification does not disappear and come back.
+  final Duration _stopGrace;
+
   late final StreamSubscription<PlayerState> _subscription;
+  Timer? _release;
 
   Track? _shownTrack;
 
@@ -57,9 +69,30 @@ class PlayerAudioHandler extends BaseAudioHandler with SeekHandler {
     if (!_controller.state.playing) await stop();
   }
 
-  Future<void> dispose() => _subscription.cancel();
+  Future<void> dispose() {
+    _release?.cancel();
+    return _subscription.cancel();
+  }
 
   void _show(PlayerState state) {
+    final stopped =
+        state.status == PlayerStatus.stopped ||
+        state.status == PlayerStatus.idle;
+    if (!stopped) {
+      _release?.cancel();
+      _release = null;
+    } else if (playbackState.value.processingState !=
+        AudioProcessingState.idle) {
+      _release ??= Timer(_stopGrace, () {
+        _release = null;
+        _showNow(_controller.state);
+      });
+      return;
+    }
+    _showNow(state);
+  }
+
+  void _showNow(PlayerState state) {
     final track = state.currentTrack;
     if (track != _shownTrack || _durationChanged(state)) {
       _shownTrack = track;

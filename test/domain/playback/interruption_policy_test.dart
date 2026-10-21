@@ -32,8 +32,11 @@ void main() {
     );
     await controller.start();
     system = FakeAudioInterruptions();
-    policy = InterruptionPolicy(controller: controller, interruptions: system)
-      ..start();
+    policy = InterruptionPolicy(
+      controller: controller,
+      interruptions: system,
+      stopGrace: const Duration(milliseconds: 20),
+    )..start();
     await controller.setQueue([t('a'), t('b')]);
   });
 
@@ -53,7 +56,7 @@ void main() {
     test('starting playback asks for the audio output', () async {
       await playing();
 
-      expect(system.activations, 1);
+      expect(system.requests, 1);
     });
 
     /// @verifies BR-005
@@ -67,17 +70,88 @@ void main() {
     });
 
     /// @verifies BR-005
+    test('a second play during a call is refused too', () async {
+      system.grant = false;
+      await controller.play();
+      await settle();
+
+      await controller.play();
+      await settle();
+
+      expect(state().playing, isFalse);
+      expect(system.requests, 2);
+    });
+
+    /// @verifies BR-005
+    test('play during a transient loss asks the system again', () async {
+      await playing();
+      system.emit(const InterruptionBegan(InterruptionKind.transient));
+      await settle();
+      system.grant = false;
+
+      await controller.play();
+      await settle();
+
+      expect(state().playing, isFalse);
+      expect(system.requests, 2);
+    });
+
+    /// @verifies BR-005
     test('stopping gives the audio output back', () async {
       await playing();
 
       await controller.stop();
+      await Future<void>.delayed(const Duration(milliseconds: 50));
       await settle();
 
       expect(system.deactivations, 1);
     });
+
+    /// @verifies BR-005
+    test('choosing another track keeps the audio output', () async {
+      await playing();
+
+      await controller.setQueue([t('b'), t('a')]);
+      await controller.play();
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      await settle();
+
+      expect(system.deactivations, 0);
+      expect(system.requests, 1);
+    });
   });
 
   group('BR-005 interruptions', () {
+    /// @verifies BR-005
+    test('a loss that ends before the pause completes still resumes', () async {
+      await playing();
+
+      system
+        ..emit(const InterruptionBegan(InterruptionKind.transient))
+        ..emit(const InterruptionEnded(InterruptionKind.transient));
+      await settle();
+
+      expect(state().playing, isTrue);
+    });
+
+    /// @verifies BR-005
+    test('a resume is not left over for a later loss', () async {
+      await playing();
+      system
+        ..emit(const InterruptionBegan(InterruptionKind.transient))
+        ..emit(const InterruptionEnded(InterruptionKind.transient));
+      await settle();
+      await controller.pause();
+      await settle();
+
+      system.emit(const InterruptionBegan(InterruptionKind.transient));
+      await settle();
+      system.emit(const InterruptionEnded(InterruptionKind.transient));
+      await settle();
+
+      expect(state().playing, isFalse);
+    });
+
     /// @verifies BR-005
     test('a permanent loss pauses without resuming', () async {
       await playing();
