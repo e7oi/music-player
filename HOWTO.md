@@ -222,10 +222,11 @@ Build release (D14), Pixel branché ou en Wi-Fi, quelques fichiers audio dans `M
 4. **Autorisation accordée :** l'accorder dans les réglages et revenir. Attendu : la liste des dossiers, avec `Music` coché et le nombre de fichiers de chacun.
 5. **Indexation :** valider. Attendu : seules les pistes des dossiers cochés apparaissent, sans blocage de l'écran.
 6. **Lecture :** toucher une piste. Attendu : la lecture démarre ; la barre du bas montre la piste ; pause, suivante et précédente fonctionnent.
-7. **Ajout :** copier un fichier dans `Music/`, attendre quelques secondes (indexation de MediaStore), toucher « Actualiser ». Attendu : la piste apparaît.
+7. **Ajout :** copier un fichier dans `Music/`, attendre quelques secondes (indexation de MediaStore), toucher « Actualiser ». Attendu : la piste apparaît. Sans recherche dans la liste, utiliser un fichier dont le nom se classe en tête (par exemple `000-test.wav`). Un fichier copié par `adb push` n'est marqué comme musique qu'après une analyse : `adb shell content call --uri content://media --method scan_file --arg /storage/emulated/0/Music/000-test.wav`.
 8. **Suppression :** supprimer ce fichier, toucher « Actualiser ». Attendu : la piste disparaît.
 9. **Dossiers :** toucher « Dossiers », cocher un autre dossier, valider. Attendu : ses pistes apparaissent ; le décocher : elles disparaissent.
 10. **Retrait de l'autorisation :** la retirer dans les réglages, revenir dans l'application. Android redémarre alors l'application. Attendu : le message d'explication, sans nouvelle demande automatique ; une fois l'accès rendu, la bibliothèque est intacte.
+11. **Retour arrière pendant la lecture :** lancer une piste, faire le geste de retour (ou la touche), attendre quelques secondes, rouvrir l'application. Attendu : pas de plantage, la lecture a continué, la barre montre la piste et une seule piste joue ; recommencer deux fois, puis changer de piste. Sans service au premier plan (MPL-036), Android peut arrêter l'application en arrière-plan : la lecture s'arrête alors, sans plantage. Compter les sorties audio : `adb shell dumpsys audio | grep 'u/pid:<uid>/' | grep -c state:started`.
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
 

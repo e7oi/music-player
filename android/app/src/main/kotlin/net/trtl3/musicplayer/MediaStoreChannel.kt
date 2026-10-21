@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
 import io.flutter.plugin.common.MethodCall
@@ -19,8 +21,11 @@ import java.util.concurrent.Executors
  * MediaStore and audio permission for the Dart side (ADR-005, FR-003,
  * FR-004). The permission is requested here rather than through a plugin:
  * CLAUDE.md rules out permission_handler.
+ *
+ * It lives as long as the Flutter engine, which outlives the activity
+ * (MainActivity): every call gets an answer, even after the activity is gone.
  */
-class MediaStoreChannel(private val activity: Activity) : MethodChannel.MethodCallHandler {
+class MediaStoreChannel(private val context: Context) : MethodChannel.MethodCallHandler {
     companion object {
         const val NAME = "net.trtl3.musicplayer/media_store"
         private const val PERMISSION_REQUEST = 4201
@@ -33,6 +38,8 @@ class MediaStoreChannel(private val activity: Activity) : MethodChannel.MethodCa
 
     // The query can take a while on a large library: never on the main thread.
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val mainThread = Handler(Looper.getMainLooper())
+    private var activity: Activity? = null
     private var pendingRequest: MethodChannel.Result? = null
 
     private val permission: String
@@ -47,13 +54,17 @@ class MediaStoreChannel(private val activity: Activity) : MethodChannel.MethodCa
             "audioPermissionStatus" -> result.success(permissionStatus())
             "requestAudioPermission" -> requestPermission(result)
             "openAppSettings" -> {
-                activity.startActivity(
-                    Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", activity.packageName, null),
-                    ),
+                val intent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", context.packageName, null),
                 )
-                result.success(null)
+                val current = activity
+                if (current == null) {
+                    result.error("no_activity", "No activity to open the settings from", null)
+                } else {
+                    current.startActivity(intent)
+                    result.success(null)
+                }
             }
             "internalStorageRoot" ->
                 result.success(Environment.getExternalStorageDirectory().absolutePath)
@@ -69,52 +80,69 @@ class MediaStoreChannel(private val activity: Activity) : MethodChannel.MethodCa
         }
     }
 
-    fun onRequestPermissionsResult(requestCode: Int) {
-        if (requestCode != PERMISSION_REQUEST) return
+    fun attach(activity: Activity) {
+        this.activity = activity
+    }
+
+    /**
+     * On a configuration change the dialog result goes to the new instance:
+     * the pending request waits for it. Otherwise it never comes.
+     */
+    fun detach(activity: Activity, recreating: Boolean) {
+        if (this.activity !== activity) return
+        val status = permissionStatus()
+        this.activity = null
+        if (recreating) return
+        pendingRequest?.success(status)
+        pendingRequest = null
+    }
+
+    fun onRequestPermissionsResult(activity: Activity, requestCode: Int) {
+        if (requestCode != PERMISSION_REQUEST || this.activity !== activity) return
         val pending = pendingRequest ?: return
         pendingRequest = null
         pending.success(permissionStatus())
     }
 
-    fun close() {
-        executor.shutdownNow()
-    }
-
-    /** Replies on the main thread, unless the activity is already gone. */
     private fun reply(action: () -> Unit) {
-        activity.runOnUiThread {
-            if (!activity.isDestroyed) action()
-        }
+        mainThread.post(action)
     }
 
     private fun permissionStatus(): String {
-        if (activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+        if (context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
             return "granted"
         }
-        val asked = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val asked = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getBoolean(ASKED_KEY, false)
         return when {
             !asked -> "notRequested"
             // Also true after the dialog was dismissed on Android 11+: the
             // Dart side tries the dialog once more before the settings.
-            !activity.shouldShowRequestPermissionRationale(permission) -> "permanentlyDenied"
+            // Without an activity Android cannot tell: assume it still asks.
+            activity?.shouldShowRequestPermissionRationale(permission) == false ->
+                "permanentlyDenied"
             else -> "denied"
         }
     }
 
     private fun requestPermission(result: MethodChannel.Result) {
-        if (activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+        if (context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
             result.success("granted")
+            return
+        }
+        val current = activity
+        if (current == null) {
+            result.error("no_activity", "No activity to show the permission dialog", null)
             return
         }
         if (pendingRequest != null) {
             result.error("request_pending", "A permission request is already running", null)
             return
         }
-        activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
             .putBoolean(ASKED_KEY, true).apply()
         pendingRequest = result
-        activity.requestPermissions(arrayOf(permission), PERMISSION_REQUEST)
+        current.requestPermissions(arrayOf(permission), PERMISSION_REQUEST)
     }
 
     /** Files marked as music on the internal storage, with the FR-003 fields. */
@@ -135,7 +163,7 @@ class MediaStoreChannel(private val activity: Activity) : MethodChannel.MethodCa
             MediaStore.Audio.Media.DATE_MODIFIED,
         )
         val rows = mutableListOf<Map<String, Any?>>()
-        activity.contentResolver.query(
+        context.contentResolver.query(
             uri,
             projection,
             "${MediaStore.Audio.Media.IS_MUSIC} != 0",
