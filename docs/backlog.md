@@ -27,9 +27,76 @@ Préfixe : MPL · Prochaine clé : MPL-039 · Dernière MAJ : 2026-10-21
 | MPL-033 | Récit | P2 | Lecture de web-radio (France Info, Radio-Canada, France Inter, Radio Nova, CBC...), Phase 2 🔗 | Bloqué | MPL-004 | D26 |
 | MPL-034 | Tâche technique | P2 | Auto-test : davantage de MP3 dans l'échantillon (92 % de la bibliothèque), un MP3 illisible gardé comme témoin, pistes en erreur signalées (« flaggées ») dans l'interface — (possible depuis MPL-003) | À faire | MPL-001 | — |
 | MPL-035 | Tâche technique | P2 | Retrait du stockage amovible pendant la lecture : écouteur natif d'éjection puis `stop()` et fermeture du descripteur dans `PlayerController` (indépendant du moteur) ; vérifier la marge sous charge et avec d'autres descripteurs ouverts ; retirer le récepteur `ACTION_MEDIA_*` ; pas de reprise au rebranchement (décidé le 2026-10-15) ; descripteur proxy gardé comme alternative non testée. Voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.3 🔗 MPL-017, D25. Depuis le 2026-10-15 : MPL-017 livre le port `VolumeEvents` et la réaction du contrôleur (BR-002) ; ce ticket livre l'adaptateur natif et le test sur le Pixel. À couvrir aussi (2026-10-15) : mesurer sur le Pixel le temps entre l'annonce d'éjection et la fermeture du fichier par mpv ; décider si l'éjection doit passer avant la commande en cours (elle attend aujourd'hui dans la file de `PlayerController`) ; garder le descripteur proxy comme plan B si la marge d'environ 1 s ne suffit pas | À faire | MPL-001 | — |
-| MPL-036 | Tâche technique | P0 | Notification et lecture en arrière-plan dans l'application réelle (`audio_service`, écran verrouillé, contrôles système, touches média), branchées sur le `PlayerController`, à traiter juste après MPL-018 (choix du propriétaire du 2026-10-21) ; le moteur Flutter qui survit à l'activité est déjà livré par MPL-018 (objet `Shared` de `MainActivity.kt`, à remplacer par `AudioServiceActivity` et à adapter avec le canal MediaStore) ; reprendre les acquis du prototype (`android/app/src/main/res/raw/keep.xml`, absent depuis MPL-017 faute d'`audio_service` ; permission de notification en natif dans `MainActivity`) | À faire | MPL-001 | — |
+| MPL-036 | Tâche technique | P0 | Lecture en arrière-plan et contrôles du système (`audio_service` : service au premier plan, notification, écran verrouillé, touches média) et interruptions (`audio_session` : focus audio, débranchement du casque), branchés sur le `PlayerController` ; `AudioServiceActivity` remplace le moteur partagé de MPL-018 ; retour de `keep.xml` (cadré le 2026-10-21) | À faire | MPL-001 | — |
 
 ## Détails
+### MPL-036
+**Description.** Rendre la lecture utilisable hors de l'application : elle continue écran verrouillé et en arrière-plan, se commande depuis la notification, l'écran verrouillé et les touches média, et réagit aux appels, aux autres applications audio et au débranchement du casque. Cadrage du 2026-10-21, juste après MPL-018 (choix du propriétaire).
+
+**Inclus.**
+- `audio_service` : service au premier plan, session média, notification de lecture, écran verrouillé, touches média ; adaptateur sous `platform/media_session/` branché sur le `PlayerController` (FR-005, ADR-006).
+- `MainActivity` hérite d'`AudioServiceActivity`, qui remplace l'objet `Shared` de MPL-018 ; canal MediaStore enregistré une fois par moteur (ADR-006).
+- `audio_session` : port `AudioInterruptions` et règles de BR-005 dans un service du domaine, testé d'abord.
+- Manifeste (service, récepteur des touches média, permissions) et `keep.xml` (MPL-013).
+- Textes du canal de notification en ARB ; procédure sur le Pixel dans `HOWTO.md`.
+
+**Exclusions.** Pochettes (MPL-037) ; Android Auto (MPL-005) ; reprise de la file après un redémarrage ; lecture aléatoire et répétition ; position et déplacement dans la piste dans l'écran de l'application (seule la notification les offre) ; écrans définitifs (MPL-016).
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Lecture en arrière-plan et contrôles du système
+
+  Scénario: Lecture écran verrouillé
+    Soit une piste en lecture
+    Quand l'utilisateur verrouille le téléphone pendant 15 minutes, téléphone débranché
+    Alors la lecture continue et enchaîne les pistes
+
+  Scénario: Commandes de la notification
+    Soit une piste en lecture et la notification affichée
+    Quand l'utilisateur touche "suivant" dans la notification
+    Alors la piste suivante de la file démarre
+    Et la notification et l'écran de l'application montrent la nouvelle piste
+
+  Scénario: Touches média
+    Soit une piste en lecture et un casque Bluetooth connecté
+    Quand l'utilisateur appuie sur la touche lecture/pause du casque
+    Alors la lecture se met en pause
+
+  Scénario: Appel entrant
+    Soit une piste en lecture
+    Quand un appel arrive puis se termine sans autre commande de l'utilisateur
+    Alors la lecture se met en pause pendant l'appel
+    Et reprend à la fin de l'appel
+
+  Scénario: Autre application audio
+    Soit une piste en lecture
+    Quand une autre application lance sa propre lecture
+    Alors la lecture se met en pause et ne reprend pas d'elle-même
+
+  Scénario: Casque débranché
+    Soit une piste en lecture dans un casque
+    Quand le casque est débranché
+    Alors la lecture se met en pause
+
+  Scénario: Arrêt
+    Soit une piste en lecture
+    Quand l'utilisateur touche "arrêt" dans la notification
+    Alors la lecture s'arrête et la notification disparaît
+
+  Scénario: Fermeture de l'application pendant la lecture
+    Soit une piste en lecture
+    Quand l'utilisateur fait le geste de retour puis retire l'application des applications récentes
+    Alors la lecture continue sans plantage
+    Et toucher la notification rouvre l'application sur la piste en cours
+```
+
+**Test appareil (Pixel, release).** Lecture écran verrouillé 15 minutes téléphone débranché, notification et écran verrouillé, touches d'un casque Bluetooth, appel entrant, autre application audio, débranchement du casque, atténuation pendant un guidage GPS (BR-005 règle 4), retour arrière et retrait des récentes. Procédure à écrire dans `HOWTO.md`.
+
+**Fiches liées.** UC-002, FR-005, BR-005 (`docs/fonctionnel/`) ; ADR-006 (`docs/technique/decisions/`). Toutes en `Brouillon`. Utilise FR-001, BR-002, BR-003 et ADR-005 (`Active`).
+
+**À valider (PO).** Inclure le focus audio et le débranchement du casque (BR-005) dans MPL-036 plutôt que dans un ticket séparé ; autorisation de notification déclarée sans être demandée (FR-005) ; commande « arrêt » dans la notification (FR-005) ; reprise automatique après un appel (BR-005, règle 3).
+
 ### MPL-018
 **Description.** Rendre la bibliothèque du stockage interne réelle : indexer les pistes du téléphone dans la base, les afficher dans une liste minimale et en lire une avec le `PlayerController` de MPL-017. Cadrage du 2026-10-15 : MPL-018 découpé en trois tickets (MPL-018, MPL-037, MPL-038), choix du propriétaire.
 
