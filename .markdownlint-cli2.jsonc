@@ -6,6 +6,7 @@
     "MD012": false, // plusieurs lignes vides consécutives
     "MD013": false, // longueur de ligne (paragraphes d'une seule ligne)
     "MD022": false, // lignes vides autour des titres
+    "MD024": { "siblings_only": true }, // titres « Livraison — date » répétés sous des tickets différents
     "MD028": false, // ligne vide dans une citation
     "MD031": false, // lignes vides autour des blocs de code
     "MD032": false, // lignes vides autour des listes
