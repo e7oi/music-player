@@ -35,3 +35,6 @@ MPL-036, 2026-10-21.
 - `lib/main.dart` crée le `ProviderContainer`, appelle `startSystemPlayback` (`lib/app/system_playback.dart`) puis lance l'interface avec `UncontrolledProviderScope`.
 - Nom et description du canal de notification : ARB (`notificationChannelName`, `notificationChannelDescription`), dans la langue du téléphone au démarrage du processus.
 - APK release : 77,8 Mo ; permissions `WAKE_LOCK`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`, `POST_NOTIFICATIONS` ajoutées, pas d'`INTERNET` ; les 7 icônes `audio_service_*` présentes.
+- Fin du processus avec le moteur : `audio_service` détruit son moteur quand son service s'arrête sans activité attachée ; un écouteur du cycle de vie du moteur termine alors le processus (`MainActivity.kt`), pour que mpv ne survive pas à l'isolat Dart.
+- Dépendances transitives ajoutées par `audio_service` : `flutter_cache_manager` (avec `http`), `sqflite` et `js`, pour les pochettes distantes, inutilisées ici. Aucune permission `INTERNET` fusionnée. À examiner par MPL-026 (licences, vulnérabilités).
+
