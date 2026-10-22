@@ -1,5 +1,5 @@
 # Backlog — MusicPlayer
-Préfixe : MPL · Prochaine clé : MPL-039 · Dernière MAJ : 2026-10-15
+Préfixe : MPL · Prochaine clé : MPL-040 · Dernière MAJ : 2026-10-21
 
 > Importé le 2026-10-14 depuis `docs/sprints/sprint-2/SPRINT-2-START.md` v5 (§3 snapshot du backlog, §4 registre des décisions), copie fidèle du tableau, des détails de MPL-029 et du registre : aucun libellé reformulé, seuls les icônes de type et de priorité sont remplacées par du texte. Le snapshot de sprint reste figé ; ce fichier est désormais la référence vivante, écrite par Claude Code, relue et validée par le propriétaire. Format : `backlog-methodology.md` §13 (dépôt AI-tools). MPL-032 est absent du snapshot : sa clé reste réservée.
 > Statuts : À faire → En cours → À tester → Terminé (+ Bloqué). Un ticket n'est « Terminé » que sur l'ordre « validé » du propriétaire, après un test réel en build release sur le Pixel (D14), et après le merge de sa PR.
@@ -29,8 +29,56 @@ Préfixe : MPL · Prochaine clé : MPL-039 · Dernière MAJ : 2026-10-15
 | MPL-034 | Tâche technique | P2 | Auto-test : davantage de MP3 dans l'échantillon (92 % de la bibliothèque), un MP3 illisible gardé comme témoin, pistes en erreur signalées (« flaggées ») dans l'interface — (possible depuis MPL-003) | À faire | MPL-001 | — |
 | MPL-035 | Tâche technique | P2 | Retrait du stockage amovible pendant la lecture : écouteur natif d'éjection puis `stop()` et fermeture du descripteur dans `PlayerController` (indépendant du moteur) ; vérifier la marge sous charge et avec d'autres descripteurs ouverts ; retirer le récepteur `ACTION_MEDIA_*` ; pas de reprise au rebranchement (décidé le 2026-10-15) ; descripteur proxy gardé comme alternative non testée. Voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.3 🔗 MPL-017, D25. Depuis le 2026-10-15 : MPL-017 livre le port `VolumeEvents` et la réaction du contrôleur (BR-002) ; ce ticket livre l'adaptateur natif et le test sur le Pixel. À couvrir aussi (2026-10-15) : mesurer sur le Pixel le temps entre l'annonce d'éjection et la fermeture du fichier par mpv ; décider si l'éjection doit passer avant la commande en cours (elle attend aujourd'hui dans la file de `PlayerController`) ; garder le descripteur proxy comme plan B si la marge d'environ 1 s ne suffit pas | À faire | MPL-001 | — |
 | MPL-036 | Tâche technique | P0 | Notification et lecture en arrière-plan dans l'application réelle (`audio_service`, écran verrouillé, contrôles système, touches média), branchées sur le `PlayerController`, à traiter juste après MPL-018 (choix du propriétaire du 2026-10-21) ; le moteur Flutter qui survit à l'activité est déjà livré par MPL-018 (objet `Shared` de `MainActivity.kt`, à remplacer par `AudioServiceActivity` et à adapter avec le canal MediaStore) ; reprendre les acquis du prototype (`android/app/src/main/res/raw/keep.xml`, absent depuis MPL-017 faute d'`audio_service` ; permission de notification en natif dans `MainActivity`) | À faire | MPL-001 | — |
+| MPL-039 | Tâche technique | P1 | Renommer l'application en TuneShell : nom visible, dépôt GitHub, identifiant Android `net.trtl3.tuneshell`, paquets Kotlin et Dart, canaux natifs, documentation (cadré le 2026-10-21, ADR-007) | À faire | — | MPL-036 |
 
 ## Détails
+### MPL-039
+**Description.** Appliquer le nom définitif choisi par le propriétaire, **TuneShell** (D4, 2026-10-21), partout où le nom de travail « MusicPlayer » apparaît : nom visible, dépôt, identifiants techniques et documentation. Choix du propriétaire : tout renommer, identifiants compris (ADR-007).
+
+**Inclus.**
+- Nom visible : `appTitle` « TuneShell » dans tous les ARB (et `flutter gen-l10n`), `android:label` « TuneShell ».
+- Identifiant Android : `applicationId` et `namespace` `net.trtl3.tuneshell` ; paquet Kotlin `net.trtl3.tuneshell` et dossier déplacé ; `MusicPlayerApplication` devient `TuneShellApplication`.
+- Dart : paquet `tuneshell` (`pubspec.yaml`), imports `package:tuneshell/` dans `lib/`, `test/`, `integration_test/` et `test/architecture/` ; `MusicPlayerApp` devient `TuneShellApp`.
+- Canaux : `net.trtl3.tuneshell/media_store` et canal de notification `net.trtl3.tuneshell.playback`.
+- Documentation : titres et mentions de `README.md`, `PRD.md` (D4 au §9), `HOWTO.md` (nom du paquet dans les commandes `adb`), `CHANGELOG.md` (nouvelle entrée), `CLAUDE.md`, as-built des ADR qui citent les chemins Kotlin (ADR-005, ADR-006).
+- Dépôt : le propriétaire renomme `music-player` en `tuneshell` sur GitHub ; mise à jour du remote du clone et des mentions du dépôt dans `CLAUDE.md` et le backlog.
+- Deux commits annulables : `refactor` mécanique des identifiants, puis nom visible et documentation.
+
+**Exclusions.** Snapshots figés de `docs/sprints/` ; historique Git ; blocs Livraison et entrées de `CHANGELOG.md` déjà écrits ; préfixe `MPL` des clés (sauf avis contraire du PO) ; dépôt privé du prototype ; icône et identité graphique (MPL-016) ; nom du fichier de base Drift ; vérification de disponibilité du nom (D5, D6).
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Application renommée TuneShell
+  Scénario: Nom visible sur le téléphone
+    Soit le build release de TuneShell installé sur le Pixel
+    Quand l'utilisateur regarde le lanceur, les applications récentes et la notification de lecture
+    Alors l'application s'appelle "TuneShell"
+
+  Scénario: Nouvel identifiant Android
+    Soit l'ancienne application "net.trtl3.musicplayer" désinstallée
+    Quand l'utilisateur installe TuneShell et l'ouvre pour la première fois
+    Alors l'autorisation audio est demandée puis les dossiers sont proposés
+    Et la bibliothèque s'indexe et une piste se lit, en arrière-plan comme au premier plan
+
+  Scénario: Plus aucune trace du nom de travail
+    Soit le dépôt après le renommage
+    Quand on cherche "musicplayer" et "MusicPlayer" hors de docs/sprints/, de l'historique et des blocs Livraison déjà écrits
+    Alors aucune occurrence n'est trouvée
+    Et la vérification complète (format, analyses, tests) et check-repo.sh sont au vert
+
+  Scénario: Dépôt renommé
+    Soit le dépôt renommé "tuneshell" sur GitHub
+    Quand on pousse la branche du ticket
+    Alors le push passe par le nouveau remote
+    Et la protection de main (protect-main) et la CI s'appliquent toujours
+```
+
+**Test appareil (Pixel, release).** Désinstaller `net.trtl3.musicplayer` ; installer TuneShell ; premier lancement (autorisation, dossiers, indexation), lecture, notification « TuneShell », écran verrouillé, touche média (`HOWTO.md` §12, étapes 1, 2 et 12 avec le nouveau paquet).
+
+**Fiches liées.** ADR-007 (`Brouillon`, `docs/technique/decisions/`). Aucune fiche UC/BR/FR modifiée : pas de changement de comportement. Utilise FR-003, FR-004, BR-004 (premier lancement et réindexation) et ADR-005, ADR-006 (as-built à mettre à jour).
+
+**À valider (PO).** Garder le préfixe `MPL` des clés (recommandé) ; ne pas renommer le dépôt privé du prototype (recommandé) ; vérifier la disponibilité du nom (Google Play, marques) avec D5 et D6 ou dès maintenant ; renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer).
 ### MPL-018
 **Description.** Rendre la bibliothèque du stockage interne réelle : indexer les pistes du téléphone dans la base, les afficher dans une liste minimale et en lire une avec le `PlayerController` de MPL-017. Cadrage du 2026-10-15 : MPL-018 découpé en trois tickets (MPL-018, MPL-037, MPL-038), choix du propriétaire.
 
@@ -278,7 +326,7 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | D1 | Projet **open source** ; licence GPL-3.0-or-later ; titulaire Eloi BERTIN (2026) | Tranchée 05/10/2026 | |
 | D2 | Moteur audio : `media_kit` (libmpv/FFmpeg) est le **moteur unique** de l'application réelle, derrière une **interface indépendante du moteur** (`PlayerController`, MPL-017) qui permet de changer de moteur plus tard ; `just_audio` n'est pas repris dans l'application réelle, le prototype reste la référence. Motifs : un seul moteur à tester et à maintenir, WMA lisible (D16 : toujours non prioritaire), ReplayGain possible via mpv (MPL-019, D13), même moteur sur Windows et macOS. Conséquences acceptées : les WARN de MPL-010 (sans effet audible constaté) ; poids de l'APK non mesuré (risque à suivre). Tests SSD du 08/10/2026 : les deux moteurs lisent le SSD et réagissent de la même façon au retrait ; remplace la recommandation de `docs/sprints/sprint-1/RESULTS.md` §6 (snapshot Sprint 1) | Tranchée 09/10/2026 | |
 | D3 | Gestion d'état et base de données : Base locale : SQLite via **Drift** (requêtes typées, migrations de schéma versionnées, flux réactifs, exécution en isolate, recherche plein texte FTS5 possible). Gestion d'état : **Riverpod**. Motif de la base : le modèle D23 est relationnel (disques, pistes par disque + chemin relatif, playlists mêlant plusieurs disques) ; Isar (état de maintenance en 2026 non vérifié) et ObjectBox (plus de natif, relations moins naturelles) ne sont pas retenus. Reporté à l'implémentation : la version exacte de Riverpod et l'usage ou non de sa génération de code (en plus de celle de Drift) | Tranchée 09/10/2026 | |
-| D4 | Nom définitif de l'application | Ouverte | |
+| D4 | Nom définitif de l'application : **TuneShell**, appliqué partout, identifiants compris (ADR-007, MPL-039) | Tranchée 2026-10-21 | Choix du propriétaire |
 | D5 | Canaux de distribution (la release est signée avec la clé debug : TODO avant toute distribution) | Ouverte | |
 | D6 | Android Auto et Google Play | Ouverte | |
 | D7 | Identifiant d'organisation `net.trtl3` | Tranchée | |
@@ -306,7 +354,8 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | D29 | À compléter par le propriétaire | — | Numéro cité nulle part dans le dépôt ; réservé |
 | À numéroter | Découpage de MPL-017 : la réassociation d'un disque passe dans MPL-018 ; l'écouteur natif d'éjection et le test sur le Pixel restent dans MPL-035 ; MPL-017 livre les ports et la réaction du contrôleur | Tranchée 2026-10-15 | Réassociation dépendante du modèle de données de MPL-018 ; Kotlin vérifiable sur appareil seulement · MPL-017, MPL-018, MPL-035 |
 | À numéroter | Stockage amovible : la lecture arrêtée par une éjection reste arrêtée et ne reprend pas au rebranchement du disque | Tranchée 2026-10-15 | Répond à `SPRINT-2-START.md` §8.3 · BR-002, MPL-017, MPL-035 |
-| À numéroter | Identifiant Android de production : `net.trtl3.musicplayer`, le même que le prototype ; l'installation de l'une remplace l'autre sur l'appareil | Tranchée 2026-10-15 | Choix du propriétaire ; nom définitif toujours ouvert (D4) · MPL-017 |
+| À numéroter | Identifiant Android de production : `net.trtl3.musicplayer`, le même que le prototype ; l'installation de l'une remplace l'autre sur l'appareil | Écartée 2026-10-21 (Tranchée 2026-10-15) | Remplacée par `net.trtl3.tuneshell` (D4, ADR-007) · MPL-017, MPL-039 |
+| À numéroter | Identifiant Android de production : `net.trtl3.tuneshell` ; paquets Kotlin et Dart et canaux natifs renommés avec lui ; TuneShell s'installe à côté de l'ancienne application et du prototype | Tranchée 2026-10-21 | Choix du propriétaire ; rien n'est publié, l'identifiant deviendra définitif à la publication (D5, D6) · ADR-007, MPL-039 |
 | À numéroter | Découpage de MPL-018 : MPL-018 (stockage interne, base, liste minimale), MPL-037 (SSD par SAF, tags dans les fichiers, test à 10 000 pistes), MPL-038 (réassociation et retrait d'un disque) | Tranchée 2026-10-15 | Ticket trop gros pour un test sur le Pixel en une fois ; MediaStore fournit déjà les tags du stockage interne · MPL-018, MPL-037, MPL-038 |
 | À numéroter | `minSdk` 30 au lieu de la valeur du gabarit Flutter (24), écart à D30 | Tranchée 2026-10-15 | `RELATIVE_PATH` de MediaStore (API 29), `StorageVolumeCallback` (API 30) ; seul appareil de test en Android 17 · ADR-005, MPL-018 |
 | À numéroter | Un seul moteur Flutter par processus dès MPL-018 (`MainActivity` fournit un moteur qui survit à l'activité), sans attendre `audio_service` ; MPL-036 suit immédiatement MPL-018 | Tranchée 2026-10-21 | Fermer l'activité (geste de retour) détruisait l'isolat Dart pendant que mpv tournait : plantages de mpv (rappel de réveil libéré) et deux lecteurs simultanés, constatés sur le Pixel · MPL-018, MPL-036 |
