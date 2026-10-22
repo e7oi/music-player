@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:musicplayer/features/library/library_page.dart';
-import 'package:musicplayer/l10n/generated/app_localizations.dart';
+import 'package:tuneshell/features/library/library_page.dart';
+import 'package:tuneshell/l10n/generated/app_localizations.dart';
 
-class MusicPlayerApp extends StatelessWidget {
+class TuneShellApp extends StatelessWidget {
   const new({super.key});
 
   @override

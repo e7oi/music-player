@@ -1,4 +1,4 @@
-import 'package:musicplayer/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
 
 /// The audio files of the internal storage, as MediaStore lists them
 /// (ADR-005).

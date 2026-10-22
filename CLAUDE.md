@@ -1,4 +1,4 @@
-# CLAUDE.md — MusicPlayer (`music-player`)
+# CLAUDE.md — TuneShell (`tuneshell`)
 
 > Le contexte produit et le périmètre sont dans `PRD.md` (§9 décisions, §10 risques). Le backlog et le registre des décisions sont dans `docs/backlog.md` ; `docs/sprints/` contient les snapshots de sprint figés. Ne pas les dupliquer ici.
 
@@ -13,7 +13,7 @@
 
 - Ne jamais pousser sur `main`. Travailler sur une branche, un commit annulable par correctif. N'ouvrir aucune pull request sans demande ; le propriétaire crée les PR.
 - `main` est protégée (ruleset `protect-main`, D17). Aucun code applicatif n'arrive sur `main` sans job de CI code : MPL-017 ajoute un job minimal (format, analyse, tests) ; MPL-026 le complète (vulnérabilités, licences, liste blanche des permissions, empreinte de libmpv).
-- L'identité Git est le nom du propriétaire et son adresse noreply GitHub, configurés localement dans chaque clone MusicPlayer, jamais en global. Vérifier `git config user.name` et `git config user.email` par rapport aux derniers commits (`git log -1 --format='%an <%ae>'`) avant le premier commit.
+- L'identité Git est le nom du propriétaire et son adresse noreply GitHub, configurés localement dans chaque clone TuneShell, jamais en global. Vérifier `git config user.name` et `git config user.email` par rapport aux derniers commits (`git log -1 --format='%an <%ae>'`) avant le premier commit.
 - Deux dépôts, deux clones. Ne jamais ajouter l'un comme remote de l'autre. `music-player-prototype` est privé et ne devient jamais public.
 - Rien de privé dans ce dépôt public : aucun titre de piste, nom d'artiste ou d'album, nom de fichier, chemin sur l'appareil, identifiant de volume ou numéro de série, adresse e-mail. Les exports d'essai (CSV, journaux, logcat) restent hors du dépôt (D27).
 - Les documents racine restent à la racine et les snapshots de sprint de `docs/sprints/` sont figés. `.github/scripts/check-repo.sh` doit rester au vert.

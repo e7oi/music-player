@@ -28,45 +28,42 @@ void main() {
         'rule 1',
       );
       expectForbidden(file, 'package:media_kit/media_kit.dart', 'rule 1');
-      expectForbidden(file, 'package:musicplayer/data/audio/x.dart', 'rule 1');
+      expectForbidden(file, 'package:tuneshell/data/audio/x.dart', 'rule 1');
       expectAllowed(file, 'dart:async');
       expectAllowed(file, 'dart:math');
       expectAllowed(file, 'dart:convert');
       expectAllowed(file, 'package:meta/meta.dart');
       expectAllowed(file, 'package:collection/collection.dart');
-      expectAllowed(
-        file,
-        'package:musicplayer/domain/library/model/track.dart',
-      );
+      expectAllowed(file, 'package:tuneshell/domain/library/model/track.dart');
     });
 
     test('rule 2: data/ and platform/ import domain/ only', () {
       expectForbidden(
         'data/audio/x.dart',
-        'package:musicplayer/features/home/x.dart',
+        'package:tuneshell/features/home/x.dart',
         'rule 2',
       );
       expectForbidden(
         'platform/x.dart',
-        'package:musicplayer/app/app.dart',
+        'package:tuneshell/app/app.dart',
         'rule 2',
       );
       expectAllowed(
         'data/audio/x.dart',
-        'package:musicplayer/domain/playback/ports/audio_engine.dart',
+        'package:tuneshell/domain/playback/ports/audio_engine.dart',
       );
-      expectAllowed('platform/x.dart', 'package:musicplayer/platform/y.dart');
+      expectAllowed('platform/x.dart', 'package:tuneshell/platform/y.dart');
     });
 
     test('rule 3: features/ never imports data/ or platform/', () {
       const file = 'features/home/x.dart';
-      expectForbidden(file, 'package:musicplayer/data/audio/x.dart', 'rule 3');
-      expectForbidden(file, 'package:musicplayer/platform/x.dart', 'rule 3');
-      expectForbidden(file, 'package:musicplayer/app/router.dart', 'rule 3');
-      expectAllowed(file, 'package:musicplayer/app/providers/player.dart');
+      expectForbidden(file, 'package:tuneshell/data/audio/x.dart', 'rule 3');
+      expectForbidden(file, 'package:tuneshell/platform/x.dart', 'rule 3');
+      expectForbidden(file, 'package:tuneshell/app/router.dart', 'rule 3');
+      expectAllowed(file, 'package:tuneshell/app/providers/player.dart');
       expectAllowed(
         file,
-        'package:musicplayer/l10n/generated/app_localizations.dart',
+        'package:tuneshell/l10n/generated/app_localizations.dart',
       );
       expectAllowed(file, 'package:flutter/material.dart');
     });
@@ -107,13 +104,13 @@ void main() {
         directivesOf(
           "import 'dart:async';\n"
           'import "package:meta/meta.dart" show immutable;\n'
-          "export 'package:musicplayer/domain/x.dart';\n"
+          "export 'package:tuneshell/domain/x.dart';\n"
           "// import 'commented.dart';\n",
         ),
         [
           'dart:async',
           'package:meta/meta.dart',
-          'package:musicplayer/domain/x.dart',
+          'package:tuneshell/domain/x.dart',
         ],
       );
     });

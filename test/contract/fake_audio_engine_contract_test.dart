@@ -1,4 +1,4 @@
-import 'package:musicplayer/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
 
 import '../fakes/fake_audio_engine.dart';
 import 'audio_engine_contract.dart';

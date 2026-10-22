@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musicplayer/app/providers/library_providers.dart';
-import 'package:musicplayer/app/providers/player_providers.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/services/library_indexer.dart';
-import 'package:musicplayer/domain/playback/model/playback_notice.dart';
-import 'package:musicplayer/features/library/library_controller.dart';
-import 'package:musicplayer/features/library/player_bar.dart';
-import 'package:musicplayer/l10n/generated/app_localizations.dart';
+import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/app/providers/player_providers.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/services/library_indexer.dart';
+import 'package:tuneshell/domain/playback/model/playback_notice.dart';
+import 'package:tuneshell/features/library/library_controller.dart';
+import 'package:tuneshell/features/library/player_bar.dart';
+import 'package:tuneshell/l10n/generated/app_localizations.dart';
 
 /// Temporary library screen until the MPL-016 mock-ups exist.
 ///

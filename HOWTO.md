@@ -1,4 +1,4 @@
-# HOWTO — MusicPlayer
+# HOWTO — TuneShell
 
 Procédures pratiques. Ajouter une section à chaque nouvelle procédure validée.
 
@@ -30,7 +30,7 @@ Le projet de production est un seul package Flutter **à la racine du dépôt** 
 flutter create --org net.trtl3 --platforms=android --project-name musicplayer <dossier temporaire>
 ```
 
-puis seuls `android/` et `.metadata` ont été repris à la racine. Les commandes se lancent depuis la racine du dépôt :
+(nom de travail de l'époque ; paquet renommé `tuneshell` par MPL-039, ADR-007), puis seuls `android/` et `.metadata` ont été repris à la racine. Les commandes se lancent depuis la racine du dépôt :
 
 ```bash
 flutter --version      # doit afficher la version épinglée dans pubspec.yaml (environment.flutter)
@@ -40,7 +40,7 @@ flutter gen-l10n       # après toute modification des fichiers ARB de lib/l10n/
 
 Avant un commit : `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && dart analyze --fatal-infos && flutter test`. `dart analyze` exécute en plus le plugin `riverpod_lint`, que `flutter analyze` ignore.
 
-> L'identifiant d'organisation `net.trtl3` est acté (D7). Il est difficile à changer après publication. L'identifiant Android est `net.trtl3.musicplayer`, le même que le prototype : installer l'une des deux applications remplace l'autre sur l'appareil.
+> L'identifiant d'organisation `net.trtl3` est acté (D7). Il est difficile à changer après publication. L'identifiant Android est `net.trtl3.tuneshell` depuis MPL-039 (ADR-007) : TuneShell s'installe à côté de l'ancienne application `net.trtl3.musicplayer` (identifiant partagé par le prototype et les builds d'avant MPL-039), à désinstaller à part (`adb uninstall net.trtl3.musicplayer`).
 
 ---
 
@@ -216,7 +216,7 @@ La suite `test/contract/audio_engine_contract.dart` tourne en CI contre le fake 
 
 Build release (D14), Pixel branché ou en Wi-Fi, quelques fichiers audio dans `Music/` et au moins un autre dossier qui contient de la musique (par exemple un MP3 copié dans `Download/`). Les sonneries ne comptent pas : MediaStore ne les marque pas comme musique.
 
-1. Désinstaller l'application pour repartir d'un premier lancement : `adb uninstall net.trtl3.musicplayer`. Cela efface aussi la bibliothèque enregistrée.
+1. Désinstaller l'application pour repartir d'un premier lancement : `adb uninstall net.trtl3.tuneshell`. Cela efface aussi la bibliothèque enregistrée.
 2. `flutter build apk --release && adb install build/app/outputs/flutter-apk/app-release.apk`, puis ouvrir l'application.
 3. **Autorisation refusée :** refuser l'accès. Attendu : message d'explication et bouton « Autoriser l'accès ». Le toucher, refuser encore. Attendu : le bouton devient « Ouvrir les réglages » ; le toucher montre d'abord la demande d'Android si elle s'affiche encore, sinon la fiche de l'application. Fermer puis rouvrir l'application : elle ne redemande pas l'accès d'elle-même.
 4. **Autorisation accordée :** l'accorder dans les réglages et revenir. Attendu : la liste des dossiers, avec `Music` coché et le nombre de fichiers de chacun.
@@ -246,6 +246,6 @@ Build release (D14), installée par-dessus la précédente (`adb install -r`), b
 9. **Fermeture :** pendant la lecture, geste de retour, puis retirer l'application des applications récentes. Attendu : la lecture continue, la notification reste ; la toucher rouvre l'application sur la piste en cours. Mettre en pause, retirer encore l'application des récentes : la notification disparaît.
 10. **Arrêt :** relancer une piste, toucher arrêt dans la notification. Attendu : la lecture s'arrête et la notification disparaît. Laisser la file arriver à sa fin : même résultat. Puis : lancer une piste, geste de retour, toucher arrêt dans la notification, attendre 10 s, rouvrir l'application. Attendu : l'application redémarre normalement ; aucun `Fatal signal` dans `adb logcat`.
 11. **Changement de piste :** pendant la lecture, toucher une autre piste dans la liste. Attendu : la notification et l'écran verrouillé changent de piste sans disparaître ni clignoter.
-12. **Touche média à froid :** mettre en pause, retirer l'application des récentes, attendre que le processus ait disparu (`adb shell pidof net.trtl3.musicplayer` vide), puis appuyer sur lecture du casque Bluetooth. Attendu : rien ne joue (la file n'est pas conservée) et aucun message « l'application s'est arrêtée » ; noter toute `ForegroundServiceDidNotStartInTimeException` dans `adb logcat`. Si le processus reste en cache après le retrait des récentes, le terminer avec `adb shell am kill net.trtl3.musicplayer` ; fermer d'abord toute autre application dont la session média est active (`dumpsys media_session`, « Sessions Stack » vide), sinon elle reçoit la touche. Puis ouvrir l'application depuis son icône sans la tuer. Attendu : la bibliothèque s'affiche (pas d'écran de chargement bloqué) et une piste se lance ; aucune `MissingPluginException` dans `adb logcat`.
+12. **Touche média à froid :** mettre en pause, retirer l'application des récentes, attendre que le processus ait disparu (`adb shell pidof net.trtl3.tuneshell` vide), puis appuyer sur lecture du casque Bluetooth. Attendu : rien ne joue (la file n'est pas conservée) et aucun message « l'application s'est arrêtée » ; noter toute `ForegroundServiceDidNotStartInTimeException` dans `adb logcat`. Si le processus reste en cache après le retrait des récentes, le terminer avec `adb shell am kill net.trtl3.tuneshell` ; fermer d'abord toute autre application dont la session média est active (`dumpsys media_session`, « Sessions Stack » vide), sinon elle reçoit la touche. Puis ouvrir l'application depuis son icône sans la tuer. Attendu : la bibliothèque s'affiche (pas d'écran de chargement bloqué) et une piste se lance ; aucune `MissingPluginException` dans `adb logcat`.
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27). Vérifications par adb : `dumpsys activity services <paquet>` (`isForeground=true`, type `0x2`), `dumpsys media_session` (état de la session), `dumpsys audio` (« Audio Focus stack »).

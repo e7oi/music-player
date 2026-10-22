@@ -1,5 +1,5 @@
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
 
 /// Counts of one [LibraryRepository.applyIndex].
 final class IndexResult {

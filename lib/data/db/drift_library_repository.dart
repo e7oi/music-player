@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:musicplayer/data/db/library_database.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/library/ports/library_repository.dart';
+import 'package:tuneshell/data/db/library_database.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/ports/library_repository.dart';
 
 /// [LibraryRepository] over Drift (ADR-004).
 class DriftLibraryRepository implements LibraryRepository {

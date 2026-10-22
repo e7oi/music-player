@@ -28,7 +28,7 @@ Tout renommer, identifiants compris (choix du propriétaire le 2026-10-21) :
 
 ## Conséquences
 
-- La ligne « Identifiant Android de production : `net.trtl3.musicplayer` » du registre est remplacée : TuneShell s'installe à côté de l'ancienne application (et du prototype) au lieu de la remplacer. Sur le Pixel : désinstaller `net.trtl3.musicplayer`, puis accorder de nouveau l'autorisation audio et choisir les dossiers (FR-004, FR-003) ; la bibliothèque est réindexée, l'identité des pistes repart de zéro (BR-004), sans perte puisqu'aucune donnée utilisateur n'est conservée au-delà de l'index.
+- La ligne « Identifiant Android de production : `net.trtl3.musicplayer` » du registre est remplacée : TuneShell s'installe à côté de l'ancienne application au lieu de la remplacer (le prototype et l'ancienne application partageant `net.trtl3.musicplayer`, une seule est présente à la fois). Sur le Pixel : désinstaller `net.trtl3.musicplayer`, puis accorder de nouveau l'autorisation audio et choisir les dossiers (FR-004, FR-003) ; la bibliothèque est réindexée, l'identité des pistes repart de zéro (BR-004), sans perte puisqu'aucune donnée utilisateur n'est conservée au-delà de l'index.
 - Le changement touche presque tous les fichiers Dart (imports) : il est fait après le merge de MPL-036 pour éviter des conflits sur sa branche, en un commit mécanique (`refactor`) séparé du nom visible.
 - `dart format`, les deux analyses, `flutter test` (dont `test/architecture/`) et `check-repo.sh` vérifient le renommage ; un `grep` de `musicplayer` hors des exclusions doit être vide.
 - Les procédures de `HOWTO.md` qui citent le paquet (`pidof`, `dumpsys`, `am kill`) changent de nom de paquet.
@@ -39,6 +39,17 @@ Tout renommer, identifiants compris (choix du propriétaire le 2026-10-21) :
 - **Nom visible seulement** : garde `net.trtl3.musicplayer` et le paquet Dart ; écarté par le propriétaire, l'identifiant Android deviendrait définitif à la publication.
 - **Nom visible et `applicationId` seulement** : laisse un paquet Dart et des canaux au nom de travail ; écarté pour la cohérence, le coût étant mécanique.
 
+## As-built
+
+MPL-039, 2026-10-21.
+
+- Identifiants : `applicationId` et `namespace` `net.trtl3.tuneshell` (`android/app/build.gradle.kts`) ; Kotlin sous `android/app/src/main/kotlin/net/trtl3/tuneshell/` (`MainActivity`, `MediaStoreChannel`, `TuneShellApplication`) ; paquet Dart `tuneshell` (51 fichiers d'imports et de références) ; `TuneShellApp` (`lib/app/app.dart`) ; canaux `net.trtl3.tuneshell/media_store` et `net.trtl3.tuneshell.playback`. Commit `refactor(android)!`, marqué changement cassant (nouvelle application sur l'appareil).
+- Nom visible : `appTitle` « TuneShell » dans `app_en.arb` et `app_fr.arb` (localisations régénérées), `android:label="TuneShell"`.
+- Documentation : titres de `README.md`, `PRD.md` (D4 tranchée au §9), `HOWTO.md`, `CHANGELOG.md`, `CLAUDE.md`, `docs/backlog.md` ; commandes `adb` de `HOWTO.md` sur `net.trtl3.tuneshell` ; as-built d'ADR-001, ADR-005 et ADR-006.
+- Restés au nom de travail, volontairement : procédures du prototype dans `HOWTO.md` (dossier `musicplayer/` du dépôt du prototype), `music-player-prototype`, la commande `flutter create` d'origine (`HOWTO.md`, annotée), l'alternative « dossier `musicplayer/` » d'ADR-001, les blocs Livraison, les lignes datées du registre et le texte de MPL-039. L'entrée de `CHANGELOG.md` est écrite après le test sur le Pixel du 2026-10-22 (règle du fichier).
+- Dépôt GitHub : renommé `tuneshell` par le propriétaire le 2026-10-21 (public, branche par défaut `main`) ; remote du clone mis à jour (`https://github.com/e7oi/tuneshell.git`), fetch et push vérifiés ; protection de `main` inchangée (ruleset `base`, actif sur la branche par défaut : PR, `code-checks`, ni suppression ni force-push).
+- Dossier local du clone : renommé `tuneshell` le 2026-10-22 (choix du propriétaire du 2026-10-21), liens du worktree réparés (`git worktree repair`) ; la mémoire de Claude Code est copiée vers le chemin du nouveau dossier.
+
 ## À valider (PO)
 
-- Renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer) : décision du propriétaire au moment de MPL-039, sans effet sur le dépôt.
+- Aucun. Validé le 2026-10-21 : dossier local du clone renommé.

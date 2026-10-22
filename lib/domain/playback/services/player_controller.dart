@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/playback/model/engine_issue.dart';
-import 'package:musicplayer/domain/playback/model/playback_notice.dart';
-import 'package:musicplayer/domain/playback/model/player_state.dart';
-import 'package:musicplayer/domain/playback/ports/audio_engine.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
-import 'package:musicplayer/domain/storage/model/volume_event.dart';
-import 'package:musicplayer/domain/storage/ports/track_source_opener.dart';
-import 'package:musicplayer/domain/storage/ports/volume_events.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/playback/model/engine_issue.dart';
+import 'package:tuneshell/domain/playback/model/playback_notice.dart';
+import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/domain/playback/ports/audio_engine.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/storage/model/volume_event.dart';
+import 'package:tuneshell/domain/storage/ports/track_source_opener.dart';
+import 'package:tuneshell/domain/storage/ports/volume_events.dart';
 
 /// Plays a queue of tracks through any [AudioEngine].
 ///

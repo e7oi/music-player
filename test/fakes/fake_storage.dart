@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
-import 'package:musicplayer/domain/storage/model/volume_event.dart';
-import 'package:musicplayer/domain/storage/ports/track_source_opener.dart';
-import 'package:musicplayer/domain/storage/ports/volume_events.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/storage/model/volume_event.dart';
+import 'package:tuneshell/domain/storage/ports/track_source_opener.dart';
+import 'package:tuneshell/domain/storage/ports/volume_events.dart';
 
 class FakeVolumeEvents implements VolumeEvents {
   new(Set<DiskId> available) : _available = {...available};

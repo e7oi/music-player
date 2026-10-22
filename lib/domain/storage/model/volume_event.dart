@@ -1,4 +1,4 @@
-import 'package:musicplayer/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
 
 /// A change in the availability of a removable disk.
 sealed class VolumeEvent {

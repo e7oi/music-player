@@ -1,5 +1,5 @@
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
 
 /// Thrown when a track cannot be opened (file missing, permission revoked).
 final class TrackSourceException implements Exception {

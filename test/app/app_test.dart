@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/app/app.dart';
-import 'package:musicplayer/app/providers/library_providers.dart';
-import 'package:musicplayer/app/providers/player_providers.dart';
-import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
-import 'package:musicplayer/platform/internal_storage.dart';
+import 'package:tuneshell/app/app.dart';
+import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/app/providers/player_providers.dart';
+import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/platform/internal_storage.dart';
 
 import '../fakes/fake_audio_engine.dart';
 import '../fakes/fake_library.dart';
@@ -29,7 +29,7 @@ void main() {
           trackSourceOpenerProvider.overrideWithValue(FakeTrackSourceOpener()),
           volumeEventsProvider.overrideWithValue(InternalVolumeEvents()),
         ],
-        child: const MusicPlayerApp(),
+        child: const TuneShellApp(),
       ),
     );
     await tester.pumpAndSettle();

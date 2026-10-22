@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musicplayer/app/providers/library_providers.dart';
-import 'package:musicplayer/data/audio/media_kit_audio_engine.dart';
-import 'package:musicplayer/domain/playback/model/playback_notice.dart';
-import 'package:musicplayer/domain/playback/model/player_state.dart';
-import 'package:musicplayer/domain/playback/ports/audio_engine.dart';
-import 'package:musicplayer/domain/playback/services/player_controller.dart';
-import 'package:musicplayer/domain/storage/ports/track_source_opener.dart';
-import 'package:musicplayer/domain/storage/ports/volume_events.dart';
-import 'package:musicplayer/platform/internal_storage.dart';
+import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/data/audio/media_kit_audio_engine.dart';
+import 'package:tuneshell/domain/playback/model/playback_notice.dart';
+import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/domain/playback/ports/audio_engine.dart';
+import 'package:tuneshell/domain/playback/services/player_controller.dart';
+import 'package:tuneshell/domain/storage/ports/track_source_opener.dart';
+import 'package:tuneshell/domain/storage/ports/volume_events.dart';
+import 'package:tuneshell/platform/internal_storage.dart';
 
 final audioEngineProvider = Provider<AudioEngine>((ref) {
   final engine = MediaKitAudioEngine();

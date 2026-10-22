@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musicplayer/app/providers/library_providers.dart';
-import 'package:musicplayer/app/providers/player_providers.dart';
-import 'package:musicplayer/domain/playback/model/player_state.dart';
-import 'package:musicplayer/l10n/generated/app_localizations.dart';
+import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/app/providers/player_providers.dart';
+import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/l10n/generated/app_localizations.dart';
 
 /// Temporary playback bar until the MPL-016 mock-ups exist (UC-001).
 class PlayerBar extends ConsumerWidget {

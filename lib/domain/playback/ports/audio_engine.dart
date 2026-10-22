@@ -1,6 +1,6 @@
-import 'package:musicplayer/domain/playback/model/engine_issue.dart';
-import 'package:musicplayer/domain/playback/model/engine_state.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/playback/model/engine_issue.dart';
+import 'package:tuneshell/domain/playback/model/engine_state.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
 
 /// The audio engine behind `PlayerController`.
 ///

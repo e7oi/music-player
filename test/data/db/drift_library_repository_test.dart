@@ -1,10 +1,10 @@
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/data/db/drift_library_repository.dart';
-import 'package:musicplayer/data/db/library_database.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
+import 'package:tuneshell/data/db/drift_library_repository.dart';
+import 'package:tuneshell/data/db/library_database.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
 
 import '../../fakes/fake_library.dart';
 

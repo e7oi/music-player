@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/playback/model/player_state.dart';
-import 'package:musicplayer/domain/playback/services/player_controller.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/domain/playback/services/player_controller.dart';
 
 /// Finds the library information of a track; null when it is not known.
 typedef TrackDescriber = LibraryTrack? Function(Track track);

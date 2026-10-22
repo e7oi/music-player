@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
-import 'package:musicplayer/domain/storage/model/volume_event.dart';
-import 'package:musicplayer/domain/storage/ports/track_source_opener.dart';
-import 'package:musicplayer/domain/storage/ports/volume_events.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/storage/model/volume_event.dart';
+import 'package:tuneshell/domain/storage/ports/track_source_opener.dart';
+import 'package:tuneshell/domain/storage/ports/volume_events.dart';
 
 /// Opens the tracks of the internal storage by file path (D25, ADR-005).
 class InternalTrackSourceOpener implements TrackSourceOpener {

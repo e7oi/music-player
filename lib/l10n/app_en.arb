@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "MusicPlayer",
+  "appTitle": "TuneShell",
   "@appTitle": {
     "description": "Application name shown in the app bar and the task switcher."
   },

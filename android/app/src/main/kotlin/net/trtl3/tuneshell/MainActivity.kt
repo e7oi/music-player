@@ -1,4 +1,4 @@
-package net.trtl3.musicplayer
+package net.trtl3.tuneshell
 
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -9,11 +9,11 @@ import io.flutter.embedding.engine.FlutterEngine
  * gesture) killed the Dart isolate while mpv kept running: mpv then called a
  * freed wakeup callback and crashed, or played on beside the player of the
  * next engine. The engine and its MediaStore channel are wired by
- * MusicPlayerApplication; this activity only lends itself to the channel.
+ * TuneShellApplication; this activity only lends itself to the channel.
  */
 class MainActivity : AudioServiceActivity() {
     private val mediaStore: MediaStoreChannel
-        get() = (application as MusicPlayerApplication).mediaStore
+        get() = (application as TuneShellApplication).mediaStore
 
     // Never, even when an intent asks for it: the process keeps one engine.
     override fun shouldDestroyEngineWithHost(): Boolean = false

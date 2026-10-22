@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/app/providers/library_providers.dart';
-import 'package:musicplayer/app/providers/player_providers.dart';
-import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
-import 'package:musicplayer/features/library/library_page.dart';
-import 'package:musicplayer/features/library/player_bar.dart';
-import 'package:musicplayer/l10n/generated/app_localizations.dart';
-import 'package:musicplayer/platform/internal_storage.dart';
+import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/app/providers/player_providers.dart';
+import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
+import 'package:tuneshell/features/library/library_page.dart';
+import 'package:tuneshell/features/library/player_bar.dart';
+import 'package:tuneshell/l10n/generated/app_localizations.dart';
+import 'package:tuneshell/platform/internal_storage.dart';
 
 import '../../fakes/fake_audio_engine.dart';
 import '../../fakes/fake_library.dart';

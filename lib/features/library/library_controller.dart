@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meta/meta.dart';
-import 'package:musicplayer/app/providers/library_providers.dart';
-import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
-import 'package:musicplayer/domain/library/services/library_indexer.dart';
+import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/domain/library/services/library_indexer.dart';
 
 sealed class LibraryViewState {
   const new();

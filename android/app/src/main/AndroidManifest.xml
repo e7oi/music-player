@@ -12,8 +12,8 @@
          without it (FR-005, requirement 11). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
-        android:label="musicplayer"
-        android:name=".MusicPlayerApplication"
+        android:label="TuneShell"
+        android:name=".TuneShellApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -4,8 +4,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:musicplayer/data/audio/media_kit_audio_engine.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
+import 'package:tuneshell/data/audio/media_kit_audio_engine.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
 
 import '../test/contract/audio_engine_contract.dart';
 

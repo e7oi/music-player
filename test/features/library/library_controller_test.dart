@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/app/providers/library_providers.dart';
-import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
-import 'package:musicplayer/features/library/library_controller.dart';
+import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/features/library/library_controller.dart';
 
 import '../../fakes/fake_library.dart';
 

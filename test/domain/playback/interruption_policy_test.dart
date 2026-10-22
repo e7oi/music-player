@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/playback/model/player_state.dart';
-import 'package:musicplayer/domain/playback/ports/audio_interruptions.dart';
-import 'package:musicplayer/domain/playback/services/interruption_policy.dart';
-import 'package:musicplayer/domain/playback/services/player_controller.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/domain/playback/ports/audio_interruptions.dart';
+import 'package:tuneshell/domain/playback/services/interruption_policy.dart';
+import 'package:tuneshell/domain/playback/services/player_controller.dart';
 
 import '../../fakes/fake_audio_engine.dart';
 import '../../fakes/fake_audio_interruptions.dart';

@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// Application name shown in the app bar and the task switcher.
   ///
   /// In en, this message translates to:
-  /// **'MusicPlayer'**
+  /// **'TuneShell'**
   String get appTitle;
 
   /// Shown instead of the library when the audio permission is refused (FR-004).

@@ -2,7 +2,7 @@
 /// so that the rules themselves are tested on synthetic files.
 library;
 
-const _package = 'package:musicplayer/';
+const _package = 'package:tuneshell/';
 
 const _domainDartLibraries = {
   'dart:core',
