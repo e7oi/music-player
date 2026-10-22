@@ -47,8 +47,9 @@ MPL-039, 2026-10-21.
 - Nom visible : `appTitle` « TuneShell » dans `app_en.arb` et `app_fr.arb` (localisations régénérées), `android:label="TuneShell"`.
 - Documentation : titres de `README.md`, `PRD.md` (D4 tranchée au §9), `HOWTO.md`, `CHANGELOG.md`, `CLAUDE.md`, `docs/backlog.md` ; commandes `adb` de `HOWTO.md` sur `net.trtl3.tuneshell` ; as-built d'ADR-001, ADR-005 et ADR-006.
 - Restés au nom de travail, volontairement : procédures du prototype dans `HOWTO.md` (dossier `musicplayer/` du dépôt du prototype), `music-player-prototype`, la commande `flutter create` d'origine (`HOWTO.md`, annotée), l'alternative « dossier `musicplayer/` » d'ADR-001, les blocs Livraison, les lignes datées du registre et le texte de MPL-039. L'entrée de `CHANGELOG.md` attend le test sur le Pixel (règle du fichier).
-- Dépôt GitHub : à renommer par le propriétaire (`music-player` → `tuneshell`) ; le remote du clone sera mis à jour ensuite. Le titre de `CLAUDE.md` porte déjà le nom cible.
+- Dépôt GitHub : renommé `tuneshell` par le propriétaire le 2026-10-21 (public, branche par défaut `main`) ; remote du clone mis à jour (`https://github.com/e7oi/tuneshell.git`), fetch et push vérifiés ; protection de `main` inchangée (ruleset `base`, actif sur la branche par défaut : PR, `code-checks`, ni suppression ni force-push).
+- Dossier local du clone : renommé `tuneshell` le 2026-10-22 (choix du propriétaire du 2026-10-21), liens du worktree réparés (`git worktree repair`) ; la mémoire de Claude Code est copiée vers le chemin du nouveau dossier.
 
 ## À valider (PO)
 
-- Renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer) : décision du propriétaire au moment de MPL-039, sans effet sur le dépôt.
+- Aucun. Validé le 2026-10-21 : dossier local du clone renommé.

@@ -76,7 +76,7 @@ Fonctionnalité: Application renommée TuneShell
 
 **Fiches liées.** ADR-007 (`Active`, validée par le propriétaire le 2026-10-21, `docs/technique/decisions/`). Aucune fiche UC/BR/FR modifiée : pas de changement de comportement. Utilise FR-003, FR-004, BR-004 (premier lancement et réindexation) et ADR-005, ADR-006 (as-built à mettre à jour).
 
-**À valider (PO).** Renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer). Validés le 2026-10-21 : ADR-007 ; préfixe `MPL` conservé ; dépôt du prototype inchangé ; nom disponible sur Google Play et l'App Store (vérifié par le propriétaire).
+**À valider (PO).** Aucun. Validés le 2026-10-21 : dossier local du clone renommé `tuneshell` ; ADR-007 ; préfixe `MPL` conservé ; dépôt du prototype inchangé ; nom disponible sur Google Play et l'App Store (vérifié par le propriétaire).
 
 ### MPL-036
 **Description.** Rendre la lecture utilisable hors de l'application : elle continue écran verrouillé et en arrière-plan, se commande depuis la notification, l'écran verrouillé et les touches média, et réagit aux appels, aux autres applications audio et au débranchement du casque. Cadrage du 2026-10-21, juste après MPL-018 (choix du propriétaire).
