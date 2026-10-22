@@ -1,10 +1,19 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:musicplayer/app/app.dart';
+import 'package:musicplayer/app/system_playback.dart';
 import 'package:musicplayer/data/audio/media_kit_audio_engine.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKitAudioEngine.ensureInitialized();
-  runApp(const ProviderScope(child: MusicPlayerApp()));
+  // One container shared by the screens and the media session.
+  final container = ProviderContainer();
+  await startSystemPlayback(container);
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: const MusicPlayerApp(),
+    ),
+  );
 }

@@ -110,4 +110,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get libraryRetry => 'Réessayer';
+
+  @override
+  String get notificationChannelName => 'Lecture';
+
+  @override
+  String get notificationChannelDescription =>
+      'Commandes de lecture : précédent, pause, suivant.';
 }

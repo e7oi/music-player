@@ -14,7 +14,6 @@ Préfixe : MPL · Prochaine clé : MPL-040 · Dernière MAJ : 2026-10-21
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-016 | Tâche technique | P0 | Maquettes UI/UX dans Claude Design (note : prévoir l'état « sources indisponibles » sans écraser la liste de pistes, défaut observé dans le prototype MPL-003) | À faire | — | — |
-| MPL-018 | Récit | P0 | Bibliothèque du stockage interne (recadré le 2026-10-15) : base Drift (disques, pistes, D23), choix des dossiers et indexation par MediaStore sans lecture des tags, autorisation d'accès à l'audio, liste minimale et lecture d'une piste réelle avec le `PlayerController`. SSD et test à 10 000 pistes : MPL-037 ; réassociation et retrait d'un disque : MPL-038 | À tester | MPL-001 | — |
 | MPL-037 | Récit | P0 | Bibliothèque du SSD par SAF : choix du dossier, droit d'accès persistant, parcours, lecture des tags et des pochettes dans les fichiers en arrière-plan, pochettes du stockage interne aussi (décision du 2026-10-15) (≈ 39 ms par fichier mesurés sur SAF, ≈ 100 s pour 2 600 fichiers), ouverture `fd://`, test à 10 000 pistes. Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | MPL-018 |
 | MPL-038 | Récit | P1 | Réassociation d'un nouveau disque dont les chemins relatifs correspondent à ceux d'un disque absent (D23) et retrait d'un disque externe de la bibliothèque (demande du propriétaire du 2026-10-15 ; sort des playlists, favoris et statistiques du disque à trancher au cadrage). Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | MPL-037 |
 | MPL-019 | Récit | P2 | Normalisation du volume (ReplayGain, préampli) | À faire | MPL-004 | — |
@@ -28,7 +27,7 @@ Préfixe : MPL · Prochaine clé : MPL-040 · Dernière MAJ : 2026-10-21
 | MPL-033 | Récit | P2 | Lecture de web-radio (France Info, Radio-Canada, France Inter, Radio Nova, CBC...), Phase 2 🔗 | Bloqué | MPL-004 | D26 |
 | MPL-034 | Tâche technique | P2 | Auto-test : davantage de MP3 dans l'échantillon (92 % de la bibliothèque), un MP3 illisible gardé comme témoin, pistes en erreur signalées (« flaggées ») dans l'interface — (possible depuis MPL-003) | À faire | MPL-001 | — |
 | MPL-035 | Tâche technique | P2 | Retrait du stockage amovible pendant la lecture : écouteur natif d'éjection puis `stop()` et fermeture du descripteur dans `PlayerController` (indépendant du moteur) ; vérifier la marge sous charge et avec d'autres descripteurs ouverts ; retirer le récepteur `ACTION_MEDIA_*` ; pas de reprise au rebranchement (décidé le 2026-10-15) ; descripteur proxy gardé comme alternative non testée. Voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.3 🔗 MPL-017, D25. Depuis le 2026-10-15 : MPL-017 livre le port `VolumeEvents` et la réaction du contrôleur (BR-002) ; ce ticket livre l'adaptateur natif et le test sur le Pixel. À couvrir aussi (2026-10-15) : mesurer sur le Pixel le temps entre l'annonce d'éjection et la fermeture du fichier par mpv ; décider si l'éjection doit passer avant la commande en cours (elle attend aujourd'hui dans la file de `PlayerController`) ; garder le descripteur proxy comme plan B si la marge d'environ 1 s ne suffit pas | À faire | MPL-001 | — |
-| MPL-036 | Tâche technique | P0 | Notification et lecture en arrière-plan dans l'application réelle (`audio_service`, écran verrouillé, contrôles système, touches média), branchées sur le `PlayerController`, à traiter juste après MPL-018 (choix du propriétaire du 2026-10-21) ; le moteur Flutter qui survit à l'activité est déjà livré par MPL-018 (objet `Shared` de `MainActivity.kt`, à remplacer par `AudioServiceActivity` et à adapter avec le canal MediaStore) ; reprendre les acquis du prototype (`android/app/src/main/res/raw/keep.xml`, absent depuis MPL-017 faute d'`audio_service` ; permission de notification en natif dans `MainActivity`) | À faire | MPL-001 | — |
+| MPL-036 | Tâche technique | P0 | Lecture en arrière-plan et contrôles du système (`audio_service` : service au premier plan, notification, écran verrouillé, touches média) et interruptions (`audio_session` : focus audio, débranchement du casque), branchés sur le `PlayerController` ; `AudioServiceActivity` remplace le moteur partagé de MPL-018 ; retour de `keep.xml` (cadré le 2026-10-21) | À tester | MPL-001 | — |
 | MPL-039 | Tâche technique | P1 | Renommer l'application en TuneShell : nom visible, dépôt GitHub, identifiant Android `net.trtl3.tuneshell`, paquets Kotlin et Dart, canaux natifs, documentation (cadré le 2026-10-21, ADR-007) | À faire | — | MPL-036 |
 
 ## Détails
@@ -79,6 +78,85 @@ Fonctionnalité: Application renommée TuneShell
 **Fiches liées.** ADR-007 (`Active`, validée par le propriétaire le 2026-10-21, `docs/technique/decisions/`). Aucune fiche UC/BR/FR modifiée : pas de changement de comportement. Utilise FR-003, FR-004, BR-004 (premier lancement et réindexation) et ADR-005, ADR-006 (as-built à mettre à jour).
 
 **À valider (PO).** Renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer). Validés le 2026-10-21 : ADR-007 ; préfixe `MPL` conservé ; dépôt du prototype inchangé ; nom disponible sur Google Play et l'App Store (vérifié par le propriétaire).
+
+### MPL-036
+**Description.** Rendre la lecture utilisable hors de l'application : elle continue écran verrouillé et en arrière-plan, se commande depuis la notification, l'écran verrouillé et les touches média, et réagit aux appels, aux autres applications audio et au débranchement du casque. Cadrage du 2026-10-21, juste après MPL-018 (choix du propriétaire).
+
+**Inclus.**
+- `audio_service` : service au premier plan, session média, notification de lecture, écran verrouillé, touches média ; adaptateur sous `platform/media_session/` branché sur le `PlayerController` (FR-005, ADR-006).
+- `MainActivity` hérite d'`AudioServiceActivity`, qui remplace l'objet `Shared` de MPL-018 ; canal MediaStore enregistré une fois par moteur (ADR-006).
+- `audio_session` : port `AudioInterruptions` et règles de BR-005 dans un service du domaine, testé d'abord.
+- Manifeste (service, récepteur des touches média, permissions) et `keep.xml` (MPL-013).
+- Textes du canal de notification en ARB ; procédure sur le Pixel dans `HOWTO.md`.
+
+**Exclusions.** Pochettes (MPL-037) ; Android Auto (MPL-005) ; reprise de la file après un redémarrage ; lecture aléatoire et répétition ; position et déplacement dans la piste dans l'écran de l'application (seule la notification les offre) ; écrans définitifs (MPL-016).
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Lecture en arrière-plan et contrôles du système
+
+  Scénario: Lecture écran verrouillé
+    Soit une piste en lecture
+    Quand l'utilisateur verrouille le téléphone pendant 15 minutes, téléphone débranché
+    Alors la lecture continue et enchaîne les pistes
+
+  Scénario: Commandes de la notification
+    Soit une piste en lecture et la notification affichée
+    Quand l'utilisateur touche "suivant" dans la notification
+    Alors la piste suivante de la file démarre
+    Et la notification et l'écran de l'application montrent la nouvelle piste
+
+  Scénario: Touches média
+    Soit une piste en lecture et un casque Bluetooth connecté
+    Quand l'utilisateur appuie sur la touche lecture/pause du casque
+    Alors la lecture se met en pause
+
+  Scénario: Appel entrant
+    Soit une piste en lecture
+    Quand un appel arrive puis se termine sans autre commande de l'utilisateur
+    Alors la lecture se met en pause pendant l'appel
+    Et reprend à la fin de l'appel
+
+  Scénario: Autre application audio
+    Soit une piste en lecture
+    Quand une autre application lance sa propre lecture
+    Alors la lecture se met en pause et ne reprend pas d'elle-même
+
+  Scénario: Casque débranché
+    Soit une piste en lecture dans un casque
+    Quand le casque est débranché
+    Alors la lecture se met en pause
+
+  Scénario: Arrêt
+    Soit une piste en lecture
+    Quand l'utilisateur touche "arrêt" dans la notification
+    Alors la lecture s'arrête et la notification disparaît
+
+  Scénario: Fermeture de l'application pendant la lecture
+    Soit une piste en lecture
+    Quand l'utilisateur fait le geste de retour puis retire l'application des applications récentes
+    Alors la lecture continue sans plantage
+    Et toucher la notification rouvre l'application sur la piste en cours
+```
+
+**Test appareil (Pixel, release).** Lecture écran verrouillé 15 minutes téléphone débranché, notification et écran verrouillé, touches d'un casque Bluetooth, appel entrant, autre application audio, débranchement du casque, atténuation pendant un guidage GPS (BR-005 règle 4), retour arrière et retrait des récentes. Procédure à écrire dans `HOWTO.md`.
+
+**Fiches liées.** UC-002, FR-005, BR-005 (`docs/fonctionnel/`) ; ADR-006 (`docs/technique/decisions/`). Toutes `Active` (validées par le propriétaire le 2026-10-21). Utilise FR-001, BR-002, BR-003 et ADR-005 (`Active`).
+
+**À valider (PO).** Aucun. Validés par le propriétaire le 2026-10-21 : focus audio et débranchement du casque inclus (BR-005) ; autorisation de notification déclarée sans être demandée (FR-005, exigence 11) ; commande « arrêt » (FR-005, exigence 2) ; reprise après un appel (BR-005, règle 3).
+
+#### Livraison — 2026-10-21
+Statut : ✅ fait
+Résumé : lecture en arrière-plan par `audio_service` (service au premier plan, notification « Lecture », écran verrouillé, touches média) branchée sur le `PlayerController`, et interruptions par `audio_session` (focus audio, débranchement du casque) avec une politique du domaine testée d'abord. `MainActivity` hérite d'`AudioServiceActivity` ; `MusicPlayerApplication` crée le moteur d'`audio_service` au démarrage du processus, y branche le canal MediaStore et termine le processus quand `audio_service` détruit ce moteur. Test sur le Pixel : étapes 1 à 12 OK.
+Fiches touchées : UC-002, FR-005, BR-005, ADR-006 : as-built écrits ; ADR-005 : as-built mis à jour ; ADR-005, ADR-006, FR-005 et `HOWTO.md` §12 (étape 12) mis à jour après le correctif du démarrage à froid ; règle 3 de BR-005 complétée après validation du propriétaire (déplacement dans la piste pendant une interruption).
+Vérification : `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && dart analyze --fatal-infos && flutter test` → 0 fichier modifié, aucune anomalie, 158 tests passés (`test/domain/playback/interruption_policy_test.dart` : BR-005 ; `test/platform/player_audio_handler_test.dart` et `audio_session_interruptions_test.dart` : FR-005, classement des événements). `flutter gen-l10n` sans écart ; markdownlint et `check-repo.sh` au vert ; `flutter build apk --release` → 77,8 Mo, permissions `WAKE_LOCK`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`, `POST_NOTIFICATIONS` ajoutées, pas d'`INTERNET`, 7 icônes `audio_service_*` présentes. Scénarios Gherkin de l'appareil : `HOWTO.md` §12.
+Test appareil (Pixel, release) : Pixel 10 Pro, build release, 2026-10-21, procédure `HOWTO.md` §12, par le propriétaire. Étapes 1, 3, 4, 6, 9, 10, 11 : OK. Étape 8 : OK (pause au débranchement, pas de reprise après une déconnexion puis une reconnexion Bluetooth) ; la lecture reprend quand l'écouteur est remis à l'oreille (voir À valider). Étape 12 : KO sur le premier build — la touche média à froid démarrait le moteur sans canal MediaStore (`MissingPluginException` dans `LibraryController.start`), puis l'application restait sur l'écran de chargement à l'ouverture ; corrigé (`fix(playback): wire the engine on a cold media button start`), puis OK sur le build corrigé : rien ne joue, aucun message, la bibliothèque s'affiche et une piste se lance ; aucun crash ni ANR dans la `dropbox` du système ; logcat du passage à froid perdu (tampon tourné), absence de `MissingPluginException` non vérifiée sur ce passage. Étape 2 : OK sur le build corrigé (téléphone débranché, verrouillé 15 min de 21:02 à 21:17, surveillé par adb en Wi-Fi chaque minute : même processus, session `PLAYING`, service au premier plan, appareil en veille, au moins un enchaînement de piste pendant la veille, journal des crashs vide ; lecteur, piste et commandes de l'écran verrouillé fonctionnels selon le propriétaire). Étape 5 : OK sur le build corrigé (appels réels, surveillés par adb) : pause au décroché et reprise automatique au raccrochage ; « lecture » touché pendant l'appel : rien ne joue, pas de reprise au raccrochage (BR-005, règles 1 et 3) ; l'essai « pause pendant l'appel » est impossible (l'application est déjà en pause), procédure corrigée ; relance depuis la notification en arrière-plan : service au premier plan (`isForeground=true`, type `0x2`) ; démarrages du service au premier plan en arrière-plan autorisés par Android (`Background started FGS: Allowed`, dont un depuis l'état en cache), aucune exception. Non vu directement : l'état du service au premier plan à l'instant de la reprise automatique (logcat tourné). Étape 7 : OK (guidage Google Maps : deux annonces, focus perdu en `LOSS_TRANSIENT_CAN_DUCK`, volume baissé pendant l'annonce selon le propriétaire, lecture toujours `PLAYING` ; BR-005, règle 4 vérifiée). Étapes 1, 3 à 11 faites sur le build précédent le correctif, qui ne touche que le démarrage du processus. Émulateur Android 16, release, par adb : service au premier plan `mediaPlayback`, notification, session `PLAYING` avec titre et « arrêt », focus `USAGE_MEDIA`, touches média, perte passagère puis reprise (préviseur de YouTube Music), retour arrière, retrait des récentes, arrêt, changement de piste sans coupure de la session, arrêt après retour arrière puis redémarrage : OK, aucun plantage.
+Revue QA : ✅ (3 tours, sous-agent à contexte neuf ; 3e tour sans bloquant ; lecture, revue obligatoire : une session séparée `>>> REVUE` est possible). Corrigés : demande de focus mise en cache par `audio_session` (un second « lecture » pendant un appel jouait par-dessus), événements traités en série, erreur qui arrêtait la politique, session et focus gardés pendant un changement de piste, moteur détruit par `audio_service` sous un mpv vivant, tests manquants (classement, artiste, album, durée), tests dépendants du temps. Restants : fenêtre étroite de fermeture au lancement. 3e tour (correctif du démarrage à froid) : aucun bloquant ; en-tête de commit trop long et bloc Livraison en retard, corrigés ; remarques : l'ordre canal / premier appel Dart repose sur le fait que le moteur poste ses tâches (variante possible : créer le moteur soi-même et le mettre en cache avant de lancer Dart, non retenue car le correctif est vérifié sur le Pixel) ; tout futur point d'entrée Android (récepteur, worker) démarrera aussi le moteur et `main()`. Non vérifié : service au premier plan à l'instant exact de la reprise automatique après un appel ; atténuation OpenSL ES (règle 4) ; démarrage par le navigateur de médias de System UI ; mode « Ne pas conserver les activités ».
+Description de PR : titre `feat(playback): add background playback and system controls (MPL-036)`. What: `audio_service` foreground media service, notification, lock-screen controls and media buttons, routed to the `PlayerController` by a `BaseAudioHandler` under `platform/media_session/`; audio focus and headphone unplugging through `audio_session` behind a new `AudioInterruptions` port, with the BR-005 rules in a domain `InterruptionPolicy`; `MainActivity` extends `AudioServiceActivity`; a `MusicPlayerApplication` creates the audio_service engine when the process starts (it replaces the shared engine of MPL-018), registers the MediaStore channel on it, so that a media button that starts the app cold no longer leaves the library loading, and ends the process when audio_service destroys that engine; `keep.xml` for the notification icons; notification channel texts in ARB; `POST_NOTIFICATIONS` declared, never requested. Why: playback has to go on and be controlled outside the app, and must not play over a call or out of the speaker (UC-002, FR-005, BR-005, ADR-006). How tested: format, `flutter analyze`, `dart analyze` and 158 unit tests green; release APK built (77.8 MB, no `INTERNET`, icons kept); emulator (Android 16, release) over adb: foreground service, notification, session, focus, media keys, transient focus loss and resume, back, task removal, stop, track change; device: Pixel 10 Pro, release build, HOWTO §12 by the owner: steps 1-12 passed (steps 2, 5, 7 and 12 on the build with the cold-start fix). Known gaps: the foreground state at the very moment of the automatic resume after a call was not observed (logcat rotated), though Android allowed every background foreground-service start; seeking during an interruption does not cancel the resume (BR-005 rule 3, as the owner decided); new transitive dependencies `flutter_cache_manager`, `http`, `sqflite` (for remote artwork, unused) to review in MPL-026; Kotlin glue without unit tests (CLAUDE.md exception).
+Décisions prises en route : moteur d'`audio_service` créé et branché dans une classe `Application` (le processus peut démarrer sans activité) ; processus terminé quand `audio_service` détruit son moteur (mpv ne peut pas être libéré sans l'isolat Dart) ; délai de 0,5 s avant de libérer la session et le focus à l'arrêt, pour le changement de piste ; une demande de focus en échec compte comme un refus.
+À valider (PO) : aucun. Validés le 2026-10-21 : un « lecture » refusé pendant un appel annule la reprise (BR-005, règle 3, précisée) ; reprise commandée par un écouteur à détection du port acceptée (BR-005, règle 5, précisée) ; section Décision d'ADR-006 révisée (moteur et canal MediaStore branchés par `MusicPlayerApplication`) ; déplacement dans la piste pendant une interruption sans effet sur la reprise (BR-005, règle 3) ; ligne de `CLAUDE.md` sur la permission de notification alignée sur FR-005, exigence 11.
+
 ### MPL-018
 **Description.** Rendre la bibliothèque du stockage interne réelle : indexer les pistes du téléphone dans la base, les afficher dans une liste minimale et en lire une avec le `PlayerController` de MPL-017. Cadrage du 2026-10-15 : MPL-018 découpé en trois tickets (MPL-018, MPL-037, MPL-038), choix du propriétaire.
 
@@ -306,6 +384,7 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 |---|---|---|---|
 | MPL-002 | Prototype audio Android | 07/10/2026 | Clos (07/10/2026) |
 | MPL-017 | Fondations du projet de production : projet Flutter, CI minimale, `PlayerController`, adaptateur `media_kit` | 15/10/2026 | Validé par le propriétaire, PR #7 fusionnée (15/10/2026). Pixel 10 Pro : application lancée en build release ; contrat `media_kit` passé en mode profile. Non testés sur appareil : éjection et descripteurs `fd://` (MPL-035) |
+| MPL-018 | Bibliothèque du stockage interne : base Drift, choix des dossiers et indexation par MediaStore, autorisation `READ_MEDIA_AUDIO`, liste et barre de lecture minimales, moteur Flutter unique par processus | 21/10/2026 | Validé par le propriétaire, PR #9 fusionnée (21/10/2026). Pixel 10 Pro, Android 17, release : `HOWTO.md` §11, étapes 1 à 11 OK ; plantages de mpv à la fermeture de l'activité corrigés |
 | MPL-003 | Sources de bibliothèque : stockage amovible (SSD USB-C), test Pixel (titre proposé) 🔗 ⚠️ | 08/10/2026 | Terminé avec réserves (08/10/2026) : SSD lu par SAF avec les deux moteurs ; tags non lus pendant le parcours (≈ 39 ms par fichier mesurés) ; retrait pendant la lecture traité en spike seulement (MPL-035) ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4 |
 | MPL-006 | Auto-test sur échantillon, isolé, exporté | 07/10/2026 | Clos (07/10/2026) : 13 pistes par moteur ; élargissement de l'échantillon MP3 : MPL-034 |
 | MPL-007 | Console de test : recherche, tri, filtre par format | 07/10/2026 | Clos (07/10/2026) |
@@ -358,6 +437,9 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | À numéroter | Identifiant Android de production : `net.trtl3.tuneshell` ; paquets Kotlin et Dart et canaux natifs renommés avec lui ; TuneShell s'installe à côté de l'ancienne application et du prototype | Tranchée 2026-10-21 | Choix du propriétaire ; rien n'est publié, l'identifiant deviendra définitif à la publication (D5, D6) · ADR-007, MPL-039 |
 | À numéroter | Découpage de MPL-018 : MPL-018 (stockage interne, base, liste minimale), MPL-037 (SSD par SAF, tags dans les fichiers, test à 10 000 pistes), MPL-038 (réassociation et retrait d'un disque) | Tranchée 2026-10-15 | Ticket trop gros pour un test sur le Pixel en une fois ; MediaStore fournit déjà les tags du stockage interne · MPL-018, MPL-037, MPL-038 |
 | À numéroter | `minSdk` 30 au lieu de la valeur du gabarit Flutter (24), écart à D30 | Tranchée 2026-10-15 | `RELATIVE_PATH` de MediaStore (API 29), `StorageVolumeCallback` (API 30) ; seul appareil de test en Android 17 · ADR-005, MPL-018 |
+| À numéroter | La reprise envoyée par un écouteur à détection du port (« pause » au retrait de l'oreille, « lecture » à la remise) est acceptée : ce sont des commandes de l'utilisateur, pas une reprise automatique | Tranchée 2026-10-21 | Constaté sur le Pixel (HOWTO §12, étape 8) ; la règle 5 visait le débranchement et la déconnexion, pas les commandes du casque · BR-005, FR-005, MPL-036 |
+| À numéroter | Le moteur Flutter d'`audio_service` est créé et branché (canal MediaStore, fin du processus) par une classe `Application`, et non plus par `MainActivity` | Tranchée 2026-10-21 | Une touche média démarre le processus sans activité : la bibliothèque restait sur l'écran de chargement (HOWTO §12, étape 12) · ADR-005, ADR-006, MPL-036 |
+| À numéroter | Le focus audio et le débranchement du casque (`audio_session`) font partie de MPL-036 ; l'autorisation de notification est déclarée sans être demandée | Tranchée 2026-10-21 | `media_kit` ne gère ni focus ni débranchement ; la notification d'une session média s'affiche sans l'autorisation (MPL-012) · BR-005, FR-005, MPL-036 |
 | À numéroter | Un seul moteur Flutter par processus dès MPL-018 (`MainActivity` fournit un moteur qui survit à l'activité), sans attendre `audio_service` ; MPL-036 suit immédiatement MPL-018 | Tranchée 2026-10-21 | Fermer l'activité (geste de retour) détruisait l'isolat Dart pendant que mpv tournait : plantages de mpv (rappel de réveil libéré) et deux lecteurs simultanés, constatés sur le Pixel · MPL-018, MPL-036 |
 | À numéroter | Stockage interne : l'utilisateur choisit les dossiers à indexer (D23 appliquée au disque « Local »), par une liste tirée de MediaStore, `Music/` proposé par défaut | Tranchée 2026-10-15 | Ne pas indexer sonneries, notes vocales et sons reçus par les messageries ; remplace le choix « tout le stockage interne » du même jour · FR-003, MPL-018 |
 | D30 | Dépendances et versions : dernière version stable compatible avec le Flutter épinglé, tout épinglé, Dependabot hebdomadaire, avis de sécurité traités hors cycle, dérogations dans `docs/dependency-exceptions.md`. Détail : `CLAUDE.md` | Provisoire | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |

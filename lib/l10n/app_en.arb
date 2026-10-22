@@ -123,5 +123,13 @@
   "libraryRetry": "Retry",
   "@libraryRetry": {
     "description": "Retries reading the folders."
+  },
+  "notificationChannelName": "Playback",
+  "notificationChannelDescription": "Playback controls: previous, pause, next.",
+  "@notificationChannelName": {
+    "description": "Name of the Android notification channel of the playback notification (FR-005)."
+  },
+  "@notificationChannelDescription": {
+    "description": "Description of the playback notification channel, shown in the Android settings."
   }
 }

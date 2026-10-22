@@ -253,6 +253,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get libraryRetry;
+
+  /// Name of the Android notification channel of the playback notification (FR-005).
+  ///
+  /// In en, this message translates to:
+  /// **'Playback'**
+  String get notificationChannelName;
+
+  /// Description of the playback notification channel, shown in the Android settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback controls: previous, pause, next.'**
+  String get notificationChannelDescription;
 }
 
 class _AppLocalizationsDelegate
