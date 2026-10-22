@@ -79,7 +79,7 @@ Règles de dépendance (vérifiées par `test/architecture/`, voir Outillage) :
 
 - Conserver `android/app/src/main/res/raw/keep.xml` (sinon les icônes de notification sont supprimées en release).
 - L'état `playing` de l'adaptateur est l'intention de lire, pas l'état momentané du moteur.
-- La permission de notification est demandée en natif dans `MainActivity` ; ne pas ajouter `permission_handler`.
+- La permission de notification (`POST_NOTIFICATIONS`) est déclarée sans être demandée (FR-005, exigence 11) ; ne pas ajouter `permission_handler`.
 - Aucune télémétrie ni réseau en release (D15, D26). `INTERNET` n'est déclarée que dans une variante de build en ligne dédiée.
 
 ## Tests

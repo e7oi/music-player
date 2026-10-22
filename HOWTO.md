@@ -230,3 +230,22 @@ Build release (D14), Pixel branché ou en Wi-Fi, quelques fichiers audio dans `M
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
 
+
+## 12. Tester la lecture en arrière-plan et les contrôles du système (MPL-036)
+
+Build release (D14), installée par-dessus la précédente (`adb install -r`), bibliothèque déjà indexée. Téléphone **débranché** pour les étapes 2 et 9 (`adb` en Wi-Fi si besoin). Un casque Bluetooth et un second téléphone pour l'appel.
+
+1. **Notification :** lancer une piste. Attendu : notification « Lecture » avec titre, artiste ou album, précédent, pause, suivant, arrêt et barre de progression ; même lecteur dans les réglages rapides.
+2. **Écran verrouillé :** verrouiller le téléphone 15 minutes. Attendu : la lecture continue et enchaîne les pistes ; l'écran verrouillé montre la piste et ses commandes, qui fonctionnent.
+3. **Commandes du système :** depuis la notification, toucher suivant, précédent (avant puis après 3 s de lecture), pause, lecture, et déplacer la barre de progression. Attendu : l'écran de l'application suit (FR-001).
+4. **Touches média :** avec le casque Bluetooth, lecture/pause, piste suivante, piste précédente. Attendu : comme à l'étape 3.
+5. **Appel :** application en arrière-plan et écran verrouillé, se faire appeler pendant la lecture, décrocher, parler plus d'une minute, raccrocher sans rien toucher. Attendu : pause pendant l'appel, reprise à la fin, notification toujours là ; aucune `ForegroundServiceStartNotAllowedException` dans `adb logcat`. Recommencer en touchant « lecture » deux fois dans la notification pendant l'appel (l'application est déjà en pause : la notification n'offre pas « pause ») : la musique ne joue pas par-dessus l'appel et ne reprend pas au raccrochage (BR-005, règles 1 et 3). Puis, application en arrière-plan, toucher « lecture » dans la notification : la lecture repart et `dumpsys activity services <paquet>` montre `isForeground=true`.
+6. **Autre application :** lancer une vidéo ou une autre application de musique. Attendu : pause, sans reprise à la fermeture de l'autre application.
+7. **Atténuation :** lancer un guidage GPS (Google Maps) pendant la lecture. Attendu : le volume baisse pendant l'annonce, la lecture continue (BR-005, règle 4). Si le volume ne baisse pas, le noter : la règle 4 devient une ligne « À valider ».
+8. **Casque :** débrancher ou déconnecter le casque pendant la lecture. Attendu : pause, sans reprise au rebranchement.
+9. **Fermeture :** pendant la lecture, geste de retour, puis retirer l'application des applications récentes. Attendu : la lecture continue, la notification reste ; la toucher rouvre l'application sur la piste en cours. Mettre en pause, retirer encore l'application des récentes : la notification disparaît.
+10. **Arrêt :** relancer une piste, toucher arrêt dans la notification. Attendu : la lecture s'arrête et la notification disparaît. Laisser la file arriver à sa fin : même résultat. Puis : lancer une piste, geste de retour, toucher arrêt dans la notification, attendre 10 s, rouvrir l'application. Attendu : l'application redémarre normalement ; aucun `Fatal signal` dans `adb logcat`.
+11. **Changement de piste :** pendant la lecture, toucher une autre piste dans la liste. Attendu : la notification et l'écran verrouillé changent de piste sans disparaître ni clignoter.
+12. **Touche média à froid :** mettre en pause, retirer l'application des récentes, attendre que le processus ait disparu (`adb shell pidof net.trtl3.musicplayer` vide), puis appuyer sur lecture du casque Bluetooth. Attendu : rien ne joue (la file n'est pas conservée) et aucun message « l'application s'est arrêtée » ; noter toute `ForegroundServiceDidNotStartInTimeException` dans `adb logcat`. Si le processus reste en cache après le retrait des récentes, le terminer avec `adb shell am kill net.trtl3.musicplayer` ; fermer d'abord toute autre application dont la session média est active (`dumpsys media_session`, « Sessions Stack » vide), sinon elle reçoit la touche. Puis ouvrir l'application depuis son icône sans la tuer. Attendu : la bibliothèque s'affiche (pas d'écran de chargement bloqué) et une piste se lance ; aucune `MissingPluginException` dans `adb logcat`.
+
+Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27). Vérifications par adb : `dumpsys activity services <paquet>` (`isForeground=true`, type `0x2`), `dumpsys media_session` (état de la session), `dumpsys audio` (« Audio Focus stack »).

@@ -25,5 +25,7 @@
   "noticeStoppedAfterFailures": "Lecture arrêtée après {count} échecs de suite",
   "noticeStoppedByEjection": "Lecture arrêtée : disque retiré",
   "libraryLoadFailed": "Les dossiers du téléphone n'ont pas pu être lus.",
-  "libraryRetry": "Réessayer"
+  "libraryRetry": "Réessayer",
+  "notificationChannelName": "Lecture",
+  "notificationChannelDescription": "Commandes de lecture : précédent, pause, suivant."
 }
