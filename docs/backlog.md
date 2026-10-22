@@ -44,7 +44,7 @@ Préfixe : MPL · Prochaine clé : MPL-040 · Dernière MAJ : 2026-10-21
 - Dépôt : le propriétaire renomme `music-player` en `tuneshell` sur GitHub ; mise à jour du remote du clone et des mentions du dépôt dans `CLAUDE.md` et le backlog.
 - Deux commits annulables : `refactor` mécanique des identifiants, puis nom visible et documentation.
 
-**Exclusions.** Snapshots figés de `docs/sprints/` ; historique Git ; blocs Livraison et entrées de `CHANGELOG.md` déjà écrits ; préfixe `MPL` des clés (sauf avis contraire du PO) ; dépôt privé du prototype ; icône et identité graphique (MPL-016) ; nom du fichier de base Drift ; vérification de disponibilité du nom (D5, D6).
+**Exclusions.** Snapshots figés de `docs/sprints/` ; historique Git ; blocs Livraison et entrées de `CHANGELOG.md` déjà écrits ; préfixe `MPL` des clés ; dépôt privé du prototype ; icône et identité graphique (MPL-016) ; nom du fichier de base Drift.
 
 **Critères d'acceptation.**
 ```gherkin
@@ -76,9 +76,9 @@ Fonctionnalité: Application renommée TuneShell
 
 **Test appareil (Pixel, release).** Désinstaller `net.trtl3.musicplayer` ; installer TuneShell ; premier lancement (autorisation, dossiers, indexation), lecture, notification « TuneShell », écran verrouillé, touche média (`HOWTO.md` §12, étapes 1, 2 et 12 avec le nouveau paquet).
 
-**Fiches liées.** ADR-007 (`Brouillon`, `docs/technique/decisions/`). Aucune fiche UC/BR/FR modifiée : pas de changement de comportement. Utilise FR-003, FR-004, BR-004 (premier lancement et réindexation) et ADR-005, ADR-006 (as-built à mettre à jour).
+**Fiches liées.** ADR-007 (`Active`, validée par le propriétaire le 2026-10-21, `docs/technique/decisions/`). Aucune fiche UC/BR/FR modifiée : pas de changement de comportement. Utilise FR-003, FR-004, BR-004 (premier lancement et réindexation) et ADR-005, ADR-006 (as-built à mettre à jour).
 
-**À valider (PO).** Garder le préfixe `MPL` des clés (recommandé) ; ne pas renommer le dépôt privé du prototype (recommandé) ; vérifier la disponibilité du nom (Google Play, marques) avec D5 et D6 ou dès maintenant ; renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer).
+**À valider (PO).** Renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer). Validés le 2026-10-21 : ADR-007 ; préfixe `MPL` conservé ; dépôt du prototype inchangé ; nom disponible sur Google Play et l'App Store (vérifié par le propriétaire).
 ### MPL-018
 **Description.** Rendre la bibliothèque du stockage interne réelle : indexer les pistes du téléphone dans la base, les afficher dans une liste minimale et en lire une avec le `PlayerController` de MPL-017. Cadrage du 2026-10-15 : MPL-018 découpé en trois tickets (MPL-018, MPL-037, MPL-038), choix du propriétaire.
 

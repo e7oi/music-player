@@ -1,6 +1,6 @@
 # ADR-007 — Nom TuneShell : nom visible, dépôt et identifiants
 
-**Statut :** Brouillon · **Date :** 2026-10-21 · **Ticket :** MPL-039 · **Décisions :** D4 · **Fiches :** aucune (pas de changement de comportement)
+**Statut :** Active (validée le 2026-10-21) · **Date :** 2026-10-21 · **Ticket :** MPL-039 · **Décisions :** D4 · **Fiches :** aucune (pas de changement de comportement)
 
 ## Contexte
 
@@ -17,12 +17,13 @@ Une décision du 2026-10-15 (registre, « Identifiant Android de production ») 
 Tout renommer, identifiants compris (choix du propriétaire le 2026-10-21) :
 
 - **Nom visible** : « TuneShell », nom propre non traduit. `appTitle` vaut « TuneShell » dans tous les fichiers ARB ; le libellé Android (`android:label`) vaut « TuneShell » dans le manifeste (Android ne lit pas les ARB ; un nom propre n'a pas à être traduit).
-- **Dépôt** : `music-player` devient `tuneshell` sur GitHub (renommé par le propriétaire dans les réglages du dépôt ; GitHub redirige l'ancienne adresse). Le remote du clone local est mis à jour. Le dépôt privé du prototype garde son nom (voir « À valider »).
+- **Dépôt** : `music-player` devient `tuneshell` sur GitHub (renommé par le propriétaire dans les réglages du dépôt ; GitHub redirige l'ancienne adresse). Le remote du clone local est mis à jour. Le dépôt privé du prototype garde son nom (validé par le propriétaire le 2026-10-21).
 - **Identifiant Android** : `applicationId` et `namespace` `net.trtl3.tuneshell`. Il ne pourra plus changer une fois l'application publiée (D5, D6 ouvertes) ; rien n'est publié, c'est le moment le moins coûteux.
 - **Kotlin** : paquet `net.trtl3.tuneshell`, dossier déplacé ; `MusicPlayerApplication` devient `TuneShellApplication`.
 - **Dart** : paquet `tuneshell` dans `pubspec.yaml` ; tous les imports `package:musicplayer/` deviennent `package:tuneshell/` ; `MusicPlayerApp` devient `TuneShellApp`.
 - **Canaux** : `net.trtl3.tuneshell/media_store` et `net.trtl3.tuneshell.playback`, des deux côtés.
-- **Préfixe des clés du backlog** : `MPL` est conservé (identifiants stables, cités dans l'historique Git et les PR) ; voir « À valider ».
+- **Préfixe des clés du backlog** : `MPL` est conservé (identifiants stables, cités dans l'historique Git et les PR ; validé par le propriétaire le 2026-10-21).
+- **Disponibilité du nom** : vérifiée par le propriétaire sur Google Play et l'App Store le 2026-10-21.
 - **Inchangés** : snapshots figés de `docs/sprints/`, historique Git, blocs Livraison et entrées de `CHANGELOG.md` déjà écrits (ils décrivent l'état de leur date), nom du fichier de base Drift (`library`).
 
 ## Conséquences
@@ -40,6 +41,4 @@ Tout renommer, identifiants compris (choix du propriétaire le 2026-10-21) :
 
 ## À valider (PO)
 
-- Garder le préfixe `MPL` des clés du backlog (recommandé) ou passer à un nouveau préfixe ?
-- Renommer aussi le dépôt privé `music-player-prototype` (recommandé : non, il est figé) ?
-- Disponibilité du nom (Google Play, marques) : non vérifiée ; à traiter avec D5 et D6 ?
+- Renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer) : décision du propriétaire au moment de MPL-039, sans effet sur le dépôt.
