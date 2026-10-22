@@ -28,7 +28,7 @@ Tout renommer, identifiants compris (choix du propriétaire le 2026-10-21) :
 
 ## Conséquences
 
-- La ligne « Identifiant Android de production : `net.trtl3.musicplayer` » du registre est remplacée : TuneShell s'installe à côté de l'ancienne application (et du prototype) au lieu de la remplacer. Sur le Pixel : désinstaller `net.trtl3.musicplayer`, puis accorder de nouveau l'autorisation audio et choisir les dossiers (FR-004, FR-003) ; la bibliothèque est réindexée, l'identité des pistes repart de zéro (BR-004), sans perte puisqu'aucune donnée utilisateur n'est conservée au-delà de l'index.
+- La ligne « Identifiant Android de production : `net.trtl3.musicplayer` » du registre est remplacée : TuneShell s'installe à côté de l'ancienne application au lieu de la remplacer (le prototype et l'ancienne application partageant `net.trtl3.musicplayer`, une seule est présente à la fois). Sur le Pixel : désinstaller `net.trtl3.musicplayer`, puis accorder de nouveau l'autorisation audio et choisir les dossiers (FR-004, FR-003) ; la bibliothèque est réindexée, l'identité des pistes repart de zéro (BR-004), sans perte puisqu'aucune donnée utilisateur n'est conservée au-delà de l'index.
 - Le changement touche presque tous les fichiers Dart (imports) : il est fait après le merge de MPL-036 pour éviter des conflits sur sa branche, en un commit mécanique (`refactor`) séparé du nom visible.
 - `dart format`, les deux analyses, `flutter test` (dont `test/architecture/`) et `check-repo.sh` vérifient le renommage ; un `grep` de `musicplayer` hors des exclusions doit être vide.
 - Les procédures de `HOWTO.md` qui citent le paquet (`pidof`, `dumpsys`, `am kill`) changent de nom de paquet.
@@ -47,7 +47,7 @@ MPL-039, 2026-10-21.
 - Nom visible : `appTitle` « TuneShell » dans `app_en.arb` et `app_fr.arb` (localisations régénérées), `android:label="TuneShell"`.
 - Documentation : titres de `README.md`, `PRD.md` (D4 tranchée au §9), `HOWTO.md`, `CHANGELOG.md`, `CLAUDE.md`, `docs/backlog.md` ; commandes `adb` de `HOWTO.md` sur `net.trtl3.tuneshell` ; as-built d'ADR-001, ADR-005 et ADR-006.
 - Restés au nom de travail, volontairement : procédures du prototype dans `HOWTO.md` (dossier `musicplayer/` du dépôt du prototype), `music-player-prototype`, la commande `flutter create` d'origine (`HOWTO.md`, annotée), l'alternative « dossier `musicplayer/` » d'ADR-001, les blocs Livraison, les lignes datées du registre et le texte de MPL-039. L'entrée de `CHANGELOG.md` attend le test sur le Pixel (règle du fichier).
-- Dépôt GitHub : renommé par le propriétaire ; remote du clone mis à jour ensuite.
+- Dépôt GitHub : à renommer par le propriétaire (`music-player` → `tuneshell`) ; le remote du clone sera mis à jour ensuite. Le titre de `CLAUDE.md` porte déjà le nom cible.
 
 ## À valider (PO)
 

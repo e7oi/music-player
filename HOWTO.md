@@ -40,7 +40,7 @@ flutter gen-l10n       # après toute modification des fichiers ARB de lib/l10n/
 
 Avant un commit : `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && dart analyze --fatal-infos && flutter test`. `dart analyze` exécute en plus le plugin `riverpod_lint`, que `flutter analyze` ignore.
 
-> L'identifiant d'organisation `net.trtl3` est acté (D7). Il est difficile à changer après publication. L'identifiant Android est `net.trtl3.tuneshell` depuis MPL-039 (ADR-007) : TuneShell s'installe à côté de l'ancienne application `net.trtl3.musicplayer` et du prototype, qu'il faut désinstaller à part (`adb uninstall net.trtl3.musicplayer`).
+> L'identifiant d'organisation `net.trtl3` est acté (D7). Il est difficile à changer après publication. L'identifiant Android est `net.trtl3.tuneshell` depuis MPL-039 (ADR-007) : TuneShell s'installe à côté de l'ancienne application `net.trtl3.musicplayer` (identifiant partagé par le prototype et les builds d'avant MPL-039), à désinstaller à part (`adb uninstall net.trtl3.musicplayer`).
 
 ---
 
