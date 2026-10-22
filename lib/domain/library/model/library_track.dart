@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
 
 /// The disk of the internal storage.
 ///

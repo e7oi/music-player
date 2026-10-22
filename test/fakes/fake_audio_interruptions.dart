@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:musicplayer/domain/playback/ports/audio_interruptions.dart';
+import 'package:tuneshell/domain/playback/ports/audio_interruptions.dart';
 
 /// Answers like audio_session 0.2.4: once a request was made, even a refused
 /// one, later requests answer true without asking the system again, until

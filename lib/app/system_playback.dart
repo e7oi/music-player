@@ -3,12 +3,12 @@ import 'dart:ui';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musicplayer/app/providers/library_providers.dart';
-import 'package:musicplayer/app/providers/player_providers.dart';
-import 'package:musicplayer/domain/playback/services/interruption_policy.dart';
-import 'package:musicplayer/l10n/generated/app_localizations.dart';
-import 'package:musicplayer/platform/audio_session_interruptions.dart';
-import 'package:musicplayer/platform/media_session/player_audio_handler.dart';
+import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/app/providers/player_providers.dart';
+import 'package:tuneshell/domain/playback/services/interruption_policy.dart';
+import 'package:tuneshell/l10n/generated/app_localizations.dart';
+import 'package:tuneshell/platform/audio_session_interruptions.dart';
+import 'package:tuneshell/platform/media_session/player_audio_handler.dart';
 
 /// Hands the player controller of [container] to Android: audio focus
 /// (BR-005) and the media session with its notification (FR-005). Runs once
@@ -33,7 +33,7 @@ Future<void> startSystemPlayback(ProviderContainer container) async {
       describe: (track) => container.read(libraryTrackIndexProvider)[track],
     ),
     config: AudioServiceConfig(
-      androidNotificationChannelId: 'net.trtl3.musicplayer.playback',
+      androidNotificationChannelId: 'net.trtl3.tuneshell.playback',
       androidNotificationChannelName: l10n.notificationChannelName,
       androidNotificationChannelDescription:
           l10n.notificationChannelDescription,

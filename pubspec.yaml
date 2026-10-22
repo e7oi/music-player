@@ -1,4 +1,4 @@
-name: musicplayer
+name: tuneshell
 description: "Local, free, ad-free music player with a streaming-like experience."
 publish_to: 'none'
 

@@ -1,4 +1,4 @@
-package net.trtl3.musicplayer
+package net.trtl3.tuneshell
 
 import android.app.Application
 import android.os.Process
@@ -13,7 +13,7 @@ import io.flutter.plugin.common.MethodChannel
  * all: the engine then runs main() without MainActivity ever configuring it,
  * and the library stayed on its loading screen once the app was opened.
  */
-class MusicPlayerApplication : Application() {
+class TuneShellApplication : Application() {
     /**
      * audio_service destroys its engine when its service stops while no
      * activity is attached (stop from the notification after a back gesture,

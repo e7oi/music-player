@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musicplayer/data/db/drift_library_repository.dart';
-import 'package:musicplayer/data/db/library_database.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
-import 'package:musicplayer/domain/library/ports/library_repository.dart';
-import 'package:musicplayer/domain/library/services/library_indexer.dart';
-import 'package:musicplayer/platform/media_store_channel.dart';
+import 'package:tuneshell/data/db/drift_library_repository.dart';
+import 'package:tuneshell/data/db/library_database.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/domain/library/ports/library_repository.dart';
+import 'package:tuneshell/domain/library/services/library_indexer.dart';
+import 'package:tuneshell/platform/media_store_channel.dart';
 
 final libraryDatabaseProvider = Provider<LibraryDatabase>((ref) {
   final db = LibraryDatabase();

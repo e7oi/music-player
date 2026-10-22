@@ -1,5 +1,5 @@
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/playback/model/engine_issue.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/playback/model/engine_issue.dart';
 
 /// Something the user should be told about. The text lives in the ARB files;
 /// the controller only states the facts.

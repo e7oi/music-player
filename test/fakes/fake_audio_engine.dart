@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:musicplayer/domain/playback/model/engine_issue.dart';
-import 'package:musicplayer/domain/playback/model/engine_state.dart';
-import 'package:musicplayer/domain/playback/ports/audio_engine.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/playback/model/engine_issue.dart';
+import 'package:tuneshell/domain/playback/model/engine_state.dart';
+import 'package:tuneshell/domain/playback/ports/audio_engine.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
 
 /// In-memory [AudioEngine].
 ///

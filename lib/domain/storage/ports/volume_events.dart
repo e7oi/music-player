@@ -1,5 +1,5 @@
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/storage/model/volume_event.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/storage/model/volume_event.dart';
 
 /// Availability of the disks, as reported by the platform.
 ///

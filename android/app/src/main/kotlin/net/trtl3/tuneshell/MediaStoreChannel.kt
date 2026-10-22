@@ -1,4 +1,4 @@
-package net.trtl3.musicplayer
+package net.trtl3.tuneshell
 
 import android.Manifest
 import android.app.Activity
@@ -27,7 +27,7 @@ import java.util.concurrent.Executors
  */
 class MediaStoreChannel(private val context: Context) : MethodChannel.MethodCallHandler {
     companion object {
-        const val NAME = "net.trtl3.musicplayer/media_store"
+        const val NAME = "net.trtl3.tuneshell/media_store"
         private const val PERMISSION_REQUEST = 4201
         private const val PREFS = "media_store"
 

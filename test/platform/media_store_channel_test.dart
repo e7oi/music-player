@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
-import 'package:musicplayer/domain/storage/ports/track_source_opener.dart';
-import 'package:musicplayer/platform/internal_storage.dart';
-import 'package:musicplayer/platform/media_store_channel.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/storage/ports/track_source_opener.dart';
+import 'package:tuneshell/platform/internal_storage.dart';
+import 'package:tuneshell/platform/media_store_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

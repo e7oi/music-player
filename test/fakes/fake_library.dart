@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
-import 'package:musicplayer/domain/library/ports/library_repository.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/domain/library/ports/library_repository.dart';
 
 TrackInfo info(
   String relativePath, {

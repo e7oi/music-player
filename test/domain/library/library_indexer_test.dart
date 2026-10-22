@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/services/library_indexer.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/services/library_indexer.dart';
 
 import '../../fakes/fake_library.dart';
 

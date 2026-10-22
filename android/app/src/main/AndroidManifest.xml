@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="musicplayer"
-        android:name=".MusicPlayerApplication"
+        android:name=".TuneShellApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:musicplayer/domain/playback/model/player_state.dart';
-import 'package:musicplayer/domain/playback/ports/audio_interruptions.dart';
-import 'package:musicplayer/domain/playback/services/player_controller.dart';
+import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/domain/playback/ports/audio_interruptions.dart';
+import 'package:tuneshell/domain/playback/services/player_controller.dart';
 
 /// Pauses and resumes the [PlayerController] when the system takes the audio
 /// output, so that the controller itself knows nothing of the system.

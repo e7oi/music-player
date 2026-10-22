@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
-import 'package:musicplayer/domain/playback/ports/audio_interruptions.dart';
+import 'package:tuneshell/domain/playback/ports/audio_interruptions.dart';
 
 /// [AudioInterruptions] over Android audio focus (ADR-006).
 ///

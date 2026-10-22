@@ -1,8 +1,8 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/playback/services/player_controller.dart';
-import 'package:musicplayer/platform/media_session/player_audio_handler.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/playback/services/player_controller.dart';
+import 'package:tuneshell/platform/media_session/player_audio_handler.dart';
 
 import '../fakes/fake_audio_engine.dart';
 import '../fakes/fake_library.dart';

@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicplayer/domain/library/model/track.dart';
-import 'package:musicplayer/domain/playback/model/engine_issue.dart';
-import 'package:musicplayer/domain/playback/model/playback_notice.dart';
-import 'package:musicplayer/domain/playback/model/player_state.dart';
-import 'package:musicplayer/domain/playback/services/player_controller.dart';
-import 'package:musicplayer/domain/storage/model/media_source.dart';
-import 'package:musicplayer/domain/storage/model/volume_event.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/playback/model/engine_issue.dart';
+import 'package:tuneshell/domain/playback/model/playback_notice.dart';
+import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/domain/playback/services/player_controller.dart';
+import 'package:tuneshell/domain/storage/model/media_source.dart';
+import 'package:tuneshell/domain/storage/model/volume_event.dart';
 
 import '../../fakes/fake_audio_engine.dart';
 import '../../fakes/fake_storage.dart';

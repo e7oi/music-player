@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musicplayer/app/app.dart';
-import 'package:musicplayer/app/system_playback.dart';
-import 'package:musicplayer/data/audio/media_kit_audio_engine.dart';
+import 'package:tuneshell/app/app.dart';
+import 'package:tuneshell/app/system_playback.dart';
+import 'package:tuneshell/data/audio/media_kit_audio_engine.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +13,7 @@ Future<void> main() async {
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: const MusicPlayerApp(),
+      child: const TuneShellApp(),
     ),
   );
 }

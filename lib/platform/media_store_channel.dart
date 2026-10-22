@@ -1,13 +1,13 @@
 import 'package:flutter/services.dart';
-import 'package:musicplayer/domain/library/model/library_track.dart';
-import 'package:musicplayer/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
 
 /// Dart side of `MediaStoreChannel.kt` (ADR-005).
 class MediaStoreChannel implements InternalAudioSource, AudioPermission {
   new([MethodChannel? channel])
     : _channel = channel ?? const MethodChannel(channelName);
 
-  static const channelName = 'net.trtl3.musicplayer/media_store';
+  static const channelName = 'net.trtl3.tuneshell/media_store';
 
   /// What MediaStore stores when a tag is missing.
   static const _unknown = '<unknown>';
