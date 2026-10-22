@@ -1,4 +1,4 @@
-# Changelog — MusicPlayer
+# Changelog — TuneShell
 
 **Dernière MAJ :** 09/10/2026 · Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 

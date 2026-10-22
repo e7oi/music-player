@@ -1,6 +1,6 @@
-# MusicPlayer
+# TuneShell
 
-**Version du document :** 0.2 · **Dernière MAJ :** 09/10/2026
+**Version du document :** 0.2 · **Dernière MAJ :** 21/10/2026
 
 Lecteur audio local, **libre, gratuit, sans publicité, sans compte, sans télémétrie**, avec l'expérience d'un service de streaming moderne.
 
@@ -52,4 +52,4 @@ Aucune donnée ne quitte l'appareil. La build release ne déclare pas la permiss
 
 ## Licence
 
-Copyright © 2026 Eloi BERTIN. Distribué sous licence GPL-3.0-or-later (voir le fichier `LICENSE`). Le nom de l'application n'est pas encore défini.
+Copyright © 2026 Eloi BERTIN. Distribué sous licence GPL-3.0-or-later (voir le fichier `LICENSE`).

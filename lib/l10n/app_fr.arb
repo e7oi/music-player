@@ -1,6 +1,6 @@
 {
   "@@locale": "fr",
-  "appTitle": "MusicPlayer",
+  "appTitle": "TuneShell",
   "permissionExplanation": "L'accès aux fichiers audio est nécessaire pour afficher et lire la musique du téléphone.",
   "permissionRetry": "Autoriser l'accès",
   "permissionOpenSettings": "Ouvrir les réglages",

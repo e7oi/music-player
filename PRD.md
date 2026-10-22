@@ -1,6 +1,6 @@
-# PRD — MusicPlayer
+# PRD — TuneShell
 
-**Version :** 0.2 · **Dernière MAJ :** 09/10/2026 · **Préfixe backlog :** MPL · **Licence :** GPL-3.0-or-later
+**Version :** 0.2 · **Dernière MAJ :** 21/10/2026 · **Préfixe backlog :** MPL · **Licence :** GPL-3.0-or-later
 
 > Le backlog (`MPL-NNN`) et le registre des décisions (`Dn`) sont tenus dans les conversations du Project et figés à chaque clôture de sprint dans `docs/sprints/`. Ce document fixe le produit, le périmètre et les critères de succès.
 
@@ -94,7 +94,7 @@ Le registre complet (`Dn`) est tenu dans le backlog. Résumé des décisions qui
 | D1 | Projet open source ; licence GPL-3.0-or-later | Tranchée 05/10/2026 |
 | D2 | Moteur audio : `media_kit` (libmpv/FFmpeg) est le **moteur unique** de l'application réelle, derrière une **interface indépendante du moteur** (`PlayerController`, MPL-017) qui permet de changer de moteur plus tard ; `just_audio` n'est pas repris dans l'application réelle, le prototype reste la référence. Motifs : un seul moteur à tester et à maintenir, WMA lisible (D16 : toujours non prioritaire), ReplayGain possible via mpv (MPL-019, D13), même moteur sur Windows et macOS. Conséquences acceptées : les WARN de MPL-010 (sans effet audible constaté) ; poids de l'APK non mesuré (risque à suivre). Tests SSD du 08/10/2026 : les deux moteurs lisent le SSD et réagissent de la même façon au retrait ; remplace la recommandation de `docs/sprints/sprint-1/RESULTS.md` §6 (snapshot Sprint 1) | Tranchée 09/10/2026 |
 | D3 | Base locale : SQLite via **Drift** (requêtes typées, migrations de schéma versionnées, flux réactifs, exécution en isolate, recherche plein texte FTS5 possible). Gestion d'état : **Riverpod**. Motif de la base : le modèle D23 est relationnel (disques, pistes par disque + chemin relatif, playlists mêlant plusieurs disques) ; Isar (état de maintenance en 2026 non vérifié) et ObjectBox (plus de natif, relations moins naturelles) ne sont pas retenus. Reporté à l'implémentation : la version exacte de Riverpod et l'usage ou non de sa génération de code (en plus de celle de Drift) | Tranchée 09/10/2026 |
-| D4 | Nom définitif de l'application | Ouverte |
+| D4 | Nom définitif de l'application : **TuneShell** (ADR-007) | Tranchée 21/10/2026 |
 | D5 | Canaux de distribution (stores, téléchargement direct, F-Droid) | Ouverte |
 | D6 | Android Auto et Google Play (apps non installées via le Play Store non visibles dans Android Auto hors mode développeur, à revérifier) | Ouverte |
 | D7 | Identifiant d'organisation `net.trtl3` | Tranchée |

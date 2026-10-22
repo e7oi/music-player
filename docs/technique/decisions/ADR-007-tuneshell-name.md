@@ -39,6 +39,16 @@ Tout renommer, identifiants compris (choix du propriétaire le 2026-10-21) :
 - **Nom visible seulement** : garde `net.trtl3.musicplayer` et le paquet Dart ; écarté par le propriétaire, l'identifiant Android deviendrait définitif à la publication.
 - **Nom visible et `applicationId` seulement** : laisse un paquet Dart et des canaux au nom de travail ; écarté pour la cohérence, le coût étant mécanique.
 
+## As-built
+
+MPL-039, 2026-10-21.
+
+- Identifiants : `applicationId` et `namespace` `net.trtl3.tuneshell` (`android/app/build.gradle.kts`) ; Kotlin sous `android/app/src/main/kotlin/net/trtl3/tuneshell/` (`MainActivity`, `MediaStoreChannel`, `TuneShellApplication`) ; paquet Dart `tuneshell` (51 fichiers d'imports et de références) ; `TuneShellApp` (`lib/app/app.dart`) ; canaux `net.trtl3.tuneshell/media_store` et `net.trtl3.tuneshell.playback`. Commit `refactor(android)!`, marqué changement cassant (nouvelle application sur l'appareil).
+- Nom visible : `appTitle` « TuneShell » dans `app_en.arb` et `app_fr.arb` (localisations régénérées), `android:label="TuneShell"`.
+- Documentation : titres de `README.md`, `PRD.md` (D4 tranchée au §9), `HOWTO.md`, `CHANGELOG.md`, `CLAUDE.md`, `docs/backlog.md` ; commandes `adb` de `HOWTO.md` sur `net.trtl3.tuneshell` ; as-built d'ADR-001, ADR-005 et ADR-006.
+- Restés au nom de travail, volontairement : procédures du prototype dans `HOWTO.md` (dossier `musicplayer/` du dépôt du prototype), `music-player-prototype`, la commande `flutter create` d'origine (`HOWTO.md`, annotée), l'alternative « dossier `musicplayer/` » d'ADR-001, les blocs Livraison, les lignes datées du registre et le texte de MPL-039. L'entrée de `CHANGELOG.md` attend le test sur le Pixel (règle du fichier).
+- Dépôt GitHub : renommé par le propriétaire ; remote du clone mis à jour ensuite.
+
 ## À valider (PO)
 
 - Renommer ou non le dossier local du clone (la mémoire de Claude Code, liée au chemin, serait à déplacer) : décision du propriétaire au moment de MPL-039, sans effet sur le dépôt.
