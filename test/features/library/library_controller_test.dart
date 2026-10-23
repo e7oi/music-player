@@ -54,9 +54,36 @@ void main() {
   tearDown(() => container.dispose());
 
   group('FR-004 permission', () {
-    /// @verifies FR-004
-    test('asks once at first launch, then offers the folders', () async {
+    /// @verifies FR-014.1
+    test('first launch shows the welcome and does not ask yet', () async {
       await controller().start();
+
+      expect(permission.requests, 0);
+      expect(
+        state(),
+        isA<LibraryWelcome>().having((s) => s.explaining, 'explaining', false),
+      );
+    });
+
+    /// @verifies FR-014.2
+    test('the explanation comes before the Android dialog', () async {
+      await controller().start();
+
+      controller().showExplanation();
+
+      expect(permission.requests, 0);
+      expect(
+        state(),
+        isA<LibraryWelcome>().having((s) => s.explaining, 'explaining', true),
+      );
+    });
+
+    /// @verifies FR-004
+    /// @verifies FR-014.2
+    test('the button asks once, then offers the folders', () async {
+      await controller().start();
+
+      await controller().requestPermission();
 
       expect(permission.requests, 1);
       expect(state(), isA<LibraryFolderChoice>());
@@ -77,6 +104,7 @@ void main() {
       permission.answer = AudioPermissionStatus.denied;
 
       await controller().start();
+      await controller().requestPermission();
 
       expect(
         state(),
@@ -92,6 +120,7 @@ void main() {
     test('retry asks again and continues when granted', () async {
       permission.answer = AudioPermissionStatus.denied;
       await controller().start();
+      await controller().requestPermission();
       permission.answer = AudioPermissionStatus.granted;
 
       await controller().requestPermission();
@@ -172,6 +201,70 @@ void main() {
       await controller().onResumed();
 
       expect(state(), isA<LibraryFolderChoice>());
+    });
+
+    /// @verifies FR-014.6
+    group('not now', () {
+      setUp(() async {
+        await controller().start();
+        controller().declineAccess();
+      });
+
+      test('shows the library without access and indexes nothing', () {
+        expect(state(), isA<LibraryAccessDeclined>());
+        expect(permission.requests, 0);
+        expect(repository.tracks, isEmpty);
+      });
+
+      test('returning to the app keeps it, nothing was refused', () async {
+        await controller().onResumed();
+
+        expect(state(), isA<LibraryAccessDeclined>());
+      });
+
+      test('the offer leads back to the explanation', () {
+        controller().showExplanation();
+
+        expect(
+          state(),
+          isA<LibraryWelcome>().having((s) => s.explaining, 'explaining', true),
+        );
+      });
+
+      test('access granted in the settings is picked up', () async {
+        permission.current = AudioPermissionStatus.granted;
+
+        await controller().onResumed();
+
+        expect(state(), isA<LibraryFolderChoice>());
+      });
+    });
+
+    /// @verifies FR-014.4
+    test('the welcome stays when the app returns before any request', () async {
+      await controller().start();
+      final before = state();
+
+      await controller().onResumed();
+
+      expect(state(), same(before));
+    });
+
+    /// @verifies FR-015.3
+    test('the folder list is first shown as loading', () async {
+      permission.current = AudioPermissionStatus.granted;
+      final states = <LibraryViewState>[];
+      container.listen(
+        libraryControllerProvider,
+        (_, next) => states.add(next),
+      );
+
+      await controller().start();
+
+      final choices = states.whereType<LibraryFolderChoice>().toList();
+      expect(choices.first.loading, isTrue);
+      expect(choices.last.loading, isFalse);
+      expect(choices.last.folders, isNotEmpty);
     });
 
     test('returning while granted changes nothing', () async {
@@ -389,7 +482,10 @@ void main() {
         controller().onResumed(),
       ]);
 
-      expect(states.whereType<LibraryFolderChoice>(), hasLength(1));
+      expect(
+        states.whereType<LibraryFolderChoice>().where((s) => !s.loading),
+        hasLength(1),
+      );
     });
 
     test('a failing index leaves the library usable', () async {

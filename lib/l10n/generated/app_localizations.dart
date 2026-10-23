@@ -104,35 +104,11 @@ abstract class AppLocalizations {
   /// **'TuneShell'**
   String get appTitle;
 
-  /// Shown instead of the library when the audio permission is refused (FR-004).
-  ///
-  /// In en, this message translates to:
-  /// **'Access to the audio files is needed to show and play the music on this phone.'**
-  String get permissionExplanation;
-
-  /// Button that asks for the audio permission again.
-  ///
-  /// In en, this message translates to:
-  /// **'Allow access'**
-  String get permissionRetry;
-
-  /// Button that opens the app settings when Android no longer shows the permission dialog.
-  ///
-  /// In en, this message translates to:
-  /// **'Open settings'**
-  String get permissionOpenSettings;
-
   /// Title of the folder choice screen (FR-003).
   ///
   /// In en, this message translates to:
   /// **'Music folders'**
   String get foldersTitle;
-
-  /// Explains the folder choice.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose the folders that hold your music. Ringtones and audio from messaging apps stay out unless their folder is checked.'**
-  String get foldersExplanation;
 
   /// Name shown for audio files placed directly at the root of the internal storage.
   ///
@@ -140,23 +116,11 @@ abstract class AppLocalizations {
   /// **'Storage root'**
   String get foldersRoot;
 
-  /// Number of audio files in a folder.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 file} other{{count} files}}'**
-  String folderFileCount(int count);
-
   /// Confirms the folder choice and starts indexing.
   ///
   /// In en, this message translates to:
   /// **'Confirm'**
   String get foldersConfirm;
-
-  /// Folder choice when MediaStore finds no audio.
-  ///
-  /// In en, this message translates to:
-  /// **'No folder of this phone holds audio.'**
-  String get foldersNone;
 
   /// Action that reindexes the library.
   ///
@@ -169,24 +133,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Folders'**
   String get libraryFolders;
-
-  /// Empty library because no folder is checked.
-  ///
-  /// In en, this message translates to:
-  /// **'No folder chosen.'**
-  String get libraryNoFolders;
-
-  /// Empty library after indexing the chosen folders.
-  ///
-  /// In en, this message translates to:
-  /// **'No track found in the chosen folders.'**
-  String get libraryEmpty;
-
-  /// Button to the folder choice from an empty library.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose folders'**
-  String get libraryChooseFolders;
 
   /// Shown when indexing failed; the stored library stays visible.
   ///
@@ -241,12 +187,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Playback stopped: disk removed'**
   String get noticeStoppedByEjection;
-
-  /// Shown when MediaStore cannot be queried.
-  ///
-  /// In en, this message translates to:
-  /// **'The folders of this phone could not be read.'**
-  String get libraryLoadFailed;
 
   /// Retries reading the folders.
   ///
@@ -589,6 +529,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Letter {letter}, {count} tracks'**
   String indexLetter(String letter, int count);
+
+  /// Small line above the name on the welcome screen (FR-014.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to'**
+  String get welcomeGreeting;
+
+  /// Tagline of the welcome screen (FR-014.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Your music, at home.'**
+  String get welcomeTagline;
+
+  /// First promise of the welcome screen (FR-014.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Reads the files already on your phone and your disks.'**
+  String get welcomePromiseRead;
+
+  /// Second promise of the welcome screen (FR-014.1).
+  ///
+  /// In en, this message translates to:
+  /// **'No account, no ads.'**
+  String get welcomePromiseNoAccount;
+
+  /// Third promise of the welcome screen (FR-014.1).
+  ///
+  /// In en, this message translates to:
+  /// **'No data sent: everything stays on the device.'**
+  String get welcomePromiseNoData;
+
+  /// Button of the welcome screen (FR-014.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get welcomeStart;
+
+  /// Footer line of the welcome screen (FR-014.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Free and open source'**
+  String get welcomeFooter;
+
+  /// Step indicator of the first launch (FR-014.1, FR-014.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String stepOf(int step, int total);
+
+  /// Title of the explanation screen (FR-014.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access to your music'**
+  String get accessTitle;
+
+  /// Body of the explanation screen (FR-014.2).
+  ///
+  /// In en, this message translates to:
+  /// **'TuneShell needs to read the audio files of this phone to build your library.'**
+  String get accessBody;
+
+  /// First guarantee of the explanation screen (FR-014.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Read only: nothing is changed or deleted'**
+  String get accessGuaranteeReadOnly;
+
+  /// Second guarantee of the explanation screen (FR-014.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing leaves your phone'**
+  String get accessGuaranteeLocal;
+
+  /// Button that asks Android for access (FR-014.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access'**
+  String get accessAllow;
+
+  /// Button after a simple refusal (FR-014.3).
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get accessRetry;
+
+  /// Button that postpones the access (FR-014.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get accessNotNow;
+
+  /// Banner after a simple refusal (FR-014.3).
+  ///
+  /// In en, this message translates to:
+  /// **'Access denied. Without it, TuneShell cannot find your music.'**
+  String get accessRefused;
+
+  /// Title of the blocked screen (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Access is blocked'**
+  String get blockedTitle;
+
+  /// Body of the blocked screen (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Android no longer lets the app ask for permission. You can turn it on in the app settings:'**
+  String get blockedBody;
+
+  /// First step of the blocked screen (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the TuneShell settings'**
+  String get blockedStepSettings;
+
+  /// Second step of the blocked screen (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get blockedStepPermissions;
+
+  /// Third step of the blocked screen (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Music and audio'**
+  String get blockedStepMusic;
+
+  /// Fourth step of the blocked screen (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get blockedStepAllow;
+
+  /// Button that opens the app settings (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get blockedOpenSettings;
+
+  /// Button that opens the Android folder picker (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a folder instead'**
+  String get blockedChooseFolder;
+
+  /// Note under the buttons of the blocked screen (FR-014.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Choosing a folder on a removable disk works without this permission.'**
+  String get blockedNote;
+
+  /// Title of the library when the user chose Not now (FR-014.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Access to your music not granted'**
+  String get declinedTitle;
+
+  /// Body of the library when the user chose Not now (FR-014.6).
+  ///
+  /// In en, this message translates to:
+  /// **'TuneShell cannot read your audio files without your permission.'**
+  String get declinedBody;
+
+  /// Introduction of the folder choice (FR-015.1).
+  ///
+  /// In en, this message translates to:
+  /// **'TuneShell looks for your music in the checked folders. You can change this choice later.'**
+  String get foldersIntro;
+
+  /// Section title of the folder list (FR-015.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Internal storage'**
+  String get foldersSection;
+
+  /// File count under a folder (FR-015.1).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} audio file} other{{count} audio files}}'**
+  String folderAudioCount(int count);
+
+  /// Button that opens the folder picker for a removable disk (FR-015.7).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a folder'**
+  String get foldersAdd;
+
+  /// Summary under the folder list (FR-015.1).
+  ///
+  /// In en, this message translates to:
+  /// **'{folders, plural, one{{folders} folder} other{{folders} folders}} · {files, plural, one{{files} file} other{{files} files}}'**
+  String foldersSummary(int folders, int files);
+
+  /// Summary while the counts are read (FR-015.3).
+  ///
+  /// In en, this message translates to:
+  /// **'{folders, plural, one{{folders} folder} other{{folders} folders}} · counting…'**
+  String foldersCounting(int folders);
+
+  /// Button of the first folder choice (FR-015.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get foldersContinue;
+
+  /// Message when no folder is checked (FR-015.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Check at least one folder to continue.'**
+  String get foldersNoneChecked;
+
+  /// Title when no folder holds audio (FR-015.5).
+  ///
+  /// In en, this message translates to:
+  /// **'No audio file found'**
+  String get foldersEmptyTitle;
+
+  /// Body when no folder holds audio (FR-015.5).
+  ///
+  /// In en, this message translates to:
+  /// **'No folder on this phone holds music. Add a folder or plug in a disk.'**
+  String get foldersEmptyBody;
+
+  /// Summary when no folder holds audio (FR-015.5).
+  ///
+  /// In en, this message translates to:
+  /// **'No folder to add.'**
+  String get foldersNothingToAdd;
+
+  /// Error banner of the folder choice (FR-015.6).
+  ///
+  /// In en, this message translates to:
+  /// **'The folders could not be read.'**
+  String get foldersReadFailed;
 }
 
 class _AppLocalizationsDelegate

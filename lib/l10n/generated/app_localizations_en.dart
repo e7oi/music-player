@@ -13,56 +13,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'TuneShell';
 
   @override
-  String get permissionExplanation =>
-      'Access to the audio files is needed to show and play the music on this phone.';
-
-  @override
-  String get permissionRetry => 'Allow access';
-
-  @override
-  String get permissionOpenSettings => 'Open settings';
-
-  @override
   String get foldersTitle => 'Music folders';
-
-  @override
-  String get foldersExplanation =>
-      'Choose the folders that hold your music. Ringtones and audio from messaging apps stay out unless their folder is checked.';
 
   @override
   String get foldersRoot => 'Storage root';
 
   @override
-  String folderFileCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count files',
-      one: '1 file',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get foldersConfirm => 'Confirm';
-
-  @override
-  String get foldersNone => 'No folder of this phone holds audio.';
 
   @override
   String get libraryRefresh => 'Refresh';
 
   @override
   String get libraryFolders => 'Folders';
-
-  @override
-  String get libraryNoFolders => 'No folder chosen.';
-
-  @override
-  String get libraryEmpty => 'No track found in the chosen folders.';
-
-  @override
-  String get libraryChooseFolders => 'Choose folders';
 
   @override
   String get libraryIndexFailed => 'The library could not be refreshed.';
@@ -102,10 +65,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noticeStoppedByEjection => 'Playback stopped: disk removed';
-
-  @override
-  String get libraryLoadFailed =>
-      'The folders of this phone could not be read.';
 
   @override
   String get libraryRetry => 'Retry';
@@ -379,4 +338,171 @@ class AppLocalizationsEn extends AppLocalizations {
 
     return 'Letter $letter, $countString tracks';
   }
+
+  @override
+  String get welcomeGreeting => 'Welcome to';
+
+  @override
+  String get welcomeTagline => 'Your music, at home.';
+
+  @override
+  String get welcomePromiseRead =>
+      'Reads the files already on your phone and your disks.';
+
+  @override
+  String get welcomePromiseNoAccount => 'No account, no ads.';
+
+  @override
+  String get welcomePromiseNoData =>
+      'No data sent: everything stays on the device.';
+
+  @override
+  String get welcomeStart => 'Get started';
+
+  @override
+  String get welcomeFooter => 'Free and open source';
+
+  @override
+  String stepOf(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get accessTitle => 'Allow access to your music';
+
+  @override
+  String get accessBody =>
+      'TuneShell needs to read the audio files of this phone to build your library.';
+
+  @override
+  String get accessGuaranteeReadOnly =>
+      'Read only: nothing is changed or deleted';
+
+  @override
+  String get accessGuaranteeLocal => 'Nothing leaves your phone';
+
+  @override
+  String get accessAllow => 'Allow access';
+
+  @override
+  String get accessRetry => 'Try again';
+
+  @override
+  String get accessNotNow => 'Not now';
+
+  @override
+  String get accessRefused =>
+      'Access denied. Without it, TuneShell cannot find your music.';
+
+  @override
+  String get blockedTitle => 'Access is blocked';
+
+  @override
+  String get blockedBody =>
+      'Android no longer lets the app ask for permission. You can turn it on in the app settings:';
+
+  @override
+  String get blockedStepSettings => 'Open the TuneShell settings';
+
+  @override
+  String get blockedStepPermissions => 'Permissions';
+
+  @override
+  String get blockedStepMusic => 'Music and audio';
+
+  @override
+  String get blockedStepAllow => 'Allow';
+
+  @override
+  String get blockedOpenSettings => 'Open settings';
+
+  @override
+  String get blockedChooseFolder => 'Choose a folder instead';
+
+  @override
+  String get blockedNote =>
+      'Choosing a folder on a removable disk works without this permission.';
+
+  @override
+  String get declinedTitle => 'Access to your music not granted';
+
+  @override
+  String get declinedBody =>
+      'TuneShell cannot read your audio files without your permission.';
+
+  @override
+  String get foldersIntro =>
+      'TuneShell looks for your music in the checked folders. You can change this choice later.';
+
+  @override
+  String get foldersSection => 'Internal storage';
+
+  @override
+  String folderAudioCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString audio files',
+      one: '$countString audio file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get foldersAdd => 'Add a folder';
+
+  @override
+  String foldersSummary(int folders, int files) {
+    final intl.NumberFormat filesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String filesString = filesNumberFormat.format(files);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      folders,
+      locale: localeName,
+      other: '$folders folders',
+      one: '$folders folder',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$filesString files',
+      one: '$filesString file',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String foldersCounting(int folders) {
+    String _temp0 = intl.Intl.pluralLogic(
+      folders,
+      locale: localeName,
+      other: '$folders folders',
+      one: '$folders folder',
+    );
+    return '$_temp0 · counting…';
+  }
+
+  @override
+  String get foldersContinue => 'Continue';
+
+  @override
+  String get foldersNoneChecked => 'Check at least one folder to continue.';
+
+  @override
+  String get foldersEmptyTitle => 'No audio file found';
+
+  @override
+  String get foldersEmptyBody =>
+      'No folder on this phone holds music. Add a folder or plug in a disk.';
+
+  @override
+  String get foldersNothingToAdd => 'No folder to add.';
+
+  @override
+  String get foldersReadFailed => 'The folders could not be read.';
 }

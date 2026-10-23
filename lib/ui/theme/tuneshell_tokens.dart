@@ -56,6 +56,12 @@ abstract final class TsSize {
   static const double fixedRowMaxTextScale = 1.3; // above: rows grow
   static const double sourceMark = 12; // source mark on a TrackTile
   static const double fab = 56; // "jump to current" button
+  static const double buttonLarge = 56; // primary button of a full screen
+  static const double heroTile = 144; // icon tile of the access screens
+  static const double heroIcon = 72;
+  static const double logo = 120; // logo of the welcome screen
+  static const double stepDot = 8; // step indicator
+  static const double stepDotActive = 24;
   static const double listBottomInset =
       88; // room under a list so the jump button never hides the last row
 

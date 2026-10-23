@@ -13,56 +13,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appTitle => 'TuneShell';
 
   @override
-  String get permissionExplanation =>
-      'L\'accès aux fichiers audio est nécessaire pour afficher et lire la musique du téléphone.';
-
-  @override
-  String get permissionRetry => 'Autoriser l\'accès';
-
-  @override
-  String get permissionOpenSettings => 'Ouvrir les réglages';
-
-  @override
   String get foldersTitle => 'Dossiers de musique';
-
-  @override
-  String get foldersExplanation =>
-      'Choisir les dossiers qui contiennent la musique. Les sonneries et les sons des messageries restent hors de la bibliothèque si leur dossier n\'est pas coché.';
 
   @override
   String get foldersRoot => 'Racine du stockage';
 
   @override
-  String folderFileCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count fichiers',
-      one: '1 fichier',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get foldersConfirm => 'Valider';
-
-  @override
-  String get foldersNone => 'Aucun dossier du téléphone ne contient d\'audio.';
 
   @override
   String get libraryRefresh => 'Actualiser';
 
   @override
   String get libraryFolders => 'Dossiers';
-
-  @override
-  String get libraryNoFolders => 'Aucun dossier choisi.';
-
-  @override
-  String get libraryEmpty => 'Aucune piste trouvée dans les dossiers choisis.';
-
-  @override
-  String get libraryChooseFolders => 'Choisir les dossiers';
 
   @override
   String get libraryIndexFailed =>
@@ -103,10 +66,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noticeStoppedByEjection => 'Lecture arrêtée : disque retiré';
-
-  @override
-  String get libraryLoadFailed =>
-      'Les dossiers du téléphone n\'ont pas pu être lus.';
 
   @override
   String get libraryRetry => 'Réessayer';
@@ -388,4 +347,171 @@ class AppLocalizationsFr extends AppLocalizations {
 
     return 'Lettre $letter, $countString pistes';
   }
+
+  @override
+  String get welcomeGreeting => 'Bienvenue dans';
+
+  @override
+  String get welcomeTagline => 'Ta musique, chez toi.';
+
+  @override
+  String get welcomePromiseRead =>
+      'Lit les fichiers déjà présents sur ton téléphone et tes disques.';
+
+  @override
+  String get welcomePromiseNoAccount => 'Aucun compte, aucune publicité.';
+
+  @override
+  String get welcomePromiseNoData =>
+      'Aucune donnée envoyée : tout reste sur l\'appareil.';
+
+  @override
+  String get welcomeStart => 'Commencer';
+
+  @override
+  String get welcomeFooter => 'Libre et gratuit · Code source ouvert';
+
+  @override
+  String stepOf(int step, int total) {
+    return 'Étape $step sur $total';
+  }
+
+  @override
+  String get accessTitle => 'Autoriser l\'accès à ta musique';
+
+  @override
+  String get accessBody =>
+      'TuneShell a besoin de lire les fichiers audio de ce téléphone pour construire ta bibliothèque.';
+
+  @override
+  String get accessGuaranteeReadOnly =>
+      'Lecture seule : rien n\'est modifié ni supprimé';
+
+  @override
+  String get accessGuaranteeLocal => 'Rien ne quitte ton téléphone';
+
+  @override
+  String get accessAllow => 'Autoriser l\'accès';
+
+  @override
+  String get accessRetry => 'Réessayer';
+
+  @override
+  String get accessNotNow => 'Pas maintenant';
+
+  @override
+  String get accessRefused =>
+      'Accès refusé. Sans lui, TuneShell ne peut pas trouver ta musique.';
+
+  @override
+  String get blockedTitle => 'L\'accès est bloqué';
+
+  @override
+  String get blockedBody =>
+      'Android ne permet plus de redemander l\'autorisation. Tu peux l\'activer dans les réglages de l\'app :';
+
+  @override
+  String get blockedStepSettings => 'Ouvrir les réglages de TuneShell';
+
+  @override
+  String get blockedStepPermissions => 'Autorisations';
+
+  @override
+  String get blockedStepMusic => 'Musique et audio';
+
+  @override
+  String get blockedStepAllow => 'Autoriser';
+
+  @override
+  String get blockedOpenSettings => 'Ouvrir les réglages';
+
+  @override
+  String get blockedChooseFolder => 'Choisir un dossier à la place';
+
+  @override
+  String get blockedNote =>
+      'Le choix d\'un dossier d\'un disque amovible fonctionne sans cette autorisation.';
+
+  @override
+  String get declinedTitle => 'Accès à ta musique non accordé';
+
+  @override
+  String get declinedBody =>
+      'TuneShell ne peut pas lire tes fichiers audio sans ton autorisation.';
+
+  @override
+  String get foldersIntro =>
+      'TuneShell cherche ta musique dans les dossiers cochés. Tu pourras changer ce choix plus tard.';
+
+  @override
+  String get foldersSection => 'Stockage interne';
+
+  @override
+  String folderAudioCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString fichiers audio',
+      one: '$countString fichier audio',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get foldersAdd => 'Ajouter un dossier';
+
+  @override
+  String foldersSummary(int folders, int files) {
+    final intl.NumberFormat filesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String filesString = filesNumberFormat.format(files);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      folders,
+      locale: localeName,
+      other: '$folders dossiers',
+      one: '$folders dossier',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$filesString fichiers',
+      one: '$filesString fichier',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String foldersCounting(int folders) {
+    String _temp0 = intl.Intl.pluralLogic(
+      folders,
+      locale: localeName,
+      other: '$folders dossiers',
+      one: '$folders dossier',
+    );
+    return '$_temp0 · comptage…';
+  }
+
+  @override
+  String get foldersContinue => 'Continuer';
+
+  @override
+  String get foldersNoneChecked => 'Coche au moins un dossier pour continuer.';
+
+  @override
+  String get foldersEmptyTitle => 'Aucun fichier audio trouvé';
+
+  @override
+  String get foldersEmptyBody =>
+      'Aucun dossier de ce téléphone ne contient de musique. Ajoute un dossier ou branche un disque.';
+
+  @override
+  String get foldersNothingToAdd => 'Aucun dossier à ajouter.';
+
+  @override
+  String get foldersReadFailed => 'Les dossiers n\'ont pas pu être lus.';
 }

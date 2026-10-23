@@ -81,9 +81,9 @@ void main() {
 
     expect(find.text('Music'), findsOneWidget);
     expect(find.text('Ringtones'), findsOneWidget);
-    expect(find.text('3 files'), findsOneWidget);
+    expect(find.text('3 audio files'), findsOneWidget);
 
-    await tester.tap(find.text('Confirm'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     expect(find.text('Alpha'), findsOneWidget);
@@ -96,7 +96,7 @@ void main() {
     tester,
   ) async {
     await pumpPage(tester);
-    await tester.tap(find.text('Confirm'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Charlie'));
@@ -130,7 +130,7 @@ void main() {
   group('leaving the folder choice', () {
     Future<void> openChoice(WidgetTester tester) async {
       await pumpPage(tester);
-      await tester.tap(find.text('Confirm'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(ActionChip, 'Folders'));
       await tester.pumpAndSettle();
@@ -169,7 +169,7 @@ void main() {
     tester,
   ) async {
     await pumpPage(tester);
-    await tester.tap(find.text('Confirm'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Alpha'));
     await tester.pumpAndSettle();
@@ -194,14 +194,33 @@ void main() {
     expect(permission.settingsOpened, 1);
   });
 
-  /// @verifies UC-001
-  testWidgets('no folder chosen leads back to the folder choice', (
+  /// @verifies FR-015.4
+  testWidgets('the first choice cannot continue without a folder', (
     tester,
   ) async {
     await pumpPage(tester);
     await tester.tap(find.text('Music'));
     await tester.pump();
-    await tester.tap(find.text('Confirm'));
+
+    expect(find.text('Check at least one folder to continue.'), findsOneWidget);
+    final button = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, 'Continue'),
+    );
+    expect(button.onPressed, isNull);
+  });
+
+  /// @verifies UC-001
+  testWidgets('no folder chosen leads back to the folder choice', (
+    tester,
+  ) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ActionChip, 'Folders'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Music'));
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Confirm'));
     await tester.pumpAndSettle();
 
     expect(find.text('No folder chosen'), findsOneWidget);
@@ -303,7 +322,7 @@ void main() {
   /// @verifies FR-011.1
   testWidgets('the search button is there, and disabled', (tester) async {
     await pumpPage(tester);
-    await tester.tap(find.text('Confirm'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     final button = tester.widget<IconButton>(
@@ -321,7 +340,7 @@ void main() {
         info('Music/$i.mp3', title: 'T${i.toString().padLeft(3, '0')}'),
     ];
     await pumpPage(tester);
-    await tester.tap(find.text('Confirm'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('T000'));
     await tester.pumpAndSettle();
@@ -356,7 +375,7 @@ void main() {
   ) async {
     final semantics = tester.ensureSemantics();
     await pumpPage(tester);
-    await tester.tap(find.text('Confirm'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     expect(find.byType(SourceMark), findsNWidgets(3));
@@ -374,7 +393,7 @@ void main() {
     tester.platformDispatcher.textScaleFactorTestValue = 2;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await pumpPage(tester);
-    await tester.tap(find.text('Confirm'));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
@@ -399,7 +418,7 @@ void main() {
           info('Music/m$i.mp3', title: 'M${i.toString().padLeft(3, '0')}'),
       ];
       await pumpPage(tester);
-      await tester.tap(find.text('Confirm'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
       final handle = find.byWidgetPredicate(

@@ -38,13 +38,13 @@ void main() {
   testWidgets('speaks French', (tester) async {
     await pumpApp(tester, const Locale('fr'));
 
-    expect(find.text("Autoriser l'accès"), findsOneWidget);
+    expect(find.text("Autoriser l'accès à ta musique"), findsOneWidget);
   });
 
   testWidgets('falls back to English for other locales', (tester) async {
     await pumpApp(tester, const Locale('de'));
 
-    expect(find.text('Allow access'), findsOneWidget);
+    expect(find.text('Allow access to your music'), findsOneWidget);
   });
 
   /// @verifies FR-008.2
