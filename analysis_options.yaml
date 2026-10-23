@@ -13,6 +13,8 @@ analyzer:
     - android/**
     - lib/l10n/generated/**
     - "**/*.g.dart"
+    - "**/*.steps.dart"
+    - test/data/db/migrations/**/generated/**
 
 linter:
   rules:

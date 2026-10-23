@@ -100,8 +100,15 @@ class DriftLibraryRepository implements LibraryRepository {
         await _db.into(_db.tracks).insert(_companion(diskRow.id, info, now));
         added++;
       } else if (_toInfo(row) != info) {
+        // The file itself changed: its artwork is read again (FR-007.8).
+        final changed =
+            row.size != info.size || row.modifiedAt != info.modifiedAt;
         await (_db.update(_db.tracks)..where((t) => t.id.equals(row.id))).write(
-          _companion(diskRow.id, info, now),
+          _companion(diskRow.id, info, now).copyWith(
+            tagsState: changed
+                ? Value(TagsState.pending.index)
+                : const Value.absent(),
+          ),
         );
         updated++;
       }
@@ -167,6 +174,154 @@ class DriftLibraryRepository implements LibraryRepository {
         : Duration(milliseconds: row.durationMs!),
   );
 
-  static LibraryTrack _toTrack(TrackRow row, DiskId disk) =>
-      LibraryTrack(id: row.id, disk: disk, info: _toInfo(row));
+  static LibraryTrack _toTrack(TrackRow row, DiskId disk) => LibraryTrack(
+    id: row.id,
+    disk: disk,
+    info: _toInfo(row),
+    artwork: row.artwork,
+    tagsState: TagsState.values[row.tagsState],
+  );
+
+  @override
+  Future<List<Disk>> disks() async => [
+    for (final row in await _db.select(_db.disks).get()) _toDisk(row),
+  ];
+
+  /// @implements FR-006.8: tags and artwork are kept for an unchanged file,
+  /// and for a changed one until it is read again.
+  @override
+  Future<IndexResult> applyScan(
+    DiskId disk,
+    List<TrackInfo> found,
+  ) => _db.transaction(() async {
+    final diskRow = await _requireDisk(disk);
+    final existing = {
+      for (final row in await (_db.select(
+        _db.tracks,
+      )..where((t) => t.diskId.equals(diskRow.id))).get())
+        row.relativePath: row,
+    };
+    final now = DateTime.now();
+    var added = 0;
+    var updated = 0;
+    final seen = <String>{};
+    for (final info in found) {
+      if (!seen.add(info.relativePath)) continue;
+      final row = existing[info.relativePath];
+      if (row == null) {
+        await _db.into(_db.tracks).insert(_companion(diskRow.id, info, now));
+        added++;
+      } else if (row.size != info.size || row.modifiedAt != info.modifiedAt) {
+        await (_db.update(_db.tracks)..where((t) => t.id.equals(row.id))).write(
+          TracksCompanion(
+            size: Value(info.size),
+            modifiedAt: Value(info.modifiedAt),
+            indexedAt: Value(now),
+            tagsState: Value(TagsState.pending.index),
+          ),
+        );
+        updated++;
+      }
+    }
+    final gone = [
+      for (final row in existing.values)
+        if (!seen.contains(row.relativePath)) row.id,
+    ];
+    if (gone.isNotEmpty) {
+      await (_db.delete(_db.tracks)..where((t) => t.id.isIn(gone))).go();
+    }
+    return IndexResult(added: added, updated: updated, removed: gone.length);
+  });
+
+  @override
+  Future<List<PendingTrack>> pendingTracks(Set<DiskId> disks, int limit) async {
+    final query =
+        _db.select(_db.tracks).join([
+            innerJoin(_db.disks, _db.disks.id.equalsExp(_db.tracks.diskId)),
+          ])
+          ..where(
+            _db.tracks.tagsState.equals(TagsState.pending.index) &
+                _db.disks.key.isIn([for (final d in disks) d.value]),
+          )
+          ..orderBy([OrderingTerm.asc(_db.tracks.id)])
+          ..limit(limit);
+    return [
+      for (final row in await query.get())
+        PendingTrack(
+          id: row.readTable(_db.tracks).id,
+          track: Track(
+            disk: DiskId(row.readTable(_db.disks).key),
+            relativePath: row.readTable(_db.tracks).relativePath,
+          ),
+        ),
+    ];
+  }
+
+  @override
+  Future<int> countPending(Set<DiskId> disks) async {
+    final count = _db.tracks.id.count();
+    final query =
+        _db.selectOnly(_db.tracks).join([
+            innerJoin(_db.disks, _db.disks.id.equalsExp(_db.tracks.diskId)),
+          ])
+          ..addColumns([count])
+          ..where(
+            _db.tracks.tagsState.equals(TagsState.pending.index) &
+                _db.disks.key.isIn([for (final d in disks) d.value]),
+          );
+    final row = await query.getSingle();
+    final pending = row.read(count);
+    return pending ?? 0;
+  }
+
+  @override
+  Future<void> applyFileTags(
+    List<TagUpdate> updates,
+  ) => _db.transaction(() async {
+    for (final update in updates) {
+      final tags = update.tags;
+      final target = _db.update(_db.tracks)
+        ..where((t) => t.id.equals(update.trackId));
+      if (tags == null) {
+        await target.write(
+          TracksCompanion(tagsState: Value(TagsState.failed.index)),
+        );
+        continue;
+      }
+      await target.write(
+        TracksCompanion(
+          tagsState: Value(TagsState.done.index),
+          artwork: Value(tags.artwork),
+          // Written only for a removable disk: MediaStore keeps the
+          // tags of the internal storage (FR-007.2).
+          title: update.writeTags ? Value(tags.title) : const Value.absent(),
+          artist: update.writeTags ? Value(tags.artist) : const Value.absent(),
+          album: update.writeTags ? Value(tags.album) : const Value.absent(),
+          albumArtist: update.writeTags
+              ? Value(tags.albumArtist)
+              : const Value.absent(),
+          trackNumber: update.writeTags
+              ? Value(tags.trackNumber)
+              : const Value.absent(),
+          discNumber: update.writeTags
+              ? Value(tags.discNumber)
+              : const Value.absent(),
+          year: update.writeTags ? Value(tags.year) : const Value.absent(),
+          genre: update.writeTags ? Value(tags.genre) : const Value.absent(),
+          durationMs: update.writeTags
+              ? Value(tags.duration?.inMilliseconds)
+              : const Value.absent(),
+        ),
+      );
+    }
+  });
+
+  @override
+  Future<Set<String>> artworkInUse() async {
+    final column = _db.tracks.artwork;
+    final query = _db.selectOnly(_db.tracks, distinct: true)
+      ..addColumns([column])
+      ..where(column.isNotNull());
+    return {for (final row in await query.get()) row.read(column)!};
+  }
 }

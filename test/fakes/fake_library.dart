@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:tuneshell/domain/library/model/file_tags.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
 import 'package:tuneshell/domain/library/ports/library_repository.dart';
+import 'package:tuneshell/domain/library/ports/removable_audio_source.dart';
+import 'package:tuneshell/domain/library/ports/tag_reader.dart';
 
 TrackInfo info(
   String relativePath, {
@@ -80,6 +83,90 @@ class FakeLibraryRepository implements LibraryRepository {
     return IndexResult(added: added, updated: updated, removed: removedCount);
   }
 
+  @override
+  Future<List<Disk>> disks() async => _disks.values.toList();
+
+  @override
+  Future<IndexResult> applyScan(DiskId disk, List<TrackInfo> found) async {
+    var added = 0;
+    var updated = 0;
+    final byPath = {for (final i in found) i.relativePath: i};
+    final removed = _tracks
+        .where(
+          (t) => t.disk == disk && !byPath.containsKey(t.info.relativePath),
+        )
+        .toList();
+    _tracks.removeWhere(removed.contains);
+    for (final entry in byPath.values) {
+      final index = _tracks.indexWhere(
+        (t) => t.disk == disk && t.info.relativePath == entry.relativePath,
+      );
+      if (index < 0) {
+        _tracks.add(LibraryTrack(id: _nextId++, disk: disk, info: entry));
+        added++;
+      } else if (!_tracks[index].info.sameFileAs(entry)) {
+        _tracks[index] = LibraryTrack(
+          id: _tracks[index].id,
+          disk: disk,
+          info: entry,
+          artwork: _tracks[index].artwork,
+        );
+        updated++;
+      }
+    }
+    _changes.add(_sorted());
+    return IndexResult(added: added, updated: updated, removed: removed.length);
+  }
+
+  @override
+  Future<List<PendingTrack>> pendingTracks(
+    Set<DiskId> disks,
+    int limit,
+  ) async => [
+    for (final t in _tracks)
+      if (disks.contains(t.disk) && t.tagsState == TagsState.pending)
+        PendingTrack(id: t.id, track: t.track),
+  ].take(limit).toList();
+
+  @override
+  Future<int> countPending(Set<DiskId> disks) async => _tracks
+      .where((t) => disks.contains(t.disk) && t.tagsState == TagsState.pending)
+      .length;
+
+  @override
+  Future<void> applyFileTags(List<TagUpdate> updates) async {
+    for (final update in updates) {
+      final index = _tracks.indexWhere((t) => t.id == update.trackId);
+      if (index < 0) continue;
+      final track = _tracks[index];
+      final tags = update.tags;
+      _tracks[index] = LibraryTrack(
+        id: track.id,
+        disk: track.disk,
+        info: tags != null && update.writeTags
+            ? TrackInfo(
+                relativePath: track.info.relativePath,
+                size: track.info.size,
+                modifiedAt: track.info.modifiedAt,
+                title: tags.title,
+                artist: tags.artist,
+                album: tags.album,
+                duration: tags.duration,
+              )
+            : track.info,
+        artwork: tags?.artwork ?? track.artwork,
+        tagsState: tags == null ? TagsState.failed : TagsState.done,
+      );
+    }
+    _changes.add(_sorted());
+  }
+
+  @override
+  Future<Set<String>> artworkInUse() async => {
+    for (final t in _tracks)
+      if (t.artwork != null) t.artwork!,
+  };
+
   List<LibraryTrack> _sorted() =>
       [..._tracks]..sort((a, b) => a.displayTitle.compareTo(b.displayTitle));
 }
@@ -123,4 +210,81 @@ class FakeAudioPermission implements AudioPermission {
 
   @override
   Future<void> openAppSettings() async => settingsOpened++;
+}
+
+class FakeRemovableAudioSource implements RemovableAudioSource {
+  /// What the picker returns next; null is a cancel.
+  RemovableFolder? picked;
+
+  List<MountedVolume> mounted = [];
+  Set<RemovableFolder> granted = {};
+
+  /// Files of each (disk, folder).
+  final Map<(DiskId, String), List<TrackInfo>> files = {};
+
+  /// Scans of these folders throw this.
+  final Map<(DiskId, String), Exception> failing = {};
+  final List<(DiskId, String)> released = [];
+  final List<(DiskId, String)> scanned = [];
+  int cancels = 0;
+
+  /// The next [pickFolder] throws this, as for a folder of the phone.
+  Exception? pickError;
+
+  @override
+  Future<RemovableFolder?> pickFolder() async {
+    final error = pickError;
+    if (error != null) throw error;
+    return picked;
+  }
+
+  @override
+  Future<Set<RemovableFolder>> grantedFolders() async => {...granted};
+
+  @override
+  Future<List<MountedVolume>> mountedVolumes() async => [...mounted];
+
+  @override
+  Future<void> releaseFolder(DiskId disk, String path) async =>
+      released.add((disk, path));
+
+  @override
+  Future<List<TrackInfo>> scan(DiskId disk, String folder) async {
+    scanned.add((disk, folder));
+    final error = failing[(disk, folder)];
+    if (error != null) throw error;
+    return [...?files[(disk, folder)]];
+  }
+
+  @override
+  Future<void> cancelScan() async => cancels++;
+}
+
+class FakeTagReader implements TagReader {
+  /// Tags per track; a missing entry reads as nothing.
+  final Map<Track, FileTags> tags = {};
+  final Set<Track> throwing = {};
+  final List<Track> reads = [];
+  Set<String>? retained;
+
+  /// Called at each read, to observe or cancel in the middle of a run.
+  void Function(Track track)? onRead;
+
+  int active = 0;
+  int maxActive = 0;
+
+  @override
+  Future<FileTags?> read(Track track) async {
+    active++;
+    if (active > maxActive) maxActive = active;
+    reads.add(track);
+    onRead?.call(track);
+    await Future<void>.delayed(Duration.zero);
+    active--;
+    if (throwing.contains(track)) throw Exception('unreadable');
+    return tags[track];
+  }
+
+  @override
+  Future<void> retainArtwork(Set<String> keep) async => retained = keep;
 }

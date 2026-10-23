@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+import 'package:tuneshell/domain/library/model/file_tags.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
 
@@ -17,8 +19,36 @@ final class IndexResult {
   String toString() => 'IndexResult(+$added ~$updated -$removed)';
 }
 
+/// A track whose file was not read yet (FR-007.3).
+@immutable
+final class PendingTrack {
+  const new({required this.id, required this.track});
+
+  final int id;
+  final Track track;
+}
+
+/// What reading one file gave, to store (FR-007).
+@immutable
+final class TagUpdate {
+  /// [writeTags] is false for the internal storage, whose tags stay those of
+  /// MediaStore (FR-007.2): only the artwork is stored.
+  const new read(this.trackId, FileTags this.tags, {required this.writeTags});
+
+  const new failed(this.trackId) : tags = null, writeTags = false;
+
+  final int trackId;
+
+  /// Null when the file could not be read.
+  final FileTags? tags;
+  final bool writeTags;
+}
+
 /// The stored library (ADR-004).
 abstract interface class LibraryRepository {
+  /// Every registered disk.
+  Future<List<Disk>> disks();
+
   /// Null when the disk was never registered.
   Future<Disk?> disk(DiskId id);
 
@@ -39,4 +69,20 @@ abstract interface class LibraryRepository {
   /// whose path is still there keeps its id (BR-004), its information is
   /// updated if it changed; paths not in [found] are removed.
   Future<IndexResult> applyIndex(DiskId disk, List<TrackInfo> found);
+
+  /// Like [applyIndex] for a disk scanned without tags (FR-006.8): a file
+  /// whose size and date are unchanged keeps its tags and artwork; a changed
+  /// one keeps its old information until it is read again.
+  Future<IndexResult> applyScan(DiskId disk, List<TrackInfo> found);
+
+  /// Tracks of [disks] still to read, at most [limit].
+  Future<List<PendingTrack>> pendingTracks(Set<DiskId> disks, int limit);
+
+  Future<int> countPending(Set<DiskId> disks);
+
+  /// Stores [updates] in one transaction.
+  Future<void> applyFileTags(List<TagUpdate> updates);
+
+  /// Artwork identifiers still used by a track.
+  Future<Set<String>> artworkInUse();
 }

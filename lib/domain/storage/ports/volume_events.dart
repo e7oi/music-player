@@ -11,4 +11,8 @@ abstract interface class VolumeEvents {
 
   /// Changes after [availableDisks] was read. Broadcast.
   Stream<VolumeEvent> get events;
+
+  /// Reads the availability again and announces what changed on [events].
+  /// Called when the app comes back to the foreground (FR-006.10).
+  Future<void> refresh();
 }

@@ -1,3 +1,5 @@
 # Generated code, committed (CLAUDE.md, Tooling).
 *.g.dart linguist-generated=true
 lib/l10n/generated/** linguist-generated=true
+*.steps.dart linguist-generated=true
+test/data/db/migrations/**/generated/** linguist-generated=true

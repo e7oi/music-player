@@ -19,6 +19,11 @@ class FakeVolumeEvents implements VolumeEvents {
   Stream<VolumeEvent> get events => _events.stream;
 
   void emit(VolumeEvent event) => _events.add(event);
+
+  int refreshes = 0;
+
+  @override
+  Future<void> refresh() async => refreshes++;
 }
 
 /// Opens every track as a file named after its disk and path, except the

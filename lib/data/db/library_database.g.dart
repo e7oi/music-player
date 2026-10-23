@@ -681,6 +681,29 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, TrackRow> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _artworkMeta = const VerificationMeta(
+    'artwork',
+  );
+  @override
+  late final GeneratedColumn<String> artwork = GeneratedColumn<String>(
+    'artwork',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _tagsStateMeta = const VerificationMeta(
+    'tagsState',
+  );
+  @override
+  late final GeneratedColumn<int> tagsState = GeneratedColumn<int>(
+    'tags_state',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -698,6 +721,8 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, TrackRow> {
     size,
     modifiedAt,
     indexedAt,
+    artwork,
+    tagsState,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -817,6 +842,18 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, TrackRow> {
     } else if (isInserting) {
       context.missing(_indexedAtMeta);
     }
+    if (data.containsKey('artwork')) {
+      context.handle(
+        _artworkMeta,
+        artwork.isAcceptableOrUnknown(data['artwork']!, _artworkMeta),
+      );
+    }
+    if (data.containsKey('tags_state')) {
+      context.handle(
+        _tagsStateMeta,
+        tagsState.isAcceptableOrUnknown(data['tags_state']!, _tagsStateMeta),
+      );
+    }
     return context;
   }
 
@@ -890,6 +927,14 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, TrackRow> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}indexed_at'],
       )!,
+      artwork: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artwork'],
+      ),
+      tagsState: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tags_state'],
+      )!,
     );
   }
 
@@ -915,6 +960,12 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
   final int size;
   final DateTime modifiedAt;
   final DateTime indexedAt;
+
+  /// Identifier of the artwork image of the file (ADR-009), null for none.
+  final String? artwork;
+
+  /// `TagsState.index` (FR-007.3): every track starts pending.
+  final int tagsState;
   const TrackRow({
     required this.id,
     required this.diskId,
@@ -931,6 +982,8 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     required this.size,
     required this.modifiedAt,
     required this.indexedAt,
+    this.artwork,
+    required this.tagsState,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -968,6 +1021,10 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     map['size'] = Variable<int>(size);
     map['modified_at'] = Variable<DateTime>(modifiedAt);
     map['indexed_at'] = Variable<DateTime>(indexedAt);
+    if (!nullToAbsent || artwork != null) {
+      map['artwork'] = Variable<String>(artwork);
+    }
+    map['tags_state'] = Variable<int>(tagsState);
     return map;
   }
 
@@ -1004,6 +1061,10 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
       size: Value(size),
       modifiedAt: Value(modifiedAt),
       indexedAt: Value(indexedAt),
+      artwork: artwork == null && nullToAbsent
+          ? const Value.absent()
+          : Value(artwork),
+      tagsState: Value(tagsState),
     );
   }
 
@@ -1028,6 +1089,8 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
       size: serializer.fromJson<int>(json['size']),
       modifiedAt: serializer.fromJson<DateTime>(json['modifiedAt']),
       indexedAt: serializer.fromJson<DateTime>(json['indexedAt']),
+      artwork: serializer.fromJson<String?>(json['artwork']),
+      tagsState: serializer.fromJson<int>(json['tagsState']),
     );
   }
   @override
@@ -1049,6 +1112,8 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
       'size': serializer.toJson<int>(size),
       'modifiedAt': serializer.toJson<DateTime>(modifiedAt),
       'indexedAt': serializer.toJson<DateTime>(indexedAt),
+      'artwork': serializer.toJson<String?>(artwork),
+      'tagsState': serializer.toJson<int>(tagsState),
     };
   }
 
@@ -1068,6 +1133,8 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     int? size,
     DateTime? modifiedAt,
     DateTime? indexedAt,
+    Value<String?> artwork = const Value.absent(),
+    int? tagsState,
   }) => TrackRow(
     id: id ?? this.id,
     diskId: diskId ?? this.diskId,
@@ -1084,6 +1151,8 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     size: size ?? this.size,
     modifiedAt: modifiedAt ?? this.modifiedAt,
     indexedAt: indexedAt ?? this.indexedAt,
+    artwork: artwork.present ? artwork.value : this.artwork,
+    tagsState: tagsState ?? this.tagsState,
   );
   TrackRow copyWithCompanion(TracksCompanion data) {
     return TrackRow(
@@ -1114,6 +1183,8 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
           ? data.modifiedAt.value
           : this.modifiedAt,
       indexedAt: data.indexedAt.present ? data.indexedAt.value : this.indexedAt,
+      artwork: data.artwork.present ? data.artwork.value : this.artwork,
+      tagsState: data.tagsState.present ? data.tagsState.value : this.tagsState,
     );
   }
 
@@ -1134,7 +1205,9 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
           ..write('durationMs: $durationMs, ')
           ..write('size: $size, ')
           ..write('modifiedAt: $modifiedAt, ')
-          ..write('indexedAt: $indexedAt')
+          ..write('indexedAt: $indexedAt, ')
+          ..write('artwork: $artwork, ')
+          ..write('tagsState: $tagsState')
           ..write(')'))
         .toString();
   }
@@ -1156,6 +1229,8 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
     size,
     modifiedAt,
     indexedAt,
+    artwork,
+    tagsState,
   );
   @override
   bool operator ==(Object other) =>
@@ -1175,7 +1250,9 @@ class TrackRow extends DataClass implements Insertable<TrackRow> {
           other.durationMs == this.durationMs &&
           other.size == this.size &&
           other.modifiedAt == this.modifiedAt &&
-          other.indexedAt == this.indexedAt);
+          other.indexedAt == this.indexedAt &&
+          other.artwork == this.artwork &&
+          other.tagsState == this.tagsState);
 }
 
 class TracksCompanion extends UpdateCompanion<TrackRow> {
@@ -1194,6 +1271,8 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
   final Value<int> size;
   final Value<DateTime> modifiedAt;
   final Value<DateTime> indexedAt;
+  final Value<String?> artwork;
+  final Value<int> tagsState;
   const TracksCompanion({
     this.id = const Value.absent(),
     this.diskId = const Value.absent(),
@@ -1210,6 +1289,8 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
     this.size = const Value.absent(),
     this.modifiedAt = const Value.absent(),
     this.indexedAt = const Value.absent(),
+    this.artwork = const Value.absent(),
+    this.tagsState = const Value.absent(),
   });
   TracksCompanion.insert({
     this.id = const Value.absent(),
@@ -1227,6 +1308,8 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
     required int size,
     required DateTime modifiedAt,
     required DateTime indexedAt,
+    this.artwork = const Value.absent(),
+    this.tagsState = const Value.absent(),
   }) : diskId = Value(diskId),
        relativePath = Value(relativePath),
        size = Value(size),
@@ -1248,6 +1331,8 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
     Expression<int>? size,
     Expression<DateTime>? modifiedAt,
     Expression<DateTime>? indexedAt,
+    Expression<String>? artwork,
+    Expression<int>? tagsState,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1265,6 +1350,8 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
       if (size != null) 'size': size,
       if (modifiedAt != null) 'modified_at': modifiedAt,
       if (indexedAt != null) 'indexed_at': indexedAt,
+      if (artwork != null) 'artwork': artwork,
+      if (tagsState != null) 'tags_state': tagsState,
     });
   }
 
@@ -1284,6 +1371,8 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
     Value<int>? size,
     Value<DateTime>? modifiedAt,
     Value<DateTime>? indexedAt,
+    Value<String?>? artwork,
+    Value<int>? tagsState,
   }) {
     return TracksCompanion(
       id: id ?? this.id,
@@ -1301,6 +1390,8 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
       size: size ?? this.size,
       modifiedAt: modifiedAt ?? this.modifiedAt,
       indexedAt: indexedAt ?? this.indexedAt,
+      artwork: artwork ?? this.artwork,
+      tagsState: tagsState ?? this.tagsState,
     );
   }
 
@@ -1352,6 +1443,12 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
     if (indexedAt.present) {
       map['indexed_at'] = Variable<DateTime>(indexedAt.value);
     }
+    if (artwork.present) {
+      map['artwork'] = Variable<String>(artwork.value);
+    }
+    if (tagsState.present) {
+      map['tags_state'] = Variable<int>(tagsState.value);
+    }
     return map;
   }
 
@@ -1372,7 +1469,9 @@ class TracksCompanion extends UpdateCompanion<TrackRow> {
           ..write('durationMs: $durationMs, ')
           ..write('size: $size, ')
           ..write('modifiedAt: $modifiedAt, ')
-          ..write('indexedAt: $indexedAt')
+          ..write('indexedAt: $indexedAt, ')
+          ..write('artwork: $artwork, ')
+          ..write('tagsState: $tagsState')
           ..write(')'))
         .toString();
   }
@@ -2032,6 +2131,8 @@ typedef $$TracksTableCreateCompanionBuilder = TracksCompanion Function({
   required int size,
   required DateTime modifiedAt,
   required DateTime indexedAt,
+  Value<String?> artwork,
+  Value<int> tagsState,
 });
 typedef $$TracksTableUpdateCompanionBuilder = TracksCompanion Function({
   Value<int> id,
@@ -2049,6 +2150,8 @@ typedef $$TracksTableUpdateCompanionBuilder = TracksCompanion Function({
   Value<int> size,
   Value<DateTime> modifiedAt,
   Value<DateTime> indexedAt,
+  Value<String?> artwork,
+  Value<int> tagsState,
 });
 
 final class $$TracksTableReferences
@@ -2149,6 +2252,16 @@ class $$TracksTableFilterComposer
 
   ColumnFilters<DateTime> get indexedAt => $composableBuilder(
     column: $table.indexedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get artwork => $composableBuilder(
+    column: $table.artwork,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get tagsState => $composableBuilder(
+    column: $table.tagsState,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2255,6 +2368,16 @@ class $$TracksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get artwork => $composableBuilder(
+    column: $table.artwork,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get tagsState => $composableBuilder(
+    column: $table.tagsState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$DisksTableOrderingComposer get diskId {
     final $$DisksTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2342,6 +2465,12 @@ class $$TracksTableAnnotationComposer
   GeneratedColumn<DateTime> get indexedAt =>
       $composableBuilder(column: $table.indexedAt, builder: (column) => column);
 
+  GeneratedColumn<String> get artwork =>
+      $composableBuilder(column: $table.artwork, builder: (column) => column);
+
+  GeneratedColumn<int> get tagsState =>
+      $composableBuilder(column: $table.tagsState, builder: (column) => column);
+
   $$DisksTableAnnotationComposer get diskId {
     final $$DisksTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -2409,6 +2538,8 @@ class $$TracksTableTableManager
                 Value<int> size = const Value.absent(),
                 Value<DateTime> modifiedAt = const Value.absent(),
                 Value<DateTime> indexedAt = const Value.absent(),
+                Value<String?> artwork = const Value.absent(),
+                Value<int> tagsState = const Value.absent(),
               }) => TracksCompanion(
                 id: id,
                 diskId: diskId,
@@ -2425,6 +2556,8 @@ class $$TracksTableTableManager
                 size: size,
                 modifiedAt: modifiedAt,
                 indexedAt: indexedAt,
+                artwork: artwork,
+                tagsState: tagsState,
               ),
           createCompanionCallback:
               ({
@@ -2443,6 +2576,8 @@ class $$TracksTableTableManager
                 required int size,
                 required DateTime modifiedAt,
                 required DateTime indexedAt,
+                Value<String?> artwork = const Value.absent(),
+                Value<int> tagsState = const Value.absent(),
               }) => TracksCompanion.insert(
                 id: id,
                 diskId: diskId,
@@ -2459,6 +2594,8 @@ class $$TracksTableTableManager
                 size: size,
                 modifiedAt: modifiedAt,
                 indexedAt: indexedAt,
+                artwork: artwork,
+                tagsState: tagsState,
               ),
           withReferenceMapper: (p0) => p0
               .map(

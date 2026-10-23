@@ -96,15 +96,29 @@ final class TrackInfo {
   );
 }
 
+/// Whether the tags and artwork of a file were read from the file itself
+/// (FR-007.3).
+enum TagsState { pending, done, failed }
+
 /// A track stored in the library.
 @immutable
 final class LibraryTrack {
-  const new({required this.id, required this.disk, required this.info});
+  const new({
+    required this.id,
+    required this.disk,
+    required this.info,
+    this.artwork,
+    this.tagsState = TagsState.pending,
+  });
 
   /// Internal identity, kept across reindexing (BR-004).
   final int id;
   final DiskId disk;
   final TrackInfo info;
+
+  /// Identifier of the artwork image of the file, once read (FR-007.6).
+  final String? artwork;
+  final TagsState tagsState;
 
   Track get track => Track(disk: disk, relativePath: info.relativePath);
 

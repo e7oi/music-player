@@ -1,11 +1,13 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:tuneshell/data/db/library_database.steps.dart';
 
 part 'library_database.g.dart';
 
-/// Schema of ADR-004. Every change bumps [LibraryDatabase.schemaVersion],
-/// adds a dump with `dart run drift_dev make-migrations` and a migration
-/// test (CLAUDE.md, Tests).
+/// Schema of ADR-004, version 2 of ADR-008. Every change bumps
+/// [LibraryDatabase.schemaVersion], adds a dump with
+/// `dart run drift_dev make-migrations` and a migration test (CLAUDE.md,
+/// Tests).
 @DataClassName('DiskRow')
 class Disks extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -62,6 +64,12 @@ class Tracks extends Table {
 
   DateTimeColumn get indexedAt => dateTime()();
 
+  /// Identifier of the artwork image of the file (ADR-009), null for none.
+  TextColumn get artwork => text().nullable()();
+
+  /// `TagsState.index` (FR-007.3): every track starts pending.
+  IntColumn get tagsState => integer().withDefault(const Constant(0))();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {diskId, relativePath},
@@ -73,10 +81,17 @@ class LibraryDatabase extends _$LibraryDatabase {
   new([QueryExecutor? executor]) : super(executor ?? _open());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: stepByStep(
+      from1To2: (migrator, schema) async {
+        // Existing tracks are pending: their artwork is still to be read.
+        await migrator.addColumn(schema.tracks, schema.tracks.artwork);
+        await migrator.addColumn(schema.tracks, schema.tracks.tagsState);
+      },
+    ),
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
