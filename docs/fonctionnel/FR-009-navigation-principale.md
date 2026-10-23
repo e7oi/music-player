@@ -30,4 +30,9 @@ Panneau lecteur permanent et paysage complet (MPL-047, MPL-048), mini-lecteur d�
 
 ## As-built
 
-À écrire à la livraison de MPL-016.
+MPL-016, 2026-10-23. `HomeShell` (`lib/features/shell/`), branché dans `lib/app/app.dart` avec `LibraryPage` et `PlayerBar`. Tests : `test/features/shell/home_shell_test.dart`.
+
+- Le contenu des vues reste dans une `GlobalKey` : à la rotation, la barre devient un rail sans perdre l'état des vues (l'arbre de widgets change, la clé le préserve).
+- Le rail affiche les libellés sous les icônes ; la barre du bas hérite de la hauteur de `TsSize.navBar`.
+- Retour système : `PopScope` sur la coquille.
+- **Non testé sur appareil** : paysage, geste Retour entre onglets.

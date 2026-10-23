@@ -202,6 +202,7 @@ class _AlphabetScrollerState extends State<AlphabetScroller> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => _reportHandle());
     final scheme = Theme.of(context).colorScheme;
+    final still = MediaQuery.disableAnimationsOf(context);
     final handleLit = _recentlyScrolled || _dragging;
     final alignment = widget.alignStart
         ? AlignmentDirectional.centerStart
@@ -248,7 +249,7 @@ class _AlphabetScrollerState extends State<AlphabetScroller> {
                       : AlignmentDirectional.centerEnd,
                   child: AnimatedOpacity(
                     opacity: handleLit ? 1 : 0.4,
-                    duration: TsMotion.short,
+                    duration: still ? Duration.zero : TsMotion.short,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: scheme.onSurfaceVariant,
@@ -423,7 +424,12 @@ class _Bubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
-    const gap = TsSize.indexColumnWidth + 2 * TsSize.indexEdgeInset + TsSpace.m;
+    // Past the letters the magnifier pushes inward, so that the bubble never
+    // covers them.
+    const gap =
+        TsSize.indexColumnWidth +
+        2 * TsSize.indexEdgeInset +
+        TsSize.indexShiftMax;
     return Positioned(
       top: y - TsSize.indexBubble / 2,
       left: alignStart ? gap : null,

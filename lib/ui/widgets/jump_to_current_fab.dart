@@ -37,6 +37,8 @@ class JumpToCurrentFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    // BR-007, rule 7: no motion when the user asked for none.
+    final still = MediaQuery.disableAnimationsOf(context);
     final background = lastPlayed
         ? scheme.surfaceContainerHigh
         : scheme.primaryContainer;
@@ -48,11 +50,11 @@ class JumpToCurrentFab extends StatelessWidget {
         : Icons.arrow_downward_rounded;
     return AnimatedScale(
       scale: visible ? 1 : 0,
-      duration: TsMotion.medium,
+      duration: still ? Duration.zero : TsMotion.medium,
       curve: TsMotion.standard,
       child: AnimatedOpacity(
         opacity: visible ? 1 : 0,
-        duration: TsMotion.medium,
+        duration: still ? Duration.zero : TsMotion.medium,
         child: IgnorePointer(
           ignoring: !visible,
           child: Semantics(
@@ -68,7 +70,7 @@ class JumpToCurrentFab extends StatelessWidget {
                 borderRadius: BorderRadius.circular(TsRadius.l),
                 onTap: onPressed,
                 child: AnimatedSize(
-                  duration: TsMotion.short,
+                  duration: still ? Duration.zero : TsMotion.short,
                   child: SizedBox(
                     height: TsSize.fab,
                     child: Padding(

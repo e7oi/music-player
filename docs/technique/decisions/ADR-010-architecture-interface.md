@@ -46,4 +46,7 @@ Le dossier de conception (`docs/design/HANDOFF.md`) suppose un projet vide et pr
 
 ## As-built
 
-À écrire à la livraison de MPL-016.
+MPL-016, 2026-10-23. `lib/ui/{theme,widgets,demo}/`, règles dans `CLAUDE.md` (règle 3 élargie, règle 6 pour `ui/`, exception `HapticFeedback`) et dans `test/architecture/import_rules.dart` (règle 6 testée sur des fichiers synthétiques et sur `lib/`). Coquille : `lib/features/shell/`. Canal de geste : `GestureExclusionChannel.kt` (`View.setSystemGestureExclusionRects` sur la fenêtre de l'activité, vidé au détachement) et `lib/platform/gesture_exclusion_channel.dart` ; la page qui porte l'index envoie le rectangle de la poignée par le fournisseur `app/providers/gesture_providers.dart`. Aucune dépendance ajoutée ; `pubspec.lock` ne change pas.
+
+- Le Kotlin du canal n'a pas de test unitaire (exception de `CLAUDE.md`) : procédure `HOWTO.md` §14, étape 9 ; vérifié sur le Pixel le 2026-10-23.
+- La galerie est ouverte depuis l'onglet Réglages, en debug et profile seulement (`kDebugMode || kProfileMode`).

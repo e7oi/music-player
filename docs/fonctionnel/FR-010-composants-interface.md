@@ -36,4 +36,11 @@ Repère de source enregistré en base (`markIndex`, MPL-045 et MPL-046), tri et 
 
 ## As-built
 
-À écrire à la livraison de MPL-016.
+MPL-016, 2026-10-23. `lib/ui/widgets/` : `source_mark`, `artwork_tile`, `track_tile`, `status_banner`, `progress_banner`, `disk_card`, `jump_to_current_fab`, `alphabet_scroller`, `alphabet_index` (regroupement des lettres, effet loupe, lettre sous le doigt) ; `lib/ui/demo/` (galerie et liste de 5 000 lignes) ; canal natif `GestureExclusionChannel.kt` et `lib/platform/gesture_exclusion_channel.dart`. Tests : `test/ui/widgets/`, `test/platform/gesture_exclusion_channel_test.dart`.
+
+- Écart : la poignée de l'index a la zone tactile de Design (32 × 64 dp), plus étroite que les 48 dp de l'exigence 6 ; la grille « Aller à la lettre » et les gestes d'ajustement de TalkBack sont les alternatives.
+- L'effet loupe suit une courbe ajustée sur les valeurs de Design (26 / 18 / 14 / 11 dp) : un sommet arrondi, sans palier. La bulle est décalée de la largeur de la colonne et du déplacement maximal des lettres, pour ne pas les recouvrir (corrigé après le test sur le Pixel).
+- La valeur d'accessibilité de la poignée est le nombre d'éléments tant qu'aucune lettre n'est choisie (Flutter exige une valeur dès que l'action « augmenter » existe).
+- `StatusBanner` remplace la bannière d'échec d'indexation de la bibliothèque, et `ProgressBanner` la progression des tags (FR-010.8). Les lignes réelles de la liste ne passent pas encore par `TrackTile` (MPL-045).
+- Les textes de la galerie sont des exemples fictifs, non traduits (page absente de la release).
+- Testé sur le Pixel 10 Pro le 2026-10-23 (build profile, par adb) : galerie en clair (lignes, repères, cartes de disque, bandeaux, progressions, pochettes) conforme aux captures ; liste de 5 000 lignes : poignée, colonne avec effet loupe, bulle, saut en temps réel, disparition de la colonne après le lâcher, grille de lettres (Q, X, Y grisés) ; glissé horizontal depuis la poignée sans Retour, depuis le bord ailleurs avec Retour. **Non testé** : galerie en sombre, vibration, TalkBack, côté gauche, fluidité (`gfxinfo` ne compte pas les images de Flutter).

@@ -29,4 +29,8 @@ Recherche, playlists, favoris (emplacements discrets seulement), contenu réel d
 
 ## As-built
 
-À écrire à la livraison de MPL-016.
+MPL-016, 2026-10-23. `lib/features/shell/home_shell.dart`, `coming_soon_page.dart`, `settings_page.dart`. Tests : `test/features/shell/home_shell_test.dart`.
+
+- La barre de lecture est montée dans la coquille, au-dessus de la navigation, dans tous les onglets (elle n'était visible que dans la bibliothèque).
+- L'onglet Réglages montre la galerie de composants en debug et profile, et « Cette vue arrive bientôt. » en release.
+- Testé sur le Pixel 10 Pro le 2026-10-23 (build profile, par adb) : quatre onglets, messages « bientôt ». **Non testé** : paysage, geste Retour entre onglets, sur appareil.

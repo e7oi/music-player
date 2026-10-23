@@ -112,4 +112,39 @@ void main() {
     expect(find.bySemanticsLabel('En cours'), findsOneWidget);
     handle.dispose();
   });
+
+  /// @verifies BR-007 rule 7
+  testWidgets('no motion when animations are disabled', (tester) async {
+    tester.view
+      ..physicalSize = const Size(412, 915)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    Widget app({required bool visible}) => MaterialApp(
+      theme: TsTheme.light(),
+      home: MediaQuery(
+        data: const MediaQueryData(disableAnimations: true),
+        child: Scaffold(
+          body: Center(
+            child: JumpToCurrentFab(
+              label: 'En cours',
+              visible: visible,
+              onPressed: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpWidget(app(visible: false));
+    await tester.pumpWidget(app(visible: true));
+
+    // Not a single animation frame: it is there at once.
+    expect(
+      tester.widget<AnimatedScale>(find.byType(AnimatedScale)).duration,
+      Duration.zero,
+    );
+    expect(
+      tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).duration,
+      Duration.zero,
+    );
+  });
 }

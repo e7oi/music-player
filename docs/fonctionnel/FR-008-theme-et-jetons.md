@@ -28,4 +28,8 @@ Réglage de thème et Material You (MPL-048), icône d'application, icône de no
 
 ## As-built
 
-À écrire à la livraison de MPL-016.
+MPL-016, 2026-10-23. `lib/ui/theme/tuneshell_tokens.dart` (repris de Design, commentaires en anglais, syntaxe du projet), thèmes dans `lib/app/app.dart`, polices dans `assets/fonts/` et `pubspec.yaml`.
+
+- Jetons ajoutés au fichier de Design : `TsSize.coverDetail` (152 dp, en-tête d'album) et `TsSize.bannerMin` (56 dp, bandeau d'état). Les valeurs de couleur, de rayon et de texte sont celles de Design, inchangées.
+- Les écrans actuels (bibliothèque, disques, barre de lecture) utilisent les espacements de `TsSpace` ; leur comportement ne change pas.
+- Constaté sur le Pixel : titres en Manrope, texte en Inter, thème clair appliqué. **Non testé** : le passage clair/sombre en direct, le thème sombre sur les écrans existants.

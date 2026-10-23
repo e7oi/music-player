@@ -36,4 +36,7 @@ Claude Design a fourni un dossier de transmission : `CLAUDE.md` et `LISEZMOI.md`
 
 ## As-built
 
-À écrire à la livraison de MPL-016.
+MPL-016, 2026-10-23. Versionnés : `docs/design/HANDOFF.md` (décisions du projet ajoutées aux § 9 et § 10, chemin des jetons corrigé), `docs/design/screens/README.md`, `docs/design/screens/source/` (30 fichiers `.dc.html` et `canvas.json`), `docs/design/brand/` (SVG, références et son README), `docs/design/screens/png/` (quatre captures en JPEG réduit à 1 000 px de large : `composants-clair` et `composants-sombre` font environ 416 Ko, les deux autres 120 à 160 Ko), `assets/fonts/` (six TTF et les deux `OFL.txt`, 1,3 Mo). Le dossier `ClaudeDesign/` reste à la racine de l'arbre de travail, non suivi, et n'a pas été ajouté.
+
+- Écart avec la décision : les deux captures de composants dépassent les 400 Ko prévus de 4 %.
+- Les sources HTML ne contiennent que des données d'exemple fictives (recherche de titres et d'artistes de la bibliothèque : aucun résultat).
