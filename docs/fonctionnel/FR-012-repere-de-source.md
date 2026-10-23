@@ -30,4 +30,4 @@ Choisir ou changer le repère d'un disque, légende dans l'écran des disques (M
 Livré par MPL-045 (2026-10-23), test appareil en attente (D14).
 - Attribution : `nextFreeMarkIndex` (`domain/library/model/mark_index.dart`) appelé dans `ensureDisk` (transaction, `drift_library_repository.dart`) ; colonne `disks.mark_index` avec index unique, schéma v3 (`drift_schemas/library/`), migration v2→v3 testée.
 - Affichage : `_TrackRow` (`library_track_list.dart`) donne `SourceMark.local` au stockage interne et `SourceMark.disk(markIndex)` aux disques ; le repère garde sa couleur si le disque est absent. Un disque sans indice n'a pas de repère.
-- TalkBack : « …, source <nom> », « Local » par l'ARB pour le téléphone.
+- TalkBack : « …, source `nom` », « Local » par l'ARB pour le téléphone.

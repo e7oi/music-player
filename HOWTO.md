@@ -322,9 +322,9 @@ Build release (D14) installée par-dessus la précédente (`adb install -r`) : l
 2. **En-tête :** « Pistes », une loupe grisée (infobulle « Rechercher (bientôt) »), puis les pastilles Actualiser, Dossiers et Disques. Attendu : rien ne recouvre la liste ; la ligne de compte dit « N pistes » et « Titre A→Z » à droite.
 3. **Repères :** chaque ligne a son repère avant l'artiste. Attendu : cercle pour le téléphone, forme colorée pour le SSD, lisibles en clair et en sombre ; une piste sans artiste dit « Artiste inconnu ».
 4. **Tri :** un titre qui commence par « É » est rangé parmi les E ; les titres qui commencent par un chiffre ou un symbole sont en tête.
-5. **Bandeau, SSD débranché :** débrancher le SSD. Attendu : « N pistes ignorées : <nom> absent » avec « Voir » ; la pastille Disques porte « 1 absent » ; les pistes du SSD sont grisées avec l'icône de prise ; la ligne de compte ajoute « · N indisponibles ». « Voir » ouvre l'écran des disques.
+5. **Bandeau, SSD débranché :** débrancher le SSD. Attendu : « N pistes ignorées : `nom` absent » avec « Voir » ; la pastille Disques porte « 1 absent » ; les pistes du SSD sont grisées avec l'icône de prise ; la ligne de compte ajoute « · N indisponibles ». « Voir » ouvre l'écran des disques.
 6. **Masquer :** toucher la croix du bandeau. Attendu : il disparaît ; rebrancher puis débrancher le SSD le fait revenir.
-7. **Piste grisée :** toucher une piste du SSD absent. Attendu : un message « Branche <nom> pour lire cette piste » ; rien ne se lance, aucune erreur de lecture.
+7. **Piste grisée :** toucher une piste du SSD absent. Attendu : un message « Branche `nom` pour lire cette piste » ; rien ne se lance, aucune erreur de lecture.
 8. **Lecture qui saute :** lancer une piste du téléphone avec des pistes du SSD absent dans la suite. Attendu : le message court « N pistes ignorées : disque absent » existe toujours.
 9. **Index :** rebrancher le SSD. Poignée fine au bord droit ; un glissé depuis la poignée ouvre « # A–Z » avec la bulle ; la liste suit en temps réel ; les lettres sans titre sont grisées et sautées ; un toucher sur la poignée ouvre la grille « Aller à la lettre ». Le geste Retour, depuis la poignée, ne quitte pas l'application ; depuis le bord droit ailleurs, il agit. Aller dans Réglages puis revenir : l'exclusion suit la vue au premier plan.
 10. **Bouton « En cours » :** lancer une piste, faire défiler loin d'elle. Attendu : « En cours » apparaît avec la flèche vers la piste, se replie en icône pendant le défilement ; le toucher centre la ligne et l'éclaire un instant ; il disparaît quand la ligne est visible. Arrêter la lecture sans quitter : la piste jouée reste proposée sous « Dernière jouée ».
@@ -332,6 +332,6 @@ Build release (D14) installée par-dessus la précédente (`adb install -r`) : l
 12. **États vides :** retirer tous les dossiers : « Aucun dossier choisi » et « Choisir des dossiers ». Choisir un dossier sans audio : « Ta bibliothèque est vide » avec « Choisir des dossiers » et « Actualiser ».
 13. **Paysage :** pivoter le téléphone. Attendu : rail à gauche, en-tête et bandeaux lisibles, première piste visible et touchable, index et bouton en place.
 14. **Fluidité (profile) :** `flutter build apk --profile`, installer, faire défiler la bibliothèque réelle au doigt et à la volée. Noter toute saccade (60 i/s visés) ; la dernière ligne reste atteignable sous le bouton.
-15. **TalkBack et texte à 200 % :** une ligne se lit « titre, artiste, durée, état, source <nom> » ; la poignée annonce « Aller à la lettre ». À 200 %, aucune ligne n'est coupée (les lignes grandissent).
+15. **TalkBack et texte à 200 % :** une ligne se lit « titre, artiste, durée, état, source `nom` » ; la poignée annonce « Aller à la lettre ». À 200 %, aucune ligne n'est coupée (les lignes grandissent).
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
