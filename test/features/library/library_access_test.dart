@@ -112,6 +112,38 @@ void main() {
       expect(state(), isA<LibraryFolderChoice>());
     });
 
+    test('Not now from that explanation returns to the library', () async {
+      await controller().chooseFolderInstead();
+      await controller().openFolderChoice();
+
+      controller().declineAccess();
+
+      expect(state(), isA<LibraryReady>());
+      expect(repository.tracks.map((t) => t.info.title), ['Sea']);
+    });
+
+    test('Back from that explanation returns to the library', () async {
+      await controller().chooseFolderInstead();
+      await controller().openFolderChoice();
+
+      controller().backToWelcome();
+
+      expect(state(), isA<LibraryReady>());
+    });
+
+    test('access granted from the dialog ends the limited library', () async {
+      await controller().chooseFolderInstead();
+      await controller().openFolderChoice();
+      permission
+        ..current = AudioPermissionStatus.notRequested
+        ..answer = AudioPermissionStatus.granted;
+
+      await controller().requestPermission();
+      await controller().openFolderChoice();
+
+      expect(state(), isA<LibraryFolderChoice>());
+    });
+
     test('Folders without access leads back to the explanation', () async {
       await controller().chooseFolderInstead();
 

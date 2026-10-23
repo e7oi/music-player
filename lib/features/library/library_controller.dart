@@ -122,6 +122,7 @@ class LibraryController extends Notifier<LibraryViewState> {
   /// library and reindex (FR-003).
   Future<void> start() async {
     _withoutAccess = false;
+    _libraryWithoutAccess = null;
     final status = await _permission.status();
     if (status == AudioPermissionStatus.notRequested) {
       state = const LibraryWelcome();
@@ -133,11 +134,23 @@ class LibraryController extends Notifier<LibraryViewState> {
   /// "Commencer", or the offer after "Pas maintenant" (FR-014.2).
   void showExplanation() => state = const LibraryWelcome(explaining: true);
 
-  /// Back from the explanation returns to the welcome (FR-014.2).
-  void backToWelcome() => state = const LibraryWelcome();
+  /// Back from the explanation returns to the welcome (FR-014.2), or to the
+  /// library of disk folders if the explanation was opened from it.
+  void backToWelcome() {
+    final library = _libraryWithoutAccess;
+    state = library ?? const LibraryWelcome();
+  }
 
-  /// "Pas maintenant" (FR-014.6).
-  void declineAccess() => state = const LibraryAccessDeclined();
+  /// "Pas maintenant" (FR-014.6); with a library of disk folders behind the
+  /// explanation, it returns to that library.
+  void declineAccess() {
+    final library = _libraryWithoutAccess;
+    state = library ?? const LibraryAccessDeclined();
+  }
+
+  /// The library shown before "Dossiers" led to the explanation, while it
+  /// holds only disk folders (FR-014.5).
+  LibraryReady? _libraryWithoutAccess;
 
   /// True once the library holds only what a disk folder gave, without
   /// access to the phone's audio (FR-014.5).
@@ -196,6 +209,7 @@ class LibraryController extends Notifier<LibraryViewState> {
     if (status == AudioPermissionStatus.granted) {
       if (waiting || (_withoutAccess && current is LibraryReady)) {
         _withoutAccess = false;
+        _libraryWithoutAccess = null;
         await _continueWith(status);
       }
       return;
@@ -221,6 +235,7 @@ class LibraryController extends Notifier<LibraryViewState> {
     if (current is LibraryReady && current.indexing) return;
     // Without access the phone's folders cannot be listed: ask for it.
     if (_withoutAccess) {
+      _libraryWithoutAccess = current is LibraryReady ? current : null;
       showExplanation();
       return;
     }
@@ -318,6 +333,9 @@ class LibraryController extends Notifier<LibraryViewState> {
       );
       return;
     }
+    // Access is there: the library no longer depends on disk folders alone.
+    _withoutAccess = false;
+    _libraryWithoutAccess = null;
     if (await _indexer.needsFolderChoice()) {
       state = const LibraryFolderChoice(
         folders: [],
