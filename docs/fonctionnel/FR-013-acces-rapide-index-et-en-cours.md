@@ -1,6 +1,6 @@
 # FR-013 — Accès rapide : index alphabétique et bouton « En cours »
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 · **Lié :** UC-005, FR-010, FR-011, BR-007, ADR-013 · **Source :** `docs/design/HANDOFF.md` §5 (écran 3, états 3c et 3d), §6, §6.1
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 · **Lié :** UC-005, FR-010, FR-011, BR-007, ADR-013 · **Source :** `docs/design/HANDOFF.md` §5 (écran 3, états 3c et 3d), §6, §6.1
 
 ## Besoin
 

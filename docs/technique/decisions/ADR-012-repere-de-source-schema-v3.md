@@ -1,6 +1,6 @@
 # ADR-012 — Repère de source : stockage et attribution (schéma v3)
 
-**Statut :** Brouillon (2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Fiches :** FR-012, FR-011 · **Complète :** ADR-004, ADR-008
+**Statut :** Active (validée le 2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Fiches :** FR-012, FR-011 · **Complète :** ADR-004, ADR-008
 
 ## Contexte
 
@@ -23,7 +23,7 @@ La conception veut un repère (forme et couleur) par source, stable, jamais part
 
 - Calculer l'indice au moment de l'affichage, par rang du disque : il changerait quand un disque est retiré ou ajouté. Écartée.
 - Stocker forme et couleur : redondant avec l'indice et rigide si la palette change. Écartée.
-- Un indice par dossier au lieu de par disque : D23 fait du disque la source. Écartée.
+- Un indice par dossier au lieu de par disque : D23 fait du disque la source. **Gardée comme option ouverte** (propriétaire, 2026-10-23), à trancher à l'usage : le schéma v3 ne ferme pas la porte (une colonne équivalente sur `disk_folders` resterait possible).
 
 ## À valider (PO)
 

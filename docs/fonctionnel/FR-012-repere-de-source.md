@@ -1,6 +1,6 @@
 # FR-012 — Repère de source
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 (repère et affichage dans la liste), MPL-046 (modification), MPL-047 et MPL-048 (autres vues) · **Décisions :** D23 · **Lié :** FR-010, FR-011, BR-004, BR-008, ADR-012 · **Source :** `docs/design/HANDOFF.md` §4
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 (repère et affichage dans la liste), MPL-046 (modification), MPL-047 et MPL-048 (autres vues) · **Décisions :** D23 · **Lié :** FR-010, FR-011, BR-004, BR-008, ADR-012 · **Source :** `docs/design/HANDOFF.md` §4
 
 ## Besoin
 
@@ -22,6 +22,7 @@ Choisir ou changer le repère d'un disque, légende dans l'écran des disques (M
 ## À valider (PO)
 
 - Les repères sont attribués dans l'ordre d'enregistrement des disques, sans choix de l'utilisateur avant MPL-046.
+- **Option gardée ouverte (propriétaire, 2026-10-23) :** un repère par dossier au lieu d'un par disque, à trancher à l'usage ; sur un téléphone, plusieurs disques externes branchés ensemble sont rares. Le repère reste par disque (D23) tant que ce n'est pas décidé.
 - Le nom affiché d'une source est celui d'Android (« T7 Shield »), pas « SSD » comme dans la maquette.
 
 ## As-built

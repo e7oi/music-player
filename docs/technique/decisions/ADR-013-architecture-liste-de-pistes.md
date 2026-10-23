@@ -1,6 +1,6 @@
 # ADR-013 — Architecture de la liste de pistes : modèle de vue, défilement, index et saut
 
-**Statut :** Brouillon (2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Fiches :** FR-011, FR-012, FR-013, BR-008 · **Complète :** ADR-010
+**Statut :** Active (validée le 2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Fiches :** FR-011, FR-012, FR-013, BR-008 · **Complète :** ADR-010
 
 ## Contexte
 

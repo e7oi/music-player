@@ -1,6 +1,6 @@
 # BR-008 — Disponibilité des sources et messages de la liste
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Lié :** BR-001, BR-003, BR-004, BR-007, FR-011, FR-006 · **Source :** `docs/design/HANDOFF.md` §5 (états 6c et 6d)
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Lié :** BR-001, BR-003, BR-004, BR-007, FR-011, FR-006 · **Source :** `docs/design/HANDOFF.md` §5 (états 6c et 6d)
 
 ## Règles
 

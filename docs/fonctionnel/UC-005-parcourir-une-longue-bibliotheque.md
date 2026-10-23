@@ -1,6 +1,6 @@
 # UC-005 — Parcourir une longue bibliothèque
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Lié :** FR-011, FR-012, FR-013, BR-008, UC-001, UC-003, FR-010
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Lié :** FR-011, FR-012, FR-013, BR-008, UC-001, UC-003, FR-010
 
 ## Acteur et but
 

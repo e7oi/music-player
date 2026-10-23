@@ -1,6 +1,6 @@
 # FR-011 — Liste de pistes de la bibliothèque
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Lié :** UC-005, FR-003, FR-007, FR-010, FR-012, FR-013, BR-007, BR-008 · **Source :** `docs/design/HANDOFF.md` §5 (écran 3 et états 6a à 6d), `Bibliotheque.dc.html` · **Remplace dans l'interface :** l'écran temporaire de MPL-018 (UC-001)
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-045 · **Décisions :** D23 · **Lié :** UC-005, FR-003, FR-007, FR-010, FR-012, FR-013, BR-007, BR-008 · **Source :** `docs/design/HANDOFF.md` §5 (écran 3 et états 6a à 6d), `Bibliotheque.dc.html` · **Remplace dans l'interface :** l'écran temporaire de MPL-018 (UC-001)
 
 ## Besoin
 
