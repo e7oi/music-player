@@ -43,5 +43,11 @@
   "removableAddFailed": "Le dossier n'a pas pu être lu. Vérifiez que le disque est branché, puis réessayez.",
   "removableNotRemovable": "Ce dossier est dans le stockage du téléphone. Choisissez un dossier du disque amovible.",
   "removableRefreshFailed": "Le disque n'a pas pu être lu. La bibliothèque est restée telle quelle.",
-  "tagsProgress": "Lecture des étiquettes : {done} / {total}"
+  "tagsProgress": "Lecture des étiquettes : {done} / {total}",
+  "navTracks": "Pistes",
+  "navAlbums": "Albums",
+  "navArtists": "Artistes",
+  "navSettings": "Réglages",
+  "comingSoon": "Cette vue arrive bientôt.",
+  "demoGallery": "Galerie de composants"
 }

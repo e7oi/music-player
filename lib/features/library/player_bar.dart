@@ -7,6 +7,7 @@ import 'package:tuneshell/app/providers/player_providers.dart';
 import 'package:tuneshell/domain/playback/model/player_state.dart';
 import 'package:tuneshell/features/library/track_artwork.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
+import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 
 /// Temporary playback bar until the MPL-016 mock-ups exist (UC-001).
 class PlayerBar extends ConsumerWidget {
@@ -27,11 +28,11 @@ class PlayerBar extends ConsumerWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: TsSpace.s),
           child: Row(
             children: [
               TrackArtwork(artwork: track?.artwork, size: 40),
-              const SizedBox(width: 8),
+              const SizedBox(width: TsSpace.s),
               Expanded(
                 child: Text(
                   title,

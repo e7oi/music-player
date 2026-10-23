@@ -10,6 +10,7 @@ import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
 import 'package:tuneshell/domain/storage/model/media_source.dart';
 import 'package:tuneshell/features/library/library_page.dart';
 import 'package:tuneshell/features/library/player_bar.dart';
+import 'package:tuneshell/features/shell/home_shell.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/platform/internal_storage.dart';
 
@@ -56,7 +57,7 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale('en'),
-          home: LibraryPage(),
+          home: HomeShell(tracks: LibraryPage(), playerBar: PlayerBar()),
         ),
       ),
     );

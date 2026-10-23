@@ -10,10 +10,12 @@ import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/library/services/library_indexer.dart';
 import 'package:tuneshell/domain/playback/model/playback_notice.dart';
 import 'package:tuneshell/features/library/library_controller.dart';
-import 'package:tuneshell/features/library/player_bar.dart';
 import 'package:tuneshell/features/library/removable_page.dart';
 import 'package:tuneshell/features/library/track_artwork.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
+import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
+import 'package:tuneshell/ui/widgets/progress_banner.dart';
+import 'package:tuneshell/ui/widgets/status_banner.dart';
 
 /// Temporary library screen until the MPL-016 mock-ups exist.
 ///
@@ -109,10 +111,6 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
         ),
         LibraryReady() => _TrackList(state: state),
       },
-      // Playback goes on while the folders are open.
-      bottomNavigationBar: ready || state is LibraryFolderChoice
-          ? const PlayerBar()
-          : null,
     );
   }
 
@@ -143,13 +141,13 @@ class _Message extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
     child: Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(TsSpace.xl),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(text, textAlign: TextAlign.center),
           if (action != null) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: TsSpace.l),
             FilledButton(onPressed: onAction, child: Text(action!)),
           ],
         ],
@@ -180,7 +178,7 @@ class _FolderChoiceViewState extends State<FolderChoiceView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(TsSpace.l),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -188,7 +186,7 @@ class _FolderChoiceViewState extends State<FolderChoiceView> {
                 l10n.foldersTitle,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: TsSpace.s),
               Text(l10n.foldersExplanation),
             ],
           ),
@@ -217,7 +215,7 @@ class _FolderChoiceViewState extends State<FolderChoiceView> {
                 ),
         ),
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(TsSpace.l),
           child: FilledButton(
             onPressed: () => widget.onConfirm({..._selected}),
             child: Text(l10n.foldersConfirm),
@@ -246,25 +244,18 @@ class _TrackList extends ConsumerWidget {
     return Column(
       children: [
         if (state.indexing) const LinearProgressIndicator(),
-        if (tagProgress != null && tagProgress.running) ...[
-          LinearProgressIndicator(value: tagProgress.done / tagProgress.total),
-          Padding(
-            padding: const EdgeInsets.all(4),
-            child: Text(
-              l10n.tagsProgress(tagProgress.done, tagProgress.total),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+        // BR-007, rule 2: persistent states sit in the flow, above the list.
+        if (tagProgress != null && tagProgress.running)
+          ProgressBanner(
+            label: l10n.tagsProgress(tagProgress.done, tagProgress.total),
+            value: tagProgress.done / tagProgress.total,
           ),
-        ],
         if (state.indexFailed)
-          MaterialBanner(
-            content: Text(l10n.libraryIndexFailed),
-            actions: [
-              TextButton(
-                onPressed: () => unawaited(controller.refresh()),
-                child: Text(l10n.libraryRefresh),
-              ),
-            ],
+          StatusBanner(
+            kind: BannerKind.error,
+            message: l10n.libraryIndexFailed,
+            actionLabel: l10n.libraryRefresh,
+            onAction: () => unawaited(controller.refresh()),
           ),
         Expanded(
           child: tracks.isEmpty && !state.indexing
