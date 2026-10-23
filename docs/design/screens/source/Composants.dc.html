@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Composants réutilisables</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 920px; min-height: 3150px; box-sizing: border-box; padding: 40px; background: {{t.surface}}; color: {{t.onSurface}}; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 40px">
+
+  <header style="display: flex; flex-direction: column; gap: 6px">
+    <h1 style="margin: 0; font-family: Manrope, sans-serif; font-size: 32px; line-height: 40px; font-weight: 800">Composants · {{themeName}}</h1>
+    <p style="margin: 0; font-size: 14px; line-height: 20px; color: {{t.onSurfVar}}">Chaque composant = un widget Flutter qui lit ses couleurs dans le thème (ColorScheme + extension TsColors). Aucune couleur codée en dur dans les widgets.</p>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">1 · Ligne de piste <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; color: {{t.primary}}">TrackTile</code></h2>
+    <div style="display: flex; gap: 24px; align-items: flex-start">
+      <div role="list" style="width: 412px; flex-shrink: 0; border-radius: 16px; overflow: hidden; border: 1px solid {{t.outlineVar}}">
+        <sc-for list="{{tracks}}" as="tr" hint-placeholder-count="6">
+          <div role="listitem" style="height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 20px 0 16px; background: {{tr.rowBg}}">
+            <div style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 8px; background: {{tr.coverBg}}; opacity: {{tr.coverOp}}; display: flex; align-items: center; justify-content: center; overflow: hidden">
+              <sc-if value="{{tr.hasCover}}" hint-placeholder-val="{{ true }}"><div style="width: 30px; height: 30px; border-radius: 50%; background: {{tr.coverFg}}; transform: translate(6px, 8px)"></div></sc-if>
+              <sc-if value="{{tr.noCover}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="{{t.onSurfVar}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></sc-if>
+            </div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+              <sc-if value="{{tr.skeleton}}" hint-placeholder-val="{{ false }}">
+                <span aria-hidden="true" style="width: 70%; height: 14px; margin: 5px 0; border-radius: 7px; background: {{t.surfContHigh}}"></span>
+                <span aria-hidden="true" style="width: 40%; height: 12px; margin: 4px 0; border-radius: 6px; background: {{t.surfContHigh}}"></span>
+              </sc-if>
+              <sc-if value="{{tr.real}}" hint-placeholder-val="{{ true }}">
+                <div style="display: flex; align-items: center; gap: 6px; min-width: 0">
+                  <sc-if value="{{tr.playing}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 14 14" fill="{{t.primary}}" aria-hidden="true"><rect x="1" y="5" width="3" height="8" rx="1"/><rect x="5.5" y="1" width="3" height="12" rx="1"/><rect x="10" y="7" width="3" height="6" rx="1"/></svg></sc-if>
+                  <span style="font-size: 16px; line-height: 24px; font-weight: {{tr.weight}}; color: {{tr.titleColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{tr.title}}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 4px; min-width: 0">
+                  <span aria-hidden="true" style="width: 12px; height: 12px; flex-shrink: 0; margin-right: 2px; display: flex">
+                    <sc-if value="{{tr.srcCircle}}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="{{tr.srcColor}}"/></svg></sc-if>
+                    <sc-if value="{{tr.srcSquare}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="{{tr.srcColor}}"/></svg></sc-if>
+                    <sc-if value="{{tr.srcDiamond}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.6L11.4 6L6 11.4L0.6 6Z" fill="{{tr.srcColor}}"/></svg></sc-if>
+                  </span>
+                  <sc-if value="{{tr.off}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{t.unavail}}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/><path d="M3 3l18 18"/></svg></sc-if>
+                  <sc-if value="{{tr.broken}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{t.error}}" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.5"/></svg></sc-if>
+                  <span style="font-size: 14px; line-height: 20px; color: {{tr.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{tr.sub}}</span>
+                </div>
+              </sc-if>
+            </div>
+            <span style="font-size: 12px; font-weight: 500; color: {{tr.subColor}}; font-variant-numeric: tabular-nums">{{tr.dur}}</span>
+          </div>
+        </sc-for>
+      </div>
+      <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 19px; color: {{t.onSurfVar}}">
+        <li>États : <strong style="color: {{t.onSurface}}">normal · en lecture · sans pochette · indisponible · illisible · chargement</strong> (de haut en bas).</li>
+        <li>Hauteur fixe 64 → <code style="font-family: 'JetBrains Mono', monospace">itemExtent: 64</code> dans la liste : défilement fluide sur 5 000+ pistes.</li>
+        <li>Marges 16 / 20 · pochette 48, rayon 8 · espace 12.</li>
+        <li>Titre : titleMedium (en lecture : primary, 600). Sous-titre : bodyMedium, onSurfaceVariant. Durée : labelMedium, chiffres tabulaires.</li>
+        <li>Indisponible : texte TsColors.unavailable + icône « débranché » + pochette à 35 %. Toujours touchable (ouvre une explication).</li>
+        <li>Toute la ligne est la zone tactile (InkWell). Appui long = menu contextuel (plus tard : playlist, favoris).</li>
+        <li>Lecteur d'écran : « Titre, artiste, durée » + état (« indisponible : SSD non connecté »).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">2 · Carte de disque <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; color: {{t.primary}}">DiskCard</code></h2>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{disks}}" as="d" hint-placeholder-count="4">
+        <div style="border-radius: 16px; background: {{t.surfContLow}}; border: 1px solid {{t.outlineVar}}; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <div style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 12px; background: {{d.iconBg}}; color: {{d.iconFg}}; display: flex; align-items: center; justify-content: center">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M5 13l2-8h10l2 8"/><circle cx="17" cy="16.5" r="1"/></svg>
+            </div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+              <span style="font-family: Manrope, sans-serif; font-size: 18px; line-height: 24px; font-weight: 700">SSD</span>
+              <span style="font-size: 12px; line-height: 16px; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">{{d.info}}</span>
+            </div>
+          </div>
+          <span style="align-self: flex-start; height: 32px; padding: 0 12px; border-radius: 8px; background: {{d.chipBg}}; color: {{d.chipFg}}; border: {{d.chipBorder}}; display: inline-flex; align-items: center; font-size: 13px; font-weight: 600">{{d.chip}}</span>
+          <sc-if value="{{d.renew}}" hint-placeholder-val="{{ false }}">
+            <button style="height: 48px; border-radius: 24px; background: {{t.tertiary}}; color: {{t.onTertiary}}; font-size: 14px; font-weight: 600">Renouveler l'accès</button>
+          </sc-if>
+          <sc-if value="{{d.scan}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div style="display: flex; align-items: center"><span style="flex: 1; font-size: 12px; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">1 240 / 3 100 fichiers</span><button style="height: 48px; padding: 0 8px; margin: -12px -8px; color: {{t.primary}}; font-size: 14px; font-weight: 600">Arrêter</button></div>
+              <div style="height: 6px; border-radius: 3px; background: {{t.outlineVar}}"><div style="width: 40%; height: 6px; border-radius: 3px; background: {{t.primary}}"></div></div>
+            </div>
+          </sc-if>
+          <span style="font-size: 12px; line-height: 16px; color: {{t.onSurfVar}}">{{d.label}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin: 0; font-size: 13px; line-height: 19px; color: {{t.onSurfVar}}">Card.filled (surfaceContainerLow, bord outlineVariant, rayon 16, marge interne 16). État = enum <code style="font-family: 'JetBrains Mono', monospace">DiskStatus { connected, scanning, absent, needsAccess }</code> qui pilote l'icône, la pastille et l'action. Absent = neutre (rien à faire) ; accès à renouveler = écaille (action requise).</p>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">3 · Bandeau de progression <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; color: {{t.primary}}">ProgressBanner</code></h2>
+    <div style="display: flex; flex-direction: column; gap: 12px; width: 412px">
+      <div role="status" style="padding: 10px 16px 12px; border-radius: 12px; background: {{t.surfContLow}}; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">Lecture des étiquettes : 340 / 2 600</span>
+        <div style="height: 4px; border-radius: 2px; background: {{t.outlineVar}}"><div style="width: 13%; height: 4px; border-radius: 2px; background: {{t.primary}}"></div></div>
+      </div>
+      <div role="status" style="padding: 10px 16px 12px; border-radius: 12px; background: {{t.surfContLow}}; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">Recherche des fichiers audio… 1 120 trouvés</span>
+        <div style="height: 4px; border-radius: 2px; background: {{t.outlineVar}}"><div style="width: 30%; margin-left: 35%; height: 4px; border-radius: 2px; background: {{t.primary}}"></div></div>
+      </div>
+    </div>
+    <p style="margin: 0; font-size: 13px; line-height: 19px; color: {{t.onSurfVar}}">Déterminé (valeur connue) ou indéterminé (valeur nulle → LinearProgressIndicator animé). minHeight 4, rayon 2, piste outlineVariant, barre primary. Texte labelMedium en chiffres tabulaires pour que le compteur ne « saute » pas. Mises à jour limitées à 4 par seconde (lecteurs d'écran : annoncer seulement le début et la fin).</p>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">4 · Bandeau d'état <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; color: {{t.primary}}">StatusBanner</code></h2>
+    <div style="display: flex; flex-direction: column; gap: 12px; width: 412px">
+      <sc-for list="{{banners}}" as="bn" hint-placeholder-count="3">
+        <div style="padding: 4px 4px 4px 16px; border-radius: 12px; background: {{bn.bg}}; color: {{bn.fg}}; display: flex; align-items: center; gap: 10px; min-height: 56px; box-sizing: border-box">
+          <sc-if value="{{bn.isError}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.5"/></svg></sc-if>
+          <sc-if value="{{bn.isWarn}}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/><path d="M3 3l18 18"/></svg></sc-if>
+          <sc-if value="{{bn.isInfo}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5v.5"/></svg></sc-if>
+          <span style="flex: 1; font-size: 14px; line-height: 20px; font-weight: 500">{{bn.text}}</span>
+          <button style="height: 48px; padding: 0 10px; font-size: 14px; font-weight: 600">{{bn.action}}</button>
+          <button aria-label="Masquer" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+      </sc-for>
+    </div>
+    <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 19px; color: {{t.onSurfVar}}">
+      <li>Variantes : <strong style="color: {{t.onSurface}}">error</strong> (errorContainer), <strong style="color: {{t.onSurface}}">warning</strong> (tertiaryContainer, écaille), <strong style="color: {{t.onSurface}}">info</strong> (surfaceContainerHigh).</li>
+      <li><strong style="color: {{t.onSurface}}">Toujours dans le flux</strong> : un SliverToBoxAdapter au-dessus du SliverList, ou la tête d'une Column. Jamais ScaffoldMessenger.showMaterialBanner, jamais Stack/Overlay → il ne peut pas recouvrir la liste, en portrait comme en paysage.</li>
+      <li>Hauteur min. 56, rayon 12, marge 16 ; texte bodyMedium 500 ; action TextButton 48 ; fermeture IconButton 48 (le bandeau revient si l'état change).</li>
+      <li>Rôle d'accessibilité : liveRegion (Semantics) pour être annoncé une fois.</li>
+    </ul>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">5 · Pastille d'action <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; color: {{t.primary}}">ActionChip</code></h2>
+    <div style="display: flex; gap: 8px">
+      <button style="height: 48px; display: flex; align-items: center"><span style="height: 36px; padding: 0 14px 0 10px; border-radius: 10px; border: 1px solid {{t.outline}}; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: {{t.onSurfVar}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>Actualiser</span></button>
+      <button style="height: 48px; display: flex; align-items: center"><span style="height: 36px; padding: 0 12px 0 10px; border-radius: 10px; border: 1px solid {{t.outline}}; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: {{t.onSurfVar}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M5 13l2-8h10l2 8"/></svg>Disques<span style="margin-left: 2px; padding: 0 6px; height: 20px; border-radius: 10px; background: {{t.tertCont}}; color: {{t.onTertCont}}; font-size: 11px; font-weight: 600; display: flex; align-items: center">1 absent</span></span></button>
+    </div>
+    <p style="margin: 0; font-size: 13px; line-height: 19px; color: {{t.onSurfVar}}">ActionChip M3 (36 visibles, zone tactile 48 via materialTapTargetSize.padded). Badge écaille seulement si une source demande attention.</p>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">6 · Repère de source <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; color: {{t.primary}}">SourceMark</code></h2>
+    <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px">
+      <sc-for list="{{marks}}" as="mk" hint-placeholder-count="5">
+        <div style="border-radius: 12px; background: {{t.surfContLow}}; border: 1px solid {{t.outlineVar}}; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px">
+          <span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px">
+            <sc-if value="{{mk.circle}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="{{mk.color}}"/></svg></sc-if>
+            <sc-if value="{{mk.square}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="{{mk.color}}"/></svg></sc-if>
+            <sc-if value="{{mk.diamond}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.6L11.4 6L6 11.4L0.6 6Z" fill="{{mk.color}}"/></svg></sc-if>
+            <sc-if value="{{mk.triangle}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1L11.4 10.8H0.6Z" fill="{{mk.color}}"/></svg></sc-if>
+            <sc-if value="{{mk.hexagon}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.7L10.6 3.35V8.65L6 11.3L1.4 8.65V3.35Z" fill="{{mk.color}}"/></svg></sc-if>
+          </span>
+          <span style="font-size: 13px; font-weight: 600">{{mk.label}}</span>
+          <code style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{t.onSurfVar}}">{{mk.token}}</code>
+          <span style="font-size: 11px; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">{{mk.ratio}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 19px; color: {{t.onSurfVar}}">
+      <li>Symbole 12 dp placé <strong style="color: {{t.onSurface}}">avant l'artiste</strong>, sur la 2ᵉ ligne de TrackTile. Indépendant de la pochette.</li>
+      <li><strong style="color: {{t.onSurface}}">Forme + couleur</strong> : la forme suffit à distinguer les sources (daltonisme), la couleur aide. Contraste ≥ 3:1 sur la surface et sur la ligne en cours, dans les deux thèmes.</li>
+      <li>Local = ● neutre. Chaque disque reçoit, dans l'ordre d'ajout : ■ bleu, ◆ violet, ▲ rose, ⬢ olive ; au-delà, les couleurs reviennent avec une forme contour. Modifiable dans Disques (« Repère »).</li>
+      <li>Le repère <strong style="color: {{t.onSurface}}">garde sa couleur</strong> quand la source est absente : on voit de quel disque viennent les pistes grisées.</li>
+      <li>Accessibilité : décoratif pour l'écran ; la source est ajoutée au libellé de la ligne (« …, source SSD »). Légende : écran Disques et Dossiers.</li>
+    </ul>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">7 · Bouton « En cours » <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; color: {{t.primary}}">JumpToCurrentFab</code></h2>
+    <div style="display: flex; gap: 16px; align-items: center">
+      <button aria-label="Aller à la piste en cours" style="height: 56px; padding: 0 20px 0 16px; border-radius: 16px; background: {{t.primaryCont}}; color: {{t.onPrimaryCont}}; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="11" width="3.4" height="9" rx="1.2"/><rect x="8.3" y="7" width="3.4" height="13" rx="1.2"/><path d="M18 20V8.5M18 8.5l-3.5 3.5M18 8.5l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        En cours
+      </button>
+      <button aria-label="Aller à la piste en cours" style="width: 56px; height: 56px; border-radius: 16px; background: {{t.primaryCont}}; color: {{t.onPrimaryCont}}; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="4" width="3.4" height="9" rx="1.2"/><rect x="8.3" y="4" width="3.4" height="13" rx="1.2"/><path d="M18 4v11.5M18 15.5l-3.5-3.5M18 15.5l3.5-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button aria-label="Aller à la dernière piste jouée" style="height: 56px; padding: 0 20px 0 16px; border-radius: 16px; background: {{t.surfContHigh}}; color: {{t.onSurface}}; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/></svg>
+        Dernière jouée
+      </button>
+    </div>
+    <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 19px; color: {{t.onSurfVar}}">
+      <li><strong style="color: {{t.onSurface}}">Visible seulement</strong> quand la piste en cours (ou, à l'arrêt, la dernière jouée) est hors de l'écran dans la liste affichée. Apparition/disparition en fondu + échelle (TsMotion.medium).</li>
+      <li>La flèche indique le sens : ↑ si la piste est au-dessus, ↓ si elle est en dessous. Pendant un défilement rapide, l'étiquette se replie (icône seule 56 × 56), puis réapparaît à l'arrêt.</li>
+      <li>Toucher : défilement animé jusqu'à la ligne, centrée, avec un bref surlignage. Si la piste n'est pas dans la liste actuelle (tri/filtre), ouvrir le lecteur à la place.</li>
+      <li>Position : en bas à droite, 16 dp au-dessus du mini-lecteur ; en paysage, en bas à droite de la colonne de liste. La liste reçoit un espace bas de 88 dp pour que la dernière ligne ne soit jamais cachée.</li>
+      <li>Variante « Dernière jouée » : surfaceContainerHigh (moins insistante) quand rien ne joue.</li>
+    </ul>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">8 · Index alphabétique <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; color: {{t.primary}}">AlphabetScroller</code></h2>
+    <div style="display: flex; gap: 32px; align-items: flex-start">
+      <div style="width: 220px; height: 420px; flex-shrink: 0; position: relative; border-radius: 16px; border: 1px solid {{t.outlineVar}}; overflow: hidden; background: {{t.surface}}">
+        <div aria-hidden="true" style="position: absolute; right: 4px; top: 8px; bottom: 8px; width: 32px; border-radius: 16px; background: {{t.surfContHigh}}"></div>
+        <div aria-hidden="true" style="position: absolute; right: 4px; top: 12px; bottom: 12px; width: 32px; display: flex; flex-direction: column">
+          <sc-for list="{{letters}}" as="lt" hint-placeholder-count="27">
+            <span style="flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; font-family: Manrope, sans-serif; font-size: {{lt.size}}; font-weight: {{lt.weight}}; color: {{lt.color}}; transform: translateX({{lt.dx}}); line-height: 1">{{lt.ch}}</span>
+          </sc-for>
+        </div>
+        <div aria-hidden="true" style="position: absolute; right: 2px; top: calc(13% - 22px); width: 44px; height: 44px; border-radius: 22px; background: {{t.finger}}"></div>
+        <div aria-hidden="true" style="position: absolute; right: 96px; top: calc(13% - 36px); width: 72px; height: 72px; border-radius: 36px 36px 8px 36px; background: {{t.primaryCont}}; color: {{t.onPrimaryCont}}; display: flex; flex-direction: column; align-items: center; justify-content: center">
+          <span style="font-family: Manrope, sans-serif; font-size: 34px; line-height: 36px; font-weight: 800">C</span>
+          <span style="font-size: 11px; line-height: 14px; font-weight: 600">148 pistes</span>
+        </div>
+        <div aria-hidden="true" style="position: absolute; left: 12px; bottom: 12px; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 11px; font-weight: 600; color: {{t.onSurfVar}}">Au repos :</span>
+          <span style="width: 6px; height: 48px; border-radius: 3px; background: {{t.outline}}"></span>
+        </div>
+      </div>
+      <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 19px; color: {{t.onSurfVar}}">
+        <li><strong style="color: {{t.onSurface}}">Au repos</strong> : seulement une poignée fine (6 × 48 dp, zone tactile 32 × 64) sur le bord, visible pendant le défilement puis estompée après 1,5 s. Affichée si la liste dépasse ~ 100 éléments.</li>
+        <li><strong style="color: {{t.onSurface}}">Activation</strong> : glisser <em>depuis la poignée</em> (pas depuis le bord de l'écran) → la colonne # A–Z apparaît (fondu 150 ms). Lâcher → elle disparaît après 600 ms.</li>
+        <li><strong style="color: {{t.onSurface}}">Effet « dock »</strong> : la lettre sous le doigt passe de 11 à 26 dp et se décale de 34 dp vers l'intérieur ; voisines ±1 : 18 dp / 18 dp de décalage ; ±2 : 14 dp / 7 dp ; interpolation continue selon la distance au doigt (pas par paliers).</li>
+        <li><strong style="color: {{t.onSurface}}">Repère courant</strong> : bulle 72 dp à gauche du doigt (primaryContainer) avec la lettre et le nombre d'éléments ; lettre courante en primary 800 ; vibration légère à chaque changement de lettre.</li>
+        <li><strong style="color: {{t.onSurface}}">Groupes</strong> : « # » en tête pour chiffres et symboles ; accents repliés (É → E) ; lettres sans éléments affichées en TsColors.unavailable et sautées.</li>
+        <li><strong style="color: {{t.onSurface}}">Une main</strong> : colonne sur toute la hauteur de la liste, côté droit par défaut ; réglage « Index alphabétique à gauche ». Toucher la poignée sans glisser ouvre une grille de lettres (feuille) atteignable au pouce.</li>
+        <li><strong style="color: {{t.onSurface}}">Gestes système</strong> : la colonne est décalée de 4 dp du bord ; seule la poignée (≤ 200 dp) est déclarée en exclusion du geste Retour (systemGestureExclusionRects). Le défilement normal de la liste n'active jamais l'index.</li>
+        <li><strong style="color: {{t.onSurface}}">Accessibilité</strong> : rôle « réglable » (Semantics onIncrease/onDecrease = lettre suivante/précédente) ; la grille de lettres sert d'alternative au glissé avec TalkBack.</li>
+        <li>Utilisé dans Pistes, Albums et Artistes.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":920,"height":3150}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = (this.props.theme ?? 'dark') === 'dark';
+    const t = dark ? {
+      surface: '#0F1522', surfContLow: '#161D2A', surfContHigh: '#252D3A', onSurface: '#DEE3EA', onSurfVar: '#BCC6D2',
+      outline: '#8A94A2', outlineVar: '#3B4555', primary: '#6FE3D0', onPrimary: '#00382F', primaryCont: '#005046', onPrimaryCont: '#8FF7E2',
+      tertiary: '#F2BF6B', onTertiary: '#3F2D00', tertCont: '#5C4300', onTertCont: '#FFDEA6',
+      error: '#FFB4AB', errorCont: '#93000A', onErrorCont: '#FFDAD6', unavail: '#8A94A2', playRow: '#123036',
+      srcLocal: '#BCC6D2', src1: '#8AB4FF', src2: '#C5A8FF', src3: '#FF9EC4', src4: '#C6E67A',
+      srcRatios: ['10,6:1', '8,7:1', '9,1:1', '9,5:1', '13,0:1']
+    } : {
+      surface: '#F5FAFA', surfContLow: '#EFF5F5', surfContHigh: '#E3E9E9', onSurface: '#171D1E', onSurfVar: '#3F4949',
+      outline: '#6F797A', outlineVar: '#BEC8C9', primary: '#00695C', onPrimary: '#FFFFFF', primaryCont: '#9EF2E0', onPrimaryCont: '#00201B',
+      tertiary: '#7A5A1F', onTertiary: '#FFFFFF', tertCont: '#FFDEA6', onTertCont: '#271900',
+      error: '#BA1A1A', errorCont: '#FFDAD6', onErrorCont: '#410002', unavail: '#6A7475', playRow: '#DDF3EE',
+      srcLocal: '#3F4949', src1: '#2F5DB8', src2: '#7048C2', src3: '#B23B78', src4: '#5D7A1C',
+      srcRatios: ['8,8:1', '5,9:1', '5,9:1', '5,3:1', '4,7:1']
+    };
+    const marks = [
+      ['Local', 'circle', t.srcLocal, 'sourceLocal'],
+      ['Disque 1', 'square', t.src1, 'sources[0]'],
+      ['Disque 2', 'diamond', t.src2, 'sources[1]'],
+      ['Disque 3', 'triangle', t.src3, 'sources[2]'],
+      ['Disque 4', 'hexagon', t.src4, 'sources[3]']
+    ].map(([label, shape, color, token], i) => ({
+      label, color, token, ratio: 'contraste ' + t.srcRatios[i],
+      circle: shape === 'circle', square: shape === 'square', diamond: shape === 'diamond', triangle: shape === 'triangle', hexagon: shape === 'hexagon'
+    }));
+    const tracks = [
+      { k: 'n', title: 'Après la pluie', sub: 'Clara Vey', dur: '3:42', bg: '#6E7F5C', fg: '#D9CBA3', src: 'circle' },
+      { k: 'p', title: 'Aube sur le fleuve', sub: 'Les Brumes', dur: '4:18', bg: '#3E6B73', fg: '#E8C77E', src: 'circle' },
+      { k: 'c', title: '01 - piste sans titre.flac', sub: 'Artiste inconnu', dur: '2:12', src: 'diamond' },
+      { k: 'o', title: 'Auroral', sub: 'Nodal · non connecté', dur: '5:03', bg: '#5B4B73', fg: '#C9B8E0', src: 'square' },
+      { k: 'b', title: 'Bastion', sub: 'Fichier illisible', dur: '3:30', bg: '#6E7F5C', fg: '#D9CBA3', src: 'circle' },
+      { k: 's', title: '', sub: '', dur: '', src: 'circle' }
+    ].map((r) => ({
+      ...r,
+      srcCircle: r.src === 'circle', srcSquare: r.src === 'square', srcDiamond: r.src === 'diamond',
+      srcColor: r.src === 'square' ? t.src1 : (r.src === 'diamond' ? t.src2 : t.srcLocal),
+      hasCover: r.k !== 'c' && r.k !== 's', noCover: r.k === 'c',
+      coverBg: r.k === 'c' || r.k === 's' ? t.surfContHigh : r.bg, coverFg: r.fg || 'transparent',
+      coverOp: r.k === 'o' ? 0.35 : 1,
+      skeleton: r.k === 's', real: r.k !== 's', playing: r.k === 'p', off: r.k === 'o', broken: r.k === 'b',
+      rowBg: r.k === 'p' ? t.playRow : t.surface,
+      weight: r.k === 'p' ? 600 : 500,
+      titleColor: r.k === 'o' ? t.unavail : (r.k === 'p' ? t.primary : t.onSurface),
+      subColor: r.k === 'o' ? t.unavail : (r.k === 'b' ? t.error : t.onSurfVar)
+    }));
+    const disks = [
+      { label: 'connected', info: '1 To · 2 dossiers · 812 pistes', chip: 'Connecté', chipBg: t.primaryCont, chipFg: t.onPrimaryCont, chipBorder: '0', iconBg: t.primaryCont, iconFg: t.onPrimaryCont },
+      { label: 'scanning', info: '1 To · parcours en cours', chip: 'Connecté', chipBg: t.primaryCont, chipFg: t.onPrimaryCont, chipBorder: '0', iconBg: t.primaryCont, iconFg: t.onPrimaryCont, scan: true },
+      { label: 'absent', info: 'Vu pour la dernière fois le 21 octobre', chip: 'Non connecté', chipBg: 'transparent', chipFg: t.onSurfVar, chipBorder: '1px solid ' + t.outline, iconBg: t.surfContHigh, iconFg: t.onSurfVar },
+      { label: 'needsAccess', info: '812 pistes grisées', chip: 'Accès à renouveler', chipBg: t.tertCont, chipFg: t.onTertCont, chipBorder: '0', iconBg: t.tertCont, iconFg: t.onTertCont, renew: true }
+    ];
+    const banners = [
+      { kind: 'error', text: 'Le dossier « Download » n’a pas pu être lu.', action: 'Réessayer', bg: t.errorCont, fg: t.onErrorCont },
+      { kind: 'warn', text: '12 pistes ignorées : SSD absent', action: 'Voir', bg: t.tertCont, fg: t.onTertCont },
+      { kind: 'info', text: 'Nouvelles pistes ajoutées : 24', action: 'Afficher', bg: t.surfContHigh, fg: t.onSurface }
+    ].map((b) => ({ ...b, isError: b.kind === 'error', isWarn: b.kind === 'warn', isInfo: b.kind === 'info' }));
+    t.finger = dark ? 'rgba(222, 227, 234, 0.16)' : 'rgba(23, 29, 30, 0.12)';
+    const empties = ['K', 'Q', 'W', 'X', 'Y'];
+    const letters = ['#'].concat('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')).map((ch, i) => {
+      const d = Math.abs(i - 3);
+      return {
+        ch,
+        size: d === 0 ? '26px' : (d === 1 ? '18px' : (d === 2 ? '14px' : '11px')),
+        dx: d === 0 ? '-34px' : (d === 1 ? '-18px' : (d === 2 ? '-7px' : '0px')),
+        weight: d === 0 ? 800 : (d <= 2 ? 700 : 600),
+        color: d === 0 ? t.primary : (empties.indexOf(ch) > -1 ? t.unavail : t.onSurfVar)
+      };
+    });
+    return { t, tracks, disks, banners, marks, letters, themeName: dark ? 'sombre' : 'clair' };
+  }
+}
+</script>
+</body>
+</html>

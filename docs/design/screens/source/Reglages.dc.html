@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Réglages</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 412px; height: 915px; box-sizing: border-box; background: {{t.surface}}; color: {{t.onSurface}}; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="height: 40px; flex-shrink: 0"></div>
+  <header style="height: 64px; flex-shrink: 0; display: flex; align-items: center; padding: 0 16px">
+    <h1 style="margin: 0; font-family: Manrope, sans-serif; font-size: 28px; line-height: 36px; font-weight: 800">Réglages</h1>
+  </header>
+
+  <div style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column">
+    <sc-for list="{{sections}}" as="s" hint-placeholder-count="4">
+      <p style="margin: 0; padding: 16px 16px 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{t.primary}}">{{s.title}}</p>
+      <sc-for list="{{s.items}}" as="it" hint-placeholder-count="3">
+        <sc-if value="{{it.isNav}}" hint-placeholder-val="{{ true }}">
+          <button style="width: 100%; min-height: 56px; display: flex; align-items: center; gap: 16px; padding: 8px 16px; box-sizing: border-box; text-align: left">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 16px; line-height: 24px">{{it.label}}</span><span style="font-size: 14px; line-height: 20px; color: {{t.onSurfVar}}">{{it.sub}}</span></span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.onSurfVar}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </sc-if>
+        <sc-if value="{{it.isSwitch}}" hint-placeholder-val="{{ false }}">
+          <button role="switch" aria-checked="{{it.aria}}" style="width: 100%; min-height: 56px; display: flex; align-items: center; gap: 16px; padding: 8px 16px; box-sizing: border-box; text-align: left">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 16px; line-height: 24px">{{it.label}}</span><span style="font-size: 14px; line-height: 20px; color: {{t.onSurfVar}}">{{it.sub}}</span></span>
+            <span aria-hidden="true" style="width: 52px; height: 32px; flex-shrink: 0; border-radius: 16px; box-sizing: border-box; background: {{it.trackBg}}; border: {{it.trackBorder}}; display: flex; align-items: center; justify-content: {{it.justify}}; padding: 0 4px">
+              <span style="width: {{it.thumb}}; height: {{it.thumb}}; border-radius: 12px; background: {{it.thumbBg}}"></span>
+            </span>
+          </button>
+        </sc-if>
+        <sc-if value="{{it.isTheme}}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 8px 16px 12px; display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 16px; line-height: 24px">Thème</span>
+            <div role="radiogroup" aria-label="Thème" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); height: 48px; border: 1px solid {{t.outline}}; border-radius: 24px; overflow: hidden">
+              <button role="radio" aria-checked="true" style="background: {{t.secCont}}; color: {{t.onSecCont}}; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4.5 4.5L19 7"/></svg>Système</button>
+              <button role="radio" aria-checked="false" style="border-left: 1px solid {{t.outline}}; font-size: 14px; font-weight: 600">Clair</button>
+              <button role="radio" aria-checked="false" style="border-left: 1px solid {{t.outline}}; font-size: 14px; font-weight: 600">Sombre</button>
+            </div>
+          </div>
+        </sc-if>
+      </sc-for>
+    </sc-for>
+  </div>
+
+  <nav aria-label="Navigation principale" style="flex-shrink: 0; height: 80px; background: {{t.surfCont}}; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: {{t.onSurfVar}}">
+      <span style="width: 64px; height: 32px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>
+      <span style="font-size: 12px; line-height: 16px; font-weight: 500">Pistes</span>
+    </a>
+    <a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: {{t.onSurfVar}}">
+      <span style="width: 64px; height: 32px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/><circle cx="10" cy="14" r="2.5"/></svg></span>
+      <span style="font-size: 12px; line-height: 16px; font-weight: 500">Albums</span>
+    </a>
+    <a href="#" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: {{t.onSurfVar}}">
+      <span style="width: 64px; height: 32px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.3-6 8-6s6.8 2 8 6"/></svg></span>
+      <span style="font-size: 12px; line-height: 16px; font-weight: 500">Artistes</span>
+    </a>
+    <a href="#" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: {{t.onSurface}}">
+      <span style="width: 64px; height: 32px; border-radius: 16px; background: {{t.secCont}}; color: {{t.onSecCont}}; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.5"/><circle cx="10" cy="17" r="2.5"/></svg></span>
+      <span style="font-size: 12px; line-height: 16px; font-weight: 600">Réglages</span>
+    </a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = (this.props.theme ?? 'dark') === 'dark';
+    const t = dark ? {
+      surface: '#0F1522', surfCont: '#1B2230', surfContHigh: '#252D3A', onSurface: '#DEE3EA', onSurfVar: '#BCC6D2',
+      outline: '#8A94A2', primary: '#6FE3D0', onPrimary: '#00382F', secCont: '#24464A', onSecCont: '#CCE8E2'
+    } : {
+      surface: '#F5FAFA', surfCont: '#E9EFEF', surfContHigh: '#E3E9E9', onSurface: '#171D1E', onSurfVar: '#3F4949',
+      outline: '#6F797A', primary: '#00695C', onPrimary: '#FFFFFF', secCont: '#CCE8E2', onSecCont: '#051F1C'
+    };
+    const sw = (label, sub, on) => ({
+      isSwitch: true, isNav: false, isTheme: false, label, sub, aria: on ? 'true' : 'false',
+      trackBg: on ? t.primary : t.surfContHigh, trackBorder: on ? '0' : '2px solid ' + t.outline,
+      justify: on ? 'flex-end' : 'flex-start', thumb: on ? '24px' : '16px',
+      thumbBg: on ? t.onPrimary : t.outline
+    });
+    const nav = (label, sub) => ({ isNav: true, isSwitch: false, isTheme: false, label, sub });
+    const sections = [
+      { title: 'Bibliothèque', items: [
+        nav('Dossiers de musique', '1 dossier · Music'),
+        nav('Disques amovibles', 'SSD · non connecté'),
+        sw('Actualiser au démarrage', 'Cherche les nouveaux fichiers à chaque ouverture', true),
+        sw('Ignorer les fichiers courts', 'Moins de 30 s (sonneries, notes vocales)', true)
+      ] },
+      { title: 'Apparence', items: [
+        { isTheme: true, isNav: false, isSwitch: false },
+        sw('Couleurs du fond d’écran', 'Remplace le menthe par les couleurs d’Android', false),
+        sw('Index alphabétique à gauche', 'Pour une utilisation de la main gauche', false)
+      ] },
+      { title: 'Lecture', items: [
+        sw('Pause si le casque est débranché', 'Recommandé', true),
+        sw('Reprendre là où j’en étais', 'Restaure la file d’attente au démarrage', true)
+      ] },
+      { title: 'À propos', items: [
+        nav('TuneShell 0.1.0', 'Libre · [LICENCE À PRÉCISER] · code source'),
+        nav('Confidentialité', 'Aucune donnée collectée, aucun compte, aucun réseau')
+      ] }
+    ];
+    return { t, sections };
+  }
+}
+</script>
+</body>
+</html>

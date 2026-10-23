@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Bibliothèque et états — sombre</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 3632px; height: 960px; display: flex; gap: 48px; font-family: Inter, system-ui, sans-serif; color: #1B2230">
+  <sc-for list="{{variants}}" as="v" hint-placeholder-count="6">
+    <div style="width: 412px; display: flex; flex-direction: column; gap: 12px">
+      <span style="height: 33px; font-size: 18px; line-height: 33px; font-weight: 600">{{v.label}}</span>
+      <dc-import name="Bibliotheque" theme="dark" state="{{v.state}}" hint-size="412px,915px"></dc-import>
+    </div>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":3632,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { variants: [
+      { state: 'normal', label: '3a · Normal + étiquettes en cours' },
+      { state: 'chargement', label: '3b · Premier parcours' },
+      { state: 'vide', label: '6a · Bibliothèque vide' },
+      { state: 'aucun', label: '6b · Aucun dossier choisi' },
+      { state: 'indispo', label: '6c · 12 pistes ignorées : SSD absent' },
+      { state: 'illisible', label: '6d · Piste illisible' },
+      { state: 'horsecran', label: '3c · Piste en cours hors écran (bouton)' },
+      { state: 'index', label: '3d · Index alphabétique (glissé sur C)' }
+    ] };
+  }
+}
+</script>
+</body>
+</html>
