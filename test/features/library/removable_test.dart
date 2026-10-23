@@ -136,6 +136,22 @@ void main() {
       expect(source.released, [(ssd, 'Music')]);
     });
 
+    /// @verifies BR-006.5 a stop is not followed by the reading of tags.
+    test('a stopped scan does not start the tags', () async {
+      await repository.setChosenFolders(
+        const Disk(id: ssd, label: 'SSD', kind: DiskKind.removable),
+        {'Music'},
+      );
+      await repository.applyScan(ssd, [info('Music/a.mp3')]);
+      source.failing[(ssd, 'Music')] = const ScanCancelledException();
+
+      await controller().refresh();
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+
+      expect(reader.reads, isEmpty);
+      expect(state().busy, isFalse);
+    });
+
     /// @verifies BR-006.5
     test('cancel stops the scan and the tags', () async {
       await controller().cancel();

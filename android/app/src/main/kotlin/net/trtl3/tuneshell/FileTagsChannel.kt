@@ -132,7 +132,8 @@ class FileTagsChannel(
         } else {
             decoded
         }
-        val temporary = File(artworkDir, "$hash.tmp")
+        // One temporary file per call: two tracks of an album share a hash.
+        val temporary = File.createTempFile("$hash-", ".tmp", artworkDir)
         FileOutputStream(temporary).use { image.compress(Bitmap.CompressFormat.JPEG, QUALITY, it) }
         if (!temporary.renameTo(target)) temporary.delete()
         // No file, no artwork: the track must not point at a missing image.

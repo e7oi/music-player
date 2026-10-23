@@ -125,12 +125,14 @@ class TagIndexer {
       return null;
     } on Exception {
       // An unreadable file, or a disk that went away during the read.
-      final disks = await _volumes.availableDisks();
-      if (!disks.contains(item.track.disk)) {
-        _diskGone = true;
-        return null;
+      try {
+        final disks = await _volumes.availableDisks();
+        if (disks.contains(item.track.disk)) return TagUpdate.failed(item.id);
+      } on Exception {
+        // Availability unknown: do not mark the file, end the pass.
       }
-      return TagUpdate.failed(item.id);
+      _diskGone = true;
+      return null;
     }
   }
 

@@ -154,7 +154,8 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
                 mainThread.post { result.error(e.code, e.message, null) }
             } catch (e: SecurityException) {
                 mainThread.post { result.error("access_lost", e.message, null) }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                // Even an Error answers Dart, which would wait for ever.
                 mainThread.post { result.error("failed", e.message, null) }
             }
         }

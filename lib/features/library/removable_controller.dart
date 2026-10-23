@@ -73,23 +73,26 @@ class RemovableController extends Notifier<RemovableViewState> {
   /// Scans the disks, then reads the tags and artwork of what is pending.
   Future<void> refresh({bool retryFailed = false}) async {
     _update(busy: true);
+    var stopped = false;
     try {
       await ref.read(volumeEventsProvider).refresh();
       await _indexer.refreshAll();
     } on ScanCancelledException {
-      // The user stopped it.
+      stopped = true;
     } on Exception {
       _update(message: RemovableMessage.refreshFailed);
     }
     _update(busy: false);
     await load();
-    unawaited(_readTags(retryFailed: retryFailed));
+    // A stop is not followed by the tags: they start on the next refresh.
+    if (!stopped) unawaited(_readTags(retryFailed: retryFailed));
   }
 
   /// UC-003: the Android picker, then the scan of the chosen folder. Also
   /// the way to renew a lost access (FR-006.11).
   Future<void> addFolder() async {
     _update(busy: true);
+    var stopped = false;
     try {
       final result = await _indexer.addFolder();
       if (result == AddFolderResult.noAudio) {
@@ -98,7 +101,7 @@ class RemovableController extends Notifier<RemovableViewState> {
     } on NotRemovableException {
       _update(message: RemovableMessage.notRemovable);
     } on ScanCancelledException {
-      // The user stopped it.
+      stopped = true;
     } on Exception {
       _update(message: RemovableMessage.addFailed);
     }
@@ -106,7 +109,7 @@ class RemovableController extends Notifier<RemovableViewState> {
     if (!ref.mounted) return;
     await ref.read(volumeEventsProvider).refresh();
     await load();
-    unawaited(_readTags());
+    if (!stopped) unawaited(_readTags());
   }
 
   Future<void> removeFolder(DiskId disk, String folder) async {
@@ -123,7 +126,9 @@ class RemovableController extends Notifier<RemovableViewState> {
 
   /// BR-006.5: stops the scan and the tags in progress.
   Future<void> cancel() async {
-    ref.read(tagIndexerProvider).cancel();
+    final tags = ref.read(tagIndexerProvider);
+    // Cancelling a pass that has not started would cancel the next one.
+    if (tags.progress.running) tags.cancel();
     await _indexer.cancel();
   }
 
