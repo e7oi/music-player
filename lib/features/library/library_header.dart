@@ -21,9 +21,12 @@ class LibraryTitleBar extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                l10n.navTracks,
-                style: Theme.of(context).textTheme.headlineSmall,
+              child: Semantics(
+                header: true,
+                child: Text(
+                  l10n.navTracks,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
               ),
             ),
             IconButton(
@@ -72,13 +75,13 @@ class LibraryActionChips extends StatelessWidget {
             label: l10n.libraryRefresh,
             onPressed: busy ? null : onRefresh,
           ),
-          const SizedBox(width: TsSpace.s),
+          const SizedBox(width: TsSpace.xs),
           _Chip(
             icon: Icons.folder_outlined,
             label: l10n.libraryFolders,
             onPressed: busy ? null : onFolders,
           ),
-          const SizedBox(width: TsSpace.s),
+          const SizedBox(width: TsSpace.xs),
           _Chip(
             icon: Icons.usb_rounded,
             label: l10n.chipDisks,
@@ -112,13 +115,17 @@ class _Chip extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final badgeColors = this.badgeColors;
     return ActionChip(
+      // Tight padding: the three chips and the badge must fit a phone held
+      // upright, with the longest French labels.
+      padding: const EdgeInsets.symmetric(horizontal: TsSpace.xs),
+      labelPadding: const EdgeInsets.symmetric(horizontal: TsSpace.xs),
       avatar: Icon(icon),
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(label),
           if (badge != null && badgeColors != null) ...[
-            const SizedBox(width: TsSpace.s),
+            const SizedBox(width: TsSpace.xs),
             DecoratedBox(
               decoration: BoxDecoration(
                 color: badgeColors.$1,

@@ -41,7 +41,10 @@ void main() {
     engine = FakeAudioEngine();
   });
 
-  Future<void> pumpPage(WidgetTester tester) async {
+  Future<void> pumpPage(
+    WidgetTester tester, {
+    Locale locale = const Locale('en'),
+  }) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -61,7 +64,7 @@ void main() {
           theme: TsTheme.light(),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('en'),
+          locale: locale,
           home: const HomeShell(tracks: LibraryPage(), playerBar: PlayerBar()),
         ),
       ),
@@ -226,7 +229,10 @@ void main() {
   });
 
   /// Tracks of an absent SSD among the local ones (BR-008).
-  Future<void> pumpWithAbsentDisk(WidgetTester tester) async {
+  Future<void> pumpWithAbsentDisk(
+    WidgetTester tester, {
+    Locale locale = const Locale('en'),
+  }) async {
     const ssd = DiskId('1234-ABCD');
     await repository.ensureDisk(Disk.internal);
     await repository.ensureDisk(
@@ -234,7 +240,7 @@ void main() {
     );
     await repository.applyScan(ssd, [info('Gone.mp3', title: 'Gone')]);
     await repository.setChosenFolders(Disk.internal, {'Music'});
-    await pumpPage(tester);
+    await pumpPage(tester, locale: locale);
   }
 
   group('the sources banner', () {
