@@ -227,5 +227,9 @@
   "demoGallery": "Component gallery",
   "@demoGallery": {
     "description": "Entry of the settings tab that opens the component demo page (debug and profile builds only, FR-010)."
+  },
+  "foldersBack": "Back",
+  "@foldersBack": {
+    "description": "Tooltip of the back arrow of the folder choice when it was opened from the library (FR-003)."
   }
 }

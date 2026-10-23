@@ -190,4 +190,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get demoGallery => 'Galerie de composants';
+
+  @override
+  String get foldersBack => 'Retour';
 }

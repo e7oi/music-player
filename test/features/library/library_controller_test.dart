@@ -277,6 +277,42 @@ void main() {
       expect((state() as LibraryFolderChoice).selected, {'Music', 'Ringtones'});
     });
 
+    /// @verifies FR-003.4 the choice opened by the user can be left unchanged.
+    test('cancelling the folder choice goes back to the library', () async {
+      await controller().start();
+      await controller().confirmFolders({'Music'});
+      await controller().openFolderChoice();
+      expect(controller().canCancelFolderChoice, isTrue);
+
+      controller().cancelFolderChoice();
+
+      expect(state(), isA<LibraryReady>());
+      expect((state() as LibraryReady).hasFolders, isTrue);
+      expect(controller().canCancelFolderChoice, isFalse);
+      expect(repository.tracks, hasLength(2));
+    });
+
+    /// @verifies FR-003.3 the first choice is not optional.
+    test('the first folder choice cannot be cancelled', () async {
+      await controller().start();
+
+      expect(state(), isA<LibraryFolderChoice>());
+      expect(controller().canCancelFolderChoice, isFalse);
+      controller().cancelFolderChoice();
+      expect(state(), isA<LibraryFolderChoice>());
+    });
+
+    test('confirming after reopening ends the choice for good', () async {
+      await controller().start();
+      await controller().confirmFolders({'Music'});
+      await controller().openFolderChoice();
+
+      await controller().confirmFolders({'Music', 'Ringtones'});
+
+      expect(state(), isA<LibraryReady>());
+      expect(controller().canCancelFolderChoice, isFalse);
+    });
+
     /// @verifies UC-001
     test('a failing folder query on first launch offers a retry', () async {
       container.dispose();

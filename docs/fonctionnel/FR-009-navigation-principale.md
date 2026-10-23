@@ -27,6 +27,7 @@ Panneau lecteur permanent et paysage complet (MPL-047, MPL-048), mini-lecteur d�
 
 - Exigence 7 : le geste Retour revient sur Pistes avant de quitter (choix de comportement non précisé par Design).
 - Exigence 10 : l'application s'ouvre toujours sur Pistes.
+- Ajout du 2026-10-23 : le retour (flèche et geste) depuis le choix des dossiers ouvert par l'utilisateur, absent de FR-003 (`Active`) et de la spécification de Design (écran 2) ; à confirmer.
 
 ## As-built
 
@@ -38,4 +39,5 @@ MPL-016, 2026-10-23. `HomeShell` (`lib/features/shell/`), branché dans `lib/app
 - La barre de lecture, montée dans la coquille, est maintenant présente aussi pendant le chargement, le refus de permission et le choix des dossiers ; elle est vide tant que rien ne joue. Avant, elle n'apparaissait que dans la bibliothèque prête ou le choix des dossiers.
 - Le rail est dans une `SafeArea` (encoche en paysage), non vérifiée sur appareil.
 - Hors périmètre, nécessaire pour que les tests de page passent : `playerStateProvider` (`app/providers/player_providers.dart`) s'abonne au flux avant de lire l'état courant. Avant, un état émis entre les deux se perdait (disques disponibles non reçus : pistes grisées à tort). Les tests de page de `library_page_test.dart` étaient rouges sans ce correctif ; `test/app/player_state_provider_test.dart` est un garde qui ne reproduit pas la course de façon déterministe.
+- Retour depuis « Dossiers de musique » (ajouté après le test du propriétaire sur le Pixel, 2026-10-23) : ouvert depuis la bibliothèque, le choix des dossiers montre une flèche de retour et le geste Retour du système y répond, au lieu de mettre l'application en arrière-plan ; au premier lancement, où le choix est obligatoire (FR-003.3), il n'y a ni flèche ni retour. `LibraryController.cancelFolderChoice`, `canCancelFolderChoice` ; tests `library_controller_test.dart` et `library_page_test.dart`. Limite : si le choix est ouvert dans Pistes et que l'utilisateur est sur un autre onglet, le geste Retour ferme aussi ce choix avant de revenir sur Pistes.
 - **Non testé sur appareil** : paysage, geste Retour entre onglets, sous-écrans (exigence 6, couverte seulement par les écrans existants).

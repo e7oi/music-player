@@ -397,6 +397,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Component gallery'**
   String get demoGallery;
+
+  /// Tooltip of the back arrow of the folder choice when it was opened from the library (FR-003).
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get foldersBack;
 }
 
 class _AppLocalizationsDelegate

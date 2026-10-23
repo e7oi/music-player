@@ -60,57 +60,72 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
       if (notice != null) _showNotice(context, notice);
     });
     final ready = state is LibraryReady;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.appTitle),
-        actions: [
-          if (ready) ...[
-            IconButton(
-              tooltip: l10n.libraryFolders,
-              icon: const Icon(Icons.folder_outlined),
-              onPressed: state.indexing
-                  ? null
-                  : () => unawaited(_controller.openFolderChoice()),
-            ),
-            IconButton(
-              tooltip: l10n.libraryDisks,
-              icon: const Icon(Icons.usb),
-              onPressed: () => Navigator.of(context).push<void>(
-                MaterialPageRoute(builder: (_) => const RemovablePage()),
-              ),
-            ),
-            IconButton(
-              tooltip: l10n.libraryRefresh,
-              icon: const Icon(Icons.refresh),
-              onPressed: state.indexing
-                  ? null
-                  : () => unawaited(_controller.refresh()),
-            ),
-          ],
-        ],
-      ),
-      body: switch (state) {
-        LibraryStarting() => const Center(child: CircularProgressIndicator()),
-        LibraryPermissionNeeded(:final permanent) => _Message(
-          text: l10n.permissionExplanation,
-          action: permanent
-              ? l10n.permissionOpenSettings
-              : l10n.permissionRetry,
-          onAction: () => unawaited(_controller.requestPermission()),
-        ),
-        LibraryLoadFailed() => _Message(
-          text: l10n.libraryLoadFailed,
-          action: l10n.libraryRetry,
-          onAction: () => unawaited(_controller.retry()),
-        ),
-        LibraryFolderChoice() => FolderChoiceView(
-          key: ValueKey(state),
-          choice: state,
-          onConfirm: (folders) =>
-              unawaited(_controller.confirmFolders(folders)),
-        ),
-        LibraryReady() => _TrackList(state: state),
+    final cancelable = _controller.canCancelFolderChoice;
+    // FR-003.4: Back leaves the folder choice before it leaves the app.
+    return PopScope(
+      canPop: !cancelable,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _controller.cancelFolderChoice();
       },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: cancelable
+              ? IconButton(
+                  tooltip: l10n.foldersBack,
+                  icon: const Icon(Icons.arrow_back_rounded),
+                  onPressed: _controller.cancelFolderChoice,
+                )
+              : null,
+          title: Text(l10n.appTitle),
+          actions: [
+            if (ready) ...[
+              IconButton(
+                tooltip: l10n.libraryFolders,
+                icon: const Icon(Icons.folder_outlined),
+                onPressed: state.indexing
+                    ? null
+                    : () => unawaited(_controller.openFolderChoice()),
+              ),
+              IconButton(
+                tooltip: l10n.libraryDisks,
+                icon: const Icon(Icons.usb),
+                onPressed: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(builder: (_) => const RemovablePage()),
+                ),
+              ),
+              IconButton(
+                tooltip: l10n.libraryRefresh,
+                icon: const Icon(Icons.refresh),
+                onPressed: state.indexing
+                    ? null
+                    : () => unawaited(_controller.refresh()),
+              ),
+            ],
+          ],
+        ),
+        body: switch (state) {
+          LibraryStarting() => const Center(child: CircularProgressIndicator()),
+          LibraryPermissionNeeded(:final permanent) => _Message(
+            text: l10n.permissionExplanation,
+            action: permanent
+                ? l10n.permissionOpenSettings
+                : l10n.permissionRetry,
+            onAction: () => unawaited(_controller.requestPermission()),
+          ),
+          LibraryLoadFailed() => _Message(
+            text: l10n.libraryLoadFailed,
+            action: l10n.libraryRetry,
+            onAction: () => unawaited(_controller.retry()),
+          ),
+          LibraryFolderChoice() => FolderChoiceView(
+            key: ValueKey(state),
+            choice: state,
+            onConfirm: (folders) =>
+                unawaited(_controller.confirmFolders(folders)),
+          ),
+          LibraryReady() => _TrackList(state: state),
+        },
+      ),
     );
   }
 

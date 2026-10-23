@@ -118,6 +118,45 @@ void main() {
     );
   });
 
+  /// @verifies FR-003.4
+  group('leaving the folder choice', () {
+    Future<void> openChoice(WidgetTester tester) async {
+      await pumpPage(tester);
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Folders'));
+      await tester.pumpAndSettle();
+      expect(find.text('Music folders'), findsOneWidget);
+    }
+
+    testWidgets('the back button returns to the list', (tester) async {
+      await openChoice(tester);
+
+      await tester.tap(find.byTooltip('Back'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Music folders'), findsNothing);
+      expect(find.text('Alpha'), findsOneWidget);
+    });
+
+    testWidgets('the system Back gesture returns to the list', (tester) async {
+      await openChoice(tester);
+
+      expect(await tester.binding.handlePopRoute(), isTrue);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Music folders'), findsNothing);
+      expect(find.text('Alpha'), findsOneWidget);
+    });
+
+    testWidgets('the first choice has no back button', (tester) async {
+      await pumpPage(tester);
+
+      expect(find.text('Music folders'), findsOneWidget);
+      expect(find.byTooltip('Back'), findsNothing);
+    });
+  });
+
   testWidgets('the playback bar stays while the folders are open', (
     tester,
   ) async {

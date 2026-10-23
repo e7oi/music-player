@@ -129,6 +129,8 @@ class LibraryController extends Notifier<LibraryViewState> {
   Future<void> openFolderChoice() async {
     final current = state;
     if (current is LibraryReady && current.indexing) return;
+    // Remembered so that the user can leave the choice unchanged.
+    if (current is LibraryReady) _beforeChoice = current;
     try {
       state = LibraryFolderChoice(
         folders: await _indexer.availableFolders(),
@@ -137,6 +139,28 @@ class LibraryController extends Notifier<LibraryViewState> {
     } on Exception {
       state = const LibraryLoadFailed(whileChoosingFolders: true);
     }
+  }
+
+  /// The library the user left to choose folders; null on first launch, when
+  /// a choice is required (FR-003.3).
+  LibraryReady? _beforeChoice;
+
+  /// True while the folder choice was opened from the library: a Back
+  /// button and the system Back gesture then return to the list.
+  bool get canCancelFolderChoice {
+    final current = state;
+    final choosing =
+        current is LibraryFolderChoice ||
+        (current is LibraryLoadFailed && current.whileChoosingFolders);
+    return choosing && _beforeChoice != null;
+  }
+
+  /// Leaves the folder choice without changing it (FR-003.4).
+  void cancelFolderChoice() {
+    final before = _beforeChoice;
+    if (before == null || !canCancelFolderChoice) return;
+    _beforeChoice = null;
+    state = before;
   }
 
   Future<void> retry() async {
@@ -195,6 +219,7 @@ class LibraryController extends Notifier<LibraryViewState> {
     required bool hasFolders,
     bool retryFailed = false,
   }) async {
+    _beforeChoice = null;
     state = LibraryReady(hasFolders: hasFolders, indexing: true);
     try {
       await index();
