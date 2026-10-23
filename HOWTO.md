@@ -249,3 +249,48 @@ Build release (D14), installée par-dessus la précédente (`adb install -r`), b
 12. **Touche média à froid :** mettre en pause, retirer l'application des récentes, attendre que le processus ait disparu (`adb shell pidof net.trtl3.tuneshell` vide), puis appuyer sur lecture du casque Bluetooth. Attendu : rien ne joue (la file n'est pas conservée) et aucun message « l'application s'est arrêtée » ; noter toute `ForegroundServiceDidNotStartInTimeException` dans `adb logcat`. Si le processus reste en cache après le retrait des récentes, le terminer avec `adb shell am kill net.trtl3.tuneshell` ; fermer d'abord toute autre application dont la session média est active (`dumpsys media_session`, « Sessions Stack » vide), sinon elle reçoit la touche. Puis ouvrir l'application depuis son icône sans la tuer. Attendu : la bibliothèque s'affiche (pas d'écran de chargement bloqué) et une piste se lance ; aucune `MissingPluginException` dans `adb logcat`.
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27). Vérifications par adb : `dumpsys activity services <paquet>` (`isForeground=true`, type `0x2`), `dumpsys media_session` (état de la session), `dumpsys audio` (« Audio Focus stack »).
+
+## 13. Tester la bibliothèque d'un disque amovible, les tags et les pochettes (MPL-037)
+
+Build release (D14), installée par-dessus la précédente (`adb install -r`). Un SSD USB-C formaté en exFAT, `adb` en Wi-Fi puisque le port USB-C est pris (`ANDROID_SERIAL` s'il y a plusieurs appareils). Aucun titre de piste, nom de fichier, chemin ni identifiant de volume dans le dépôt ni dans les comptes rendus (D27) : les exports restent hors du dépôt.
+
+**Jeu d'essai synthétique.** Générer le jeu hors du dépôt, avec `ffmpeg`, puis le copier sur le SSD. Les fichiers contiennent des tags et une pochette fabriqués, jamais de musique personnelle :
+
+```bash
+mkdir -p ~/tuneshell-fixtures && cd ~/tuneshell-fixtures
+ffmpeg -f lavfi -i "color=c=red:s=600x600:d=1" -frames:v 1 cover-a.png
+ffmpeg -f lavfi -i "color=c=blue:s=300x300:d=1" -frames:v 1 cover-b.png
+for i in $(seq 1 200); do
+  cover=cover-a.png; [ $((i % 2)) -eq 0 ] && cover=cover-b.png
+  ffmpeg -loglevel error -f lavfi -i "sine=frequency=$((200 + i)):duration=3" -i "$cover" \
+    -map 0 -map 1 -c:a libmp3lame -c:v mjpeg -id3v2_version 3 \
+    -metadata title="Fixture $i" -metadata artist="Artist $((i % 20))" \
+    -metadata album="Album $((i % 10))" -metadata track="$i" "base-$i.mp3"
+done
+```
+
+Pour le test à 10 000 pistes, copier chacun des 200 fichiers 50 fois, sous des noms différents, dans 100 sous-dossiers du SSD (`TuneShellTest/d00` à `d99`). Pour les cas particuliers, ajouter dans un dossier à part : un fichier `._x.mp3`, un sous-dossier `.cache` avec un MP3, un sous-dossier avec un fichier `.nomedia`, un fichier MP3 vide (illisible), un MP3 sans tags ni pochette.
+
+**Mesures à consigner pendant le test (ADR-008, ADR-009).** Elles n'ont pas été faites avant la livraison de MPL-037 : le code suppose que l'UUID se déduit du dossier choisi et que 2 lectures en parallèle conviennent.
+
+0. **UUID du volume :** avec le SSD branché, `adb shell sm list-volumes all` donne le volume public et son UUID (ne pas le consigner dans le dépôt, D27). Après l'étape 1, vérifier que le disque s'affiche avec le nom du volume, qu'il passe « Non connecté » quand on le débranche, et qu'une piste se lit ; si le SSD ne se laisse pas identifier, arrêter et revenir à `/cadrer` (ADR-008).
+0b. **Débit des tags :** noter le temps de lecture des tags de 1 000 pistes avec 1, 2 et 4 lectures en parallèle (`parallelism` de `TagIndexer`, changé le temps de la mesure sur un build de mesure), puis l'effet sur une lecture en cours. La plus petite valeur qui tient le débit visé devient la limite de BR-006.4 ; si ce n'est pas 2, changer la valeur par défaut. Consigner chiffres et choix dans ADR-009.
+
+**Étapes.**
+
+1. **Ajout d'un dossier :** ouvrir l'écran des disques (icône USB), « Ajouter un dossier », choisir `TuneShellTest/d00` dans le sélecteur d'Android, accorder l'accès. Attendu : le disque apparaît avec le nom du volume, « Connecté » ; ses pistes apparaissent tout de suite avec le nom de fichier comme titre, sans attendre les tags (FR-006.7). Choisir un dossier du téléphone : message « Ce dossier est dans le stockage du téléphone… ».
+2. **Droit conservé :** arrêt forcé de l'application, puis redémarrage du téléphone, SSD branché. Attendu : les pistes du SSD sont disponibles sans nouveau choix de dossier.
+3. **Tags et pochettes :** observer la bande de progression « Lecture des étiquettes : x / y ». Attendu : titres, artistes et pochettes remplacent peu à peu les noms de fichiers ; l'écran reste fluide ; lancer une piste du SSD pendant la lecture des tags ne la coupe pas ; deux pistes du même album n'enregistrent qu'une image (compter les fichiers : `adb shell run-as` est impossible en release, compter sur une build debug ou s'en tenir à la taille du dossier de données dans les réglages d'Android).
+4. **Lecture et enchaînement :** lancer une piste du SSD, enchaîner dix pistes, écran verrouillé, application en arrière-plan. Attendu : lecture normale ; notification et écran verrouillé affichent le titre ; aucun message d'erreur.
+5. **Descripteurs (build debug) :** sur une build **debug**, `adb shell run-as net.trtl3.tuneshell ls -l /proc/self/fd` n'est pas utilisable (il liste le processus de `ls`) ; utiliser `adb shell run-as net.trtl3.tuneshell sh -c 'ls -l /proc/$(pidof net.trtl3.tuneshell)/fd'`, ou à défaut `adb shell lsof -p $(pidof net.trtl3.tuneshell)` si disponible, et compter les lignes qui pointent vers le volume. Attendu : le nombre revient à son niveau de départ après dix pistes enchaînées puis un arrêt (BR-006.2). Ce comptage n'est possible qu'en build debug : il ne remplace pas le test en release des autres étapes.
+6. **Disque absent :** retirer le SSD, ouvrir l'application. Attendu : ses pistes sont grisées et restent dans la bibliothèque ; l'écran des disques indique « Non connecté » ; une file qui les rencontre les saute avec un message (BR-001). Rebrancher, revenir dans l'application. Attendu : les pistes sont de nouveau disponibles sans nouveau choix de dossier.
+7. **Accès à renouveler :** Android ne retire pas un droit de dossier sans action de l'utilisateur, et effacer les données de l'application efface aussi la base : pas de moyen simple de le provoquer. Noter « non testé » pour FR-006.11 (la logique est couverte par les tests automatisés) sauf si un moyen apparaît.
+8. **Fichiers ignorés :** choisir le dossier des cas particuliers. Attendu : ni `._x.mp3`, ni le sous-dossier caché, ni le dossier à `.nomedia` ; le MP3 vide est listé (nom de fichier) et lisible par le moteur uniquement s'il l'est, sinon la lecture signale l'échec (BR-003) ; le MP3 sans tags garde son nom de fichier et l'image de remplacement.
+9. **Actualiser :** ajouter, supprimer et modifier un fichier sur le SSD, toucher « Actualiser ». Attendu : la piste ajoutée apparaît, la supprimée disparaît, la modifiée est relue ; les autres gardent leur identité.
+10. **Parcours coupé :** débrancher le SSD pendant l'actualisation. Attendu : un message signale l'échec et la bibliothèque est gardée. Sans MPL-035, Android peut tuer l'application à ce moment (ADR-008) : le noter ; le parcours reprend au lancement suivant.
+11. **Lecture des tags reprise :** avec une lecture de tags en cours (10 000 pistes), fermer l'application puis la rouvrir. Attendu : seules les pistes encore en attente sont lues.
+12. **Décocher un dossier :** avec deux dossiers du SSD, retirer l'un. Attendu : ses pistes disparaissent, l'autre reste ; le droit d'accès est libéré (vérifier avec `adb shell dumpsys package net.trtl3.tuneshell`, section des permissions d'URI).
+13. **Pochettes du stockage interne :** laisser la lecture se terminer sur le téléphone. Attendu : les pistes du téléphone qui ont une pochette l'affichent dans la liste et la barre de lecture.
+14. **10 000 pistes :** ajouter `TuneShellTest` entier. Noter : durée du parcours, durée de la lecture des tags, fluidité du défilement, taille des données de l'application avant et après (pochettes), mémoire (`adb shell dumpsys meminfo net.trtl3.tuneshell`).
+
+Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).

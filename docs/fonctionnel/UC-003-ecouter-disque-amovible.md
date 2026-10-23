@@ -35,4 +35,8 @@ Réassociation d'un nouveau disque et retrait d'un disque de la bibliothèque (M
 
 ## As-built
 
-À écrire à la livraison de MPL-037.
+MPL-037, 2026-10-22. Écran temporaire `lib/features/library/removable_page.dart` (icône USB de la liste), état dans `removable_controller.dart`, service `RemovableIndexer` (`lib/domain/library/services/`). Tests : `test/features/library/removable_test.dart`, `test/domain/library/removable_indexer_test.dart`.
+
+- Le choix d'un dossier du téléphone est refusé avec un message (le stockage interne passe par MediaStore).
+- Un disque absent ou à accès perdu s'affiche dans l'écran des disques ; ses pistes sont grisées dans la liste.
+- **Non testé sur appareil** : tout le scénario nominal (sélecteur, droit conservé, tags, pochettes, lecture) attend la procédure `HOWTO.md` §13 sur le Pixel et le SSD.

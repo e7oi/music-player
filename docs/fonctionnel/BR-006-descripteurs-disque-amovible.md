@@ -19,6 +19,13 @@ Un descripteur resté ouvert sur le volume quand Android l'éjecte fait tuer l'a
 
 - BR-002 (`Active`) ne parle que du moteur ; la règle 5 étend le même principe au parcours et à la lecture des tags sans la modifier. À confirmer que cette fiche suffit, sans ligne sur BR-002.
 
+## Écarts constatés à la livraison (À valider, PO)
+
+- Règle 5 : l'arrêt à l'annonce d'éjection n'est pas câblé (MPL-035).
+
 ## As-built
 
-À écrire à la livraison de MPL-037.
+MPL-037, 2026-10-22. Règle 1 : `RemovableTrackSourceOpener` rend `DescriptorMediaSource` (le moteur ferme, BR-002) ; Kotlin `openFd` détache le descripteur seulement après l'ouverture réussie. Règle 3 : `readTags` ouvre, lit, ferme dans un `finally`. Règle 4 : `TagIndexer.parallelism` vaut 2 par défaut, **non mesuré**. Règles 5 et 6 : `cancel()` du `TagIndexer` et du parcours arrête entre deux fichiers ou deux dossiers ; ce qui est lu est gardé, le reste reste « en attente ». Tests : `test/platform/removable_storage_channel_test.dart`, `test/domain/library/tag_indexer_test.dart`.
+
+- Aucune lecture native n'est interrompue en cours et il n'y a pas de délai maximal ; une lecture bloquée sur un disque en cours d'éjection bloque la passe (MPL-035).
+- **Non testé sur appareil** : règles 2 et 3 (comptage des descripteurs), valeur de la règle 4.
