@@ -56,9 +56,12 @@ String? _violation(String file, String uri) {
   }
   if (uri == 'package:flutter/services.dart' &&
       layer != 'platform' &&
-      layer != 'app') {
-    return 'rule 4: channels only under platform/ and app/';
+      layer != 'app' &&
+      layer != 'ui') {
+    return 'rule 4: channels only under platform/, app/ and ui/';
   }
+
+  if (layer == 'ui') return _uiViolation(uri);
 
   if (!uri.startsWith(_package)) return null;
   final target = uri.substring(_package.length);
@@ -74,12 +77,36 @@ String? _violation(String file, String uri) {
         targetLayer == 'domain' ||
         targetLayer == 'l10n' ||
         targetLayer == 'features' ||
+        targetLayer == 'ui' ||
         target.startsWith('app/providers/');
     return allowed
         ? null
-        : 'rule 3: features/ imports domain/, l10n/ and app/providers/ only';
+        : 'rule 3: features/ imports domain/, l10n/, ui/ and app/providers/ '
+              'only';
   }
   return null;
+}
+
+const _uiDartLibraries = {'dart:core', 'dart:async', 'dart:math', 'dart:ui'};
+const _uiPackages = {
+  'package:flutter/',
+  'package:meta/',
+  'package:collection/',
+  '${_package}ui/',
+  '${_package}l10n/',
+};
+
+/// ADR-010: `ui/` holds no business logic. It imports Flutter, `l10n/` and
+/// itself, and never the domain, Riverpod, data or platform code.
+String? _uiViolation(String uri) {
+  if (uri.startsWith('dart:')) {
+    return _uiDartLibraries.contains(uri)
+        ? null
+        : 'rule 6: ui/ imports Flutter, l10n/ and ui/ only';
+  }
+  return _uiPackages.any(uri.startsWith)
+      ? null
+      : 'rule 6: ui/ imports Flutter, l10n/ and ui/ only';
 }
 
 /// `package:media_kit/…` and the `media_kit_*` packages.

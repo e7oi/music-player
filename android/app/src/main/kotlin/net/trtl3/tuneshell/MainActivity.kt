@@ -19,6 +19,9 @@ class MainActivity : AudioServiceActivity() {
     private val removableStorage: RemovableStorageChannel
         get() = (application as TuneShellApplication).removableStorage
 
+    private val gestureExclusion: GestureExclusionChannel
+        get() = (application as TuneShellApplication).gestureExclusion
+
     // Never, even when an intent asks for it: the process keeps one engine.
     override fun shouldDestroyEngineWithHost(): Boolean = false
 
@@ -26,11 +29,13 @@ class MainActivity : AudioServiceActivity() {
         super.configureFlutterEngine(flutterEngine)
         mediaStore.attach(this)
         removableStorage.attach(this)
+        gestureExclusion.attach(this)
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
         mediaStore.detach(this, isChangingConfigurations)
         removableStorage.detach(this, isChangingConfigurations)
+        gestureExclusion.detach(this)
         super.cleanUpFlutterEngine(flutterEngine)
     }
 

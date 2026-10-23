@@ -49,8 +49,16 @@ final playerControllerProvider = Provider<PlayerController>((ref) {
 
 final playerStateProvider = StreamProvider<PlayerState>((ref) async* {
   final controller = ref.watch(playerControllerProvider);
+  // Subscribe before reading the current state: a state emitted in between
+  // (the available disks arriving) would otherwise be lost for good.
+  final updates = StreamController<PlayerState>();
+  final subscription = controller.states.listen(updates.add);
+  ref.onDispose(() {
+    unawaited(subscription.cancel());
+    unawaited(updates.close());
+  });
   yield controller.state;
-  yield* controller.states;
+  yield* updates.stream;
 });
 
 final playbackNoticesProvider = StreamProvider<PlaybackNotice>(

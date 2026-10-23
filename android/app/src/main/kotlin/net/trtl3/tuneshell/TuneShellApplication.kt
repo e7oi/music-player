@@ -33,6 +33,8 @@ class TuneShellApplication : Application() {
     lateinit var removableStorage: RemovableStorageChannel
         private set
 
+    val gestureExclusion = GestureExclusionChannel()
+
     override fun onCreate() {
         super.onCreate()
         val engine = AudioServicePlugin.getFlutterEngine(this)
@@ -43,6 +45,8 @@ class TuneShellApplication : Application() {
         removableStorage = RemovableStorageChannel(this)
         MethodChannel(engine.dartExecutor.binaryMessenger, RemovableStorageChannel.NAME)
             .setMethodCallHandler(removableStorage)
+        MethodChannel(engine.dartExecutor.binaryMessenger, GestureExclusionChannel.NAME)
+            .setMethodCallHandler(gestureExclusion)
         MethodChannel(engine.dartExecutor.binaryMessenger, FileTagsChannel.NAME)
             .setMethodCallHandler(FileTagsChannel(this, removableStorage))
         engine.addEngineLifecycleListener(EndProcessWithEngine)

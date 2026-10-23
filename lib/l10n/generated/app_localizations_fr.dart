@@ -172,4 +172,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String tagsProgress(int done, int total) {
     return 'Lecture des étiquettes : $done / $total';
   }
+
+  @override
+  String get navTracks => 'Pistes';
+
+  @override
+  String get navAlbums => 'Albums';
+
+  @override
+  String get navArtists => 'Artistes';
+
+  @override
+  String get navSettings => 'Réglages';
+
+  @override
+  String get comingSoon => 'Cette vue arrive bientôt.';
+
+  @override
+  String get demoGallery => 'Galerie de composants';
+
+  @override
+  String get foldersBack => 'Retour';
 }

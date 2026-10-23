@@ -203,5 +203,33 @@
         "type": "int"
       }
     }
+  },
+  "navTracks": "Tracks",
+  "@navTracks": {
+    "description": "Label of the Tracks tab (FR-009)."
+  },
+  "navAlbums": "Albums",
+  "@navAlbums": {
+    "description": "Label of the Albums tab (FR-009)."
+  },
+  "navArtists": "Artists",
+  "@navArtists": {
+    "description": "Label of the Artists tab (FR-009)."
+  },
+  "navSettings": "Settings",
+  "@navSettings": {
+    "description": "Label of the Settings tab (FR-009)."
+  },
+  "comingSoon": "This view is coming soon.",
+  "@comingSoon": {
+    "description": "Shown by the tabs whose content is not built yet (FR-009)."
+  },
+  "demoGallery": "Component gallery",
+  "@demoGallery": {
+    "description": "Entry of the settings tab that opens the component demo page (debug and profile builds only, FR-010)."
+  },
+  "foldersBack": "Back",
+  "@foldersBack": {
+    "description": "Tooltip of the back arrow of the folder choice when it was opened from the library (FR-003)."
   }
 }

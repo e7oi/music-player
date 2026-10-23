@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Pistes en paysage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 915px; height: 412px; box-sizing: border-box; padding-top: 24px; background: {{t.surface}}; color: {{t.onSurface}}; font-family: Inter, system-ui, sans-serif; display: flex; overflow: hidden">
+
+  <nav aria-label="Navigation principale" style="width: 80px; flex-shrink: 0; background: {{t.surfCont}}; display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 12px">
+    <a href="#" aria-current="page" aria-label="Pistes" style="width: 56px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: {{t.onSurface}}">
+      <span style="width: 56px; height: 32px; border-radius: 16px; background: {{t.secCont}}; color: {{t.onSecCont}}; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>
+      <span style="font-size: 11px; font-weight: 600">Pistes</span>
+    </a>
+    <a href="#" aria-label="Albums" style="width: 56px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: {{t.onSurfVar}}">
+      <span style="height: 32px; display: flex; align-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/><circle cx="10" cy="14" r="2.5"/></svg></span>
+      <span style="font-size: 11px; font-weight: 500">Albums</span>
+    </a>
+    <a href="#" aria-label="Artistes" style="width: 56px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: {{t.onSurfVar}}">
+      <span style="height: 32px; display: flex; align-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.3-6 8-6s6.8 2 8 6"/></svg></span>
+      <span style="font-size: 11px; font-weight: 500">Artistes</span>
+    </a>
+    <a href="#" aria-label="Réglages" style="width: 56px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: {{t.onSurfVar}}">
+      <span style="height: 32px; display: flex; align-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.5"/><circle cx="10" cy="17" r="2.5"/></svg></span>
+      <span style="font-size: 11px; font-weight: 500">Réglages</span>
+    </a>
+  </nav>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+    <header style="height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 0 8px 0 16px">
+      <h1 style="margin: 0; flex: 1; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 800">Pistes</h1>
+      <button aria-label="Actualiser" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: {{t.onSurfVar}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg></button>
+      <button aria-label="Dossiers" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: {{t.onSurfVar}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
+      <button aria-label="Disques, 1 absent" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: {{t.onSurfVar}}; position: relative"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M5 13l2-8h10l2 8"/></svg><span aria-hidden="true" style="position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; border-radius: 4px; background: {{t.tertiary}}"></span></button>
+      <button aria-label="Rechercher (bientôt)" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: {{t.onSurfVar}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    </header>
+
+    <section role="status" style="flex-shrink: 0; margin: 0 16px 4px; padding: 0 4px 0 16px; border-radius: 12px; background: {{t.tertCont}}; color: {{t.onTertCont}}; display: flex; align-items: center; gap: 10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/><path d="M3 3l18 18"/></svg>
+      <span style="flex: 1; font-size: 14px; font-weight: 500">12 pistes ignorées : SSD absent</span>
+      <button style="height: 48px; padding: 0 10px; font-size: 14px; font-weight: 600">Voir</button>
+      <button aria-label="Masquer ce message" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </section>
+
+    <div role="list" style="flex: 1; min-height: 0; overflow: hidden">
+      <sc-for list="{{tracks}}" as="tr" hint-placeholder-count="4">
+        <button role="listitem" aria-label="{{tr.aria}}" style="width: 100%; height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 16px; box-sizing: border-box; background: {{tr.rowBg}}; text-align: left">
+          <div style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 8px; background: {{tr.coverBg}}; opacity: {{tr.coverOpacity}}; display: flex; align-items: center; justify-content: center; overflow: hidden"><div style="width: 30px; height: 30px; border-radius: {{tr.shapeRadius}}; background: {{tr.coverFg}}; transform: {{tr.shift}}"></div></div>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 16px; line-height: 24px; font-weight: {{tr.titleWeight}}; color: {{tr.titleColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{tr.title}}</span>
+            <div style="display: flex; align-items: center; gap: 4px">
+              <sc-if value="{{tr.circle}}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; margin-right: 2px"><circle cx="6" cy="6" r="4.5" fill="{{tr.srcColor}}"/></svg></sc-if>
+              <sc-if value="{{tr.square}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; margin-right: 2px"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="{{tr.srcColor}}"/></svg></sc-if>
+              <sc-if value="{{tr.diamond}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; margin-right: 2px"><path d="M6 0.6L11.4 6L6 11.4L0.6 6Z" fill="{{tr.srcColor}}"/></svg></sc-if>
+              <sc-if value="{{tr.off}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{t.unavail}}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/><path d="M3 3l18 18"/></svg></sc-if>
+              <span style="font-size: 14px; line-height: 20px; color: {{tr.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{tr.sub}}</span>
+            </div>
+          </div>
+          <span style="font-size: 12px; font-weight: 500; color: {{tr.subColor}}; font-variant-numeric: tabular-nums">{{tr.dur}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </main>
+
+  <aside aria-label="Lecture en cours" style="width: 280px; flex-shrink: 0; background: {{t.surfContLow}}; border-left: 1px solid {{t.outlineVar}}; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; gap: 12px; align-items: center">
+      <div style="width: 96px; height: 96px; flex-shrink: 0; border-radius: 12px; background: #3E6B73; display: flex; align-items: center; justify-content: center; overflow: hidden"><div style="width: 60px; height: 60px; border-radius: 50%; background: #E8C77E; transform: translate(12px, 16px)"></div></div>
+      <div style="min-width: 0; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: Manrope, sans-serif; font-size: 17px; line-height: 22px; font-weight: 700">Aube sur le fleuve</span>
+        <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; color: {{t.onSurfVar}}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="{{t.srcLocal}}"/></svg>Les Brumes · Littoral</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <div style="height: 4px; border-radius: 2px; background: {{t.outlineVar}}"><div style="width: 38%; height: 4px; border-radius: 2px; background: {{t.primary}}"></div></div>
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums"><span>1:38</span><span>4:18</span></div>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; gap: 8px">
+      <button aria-label="Piste précédente" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="2.4" height="14" rx="1"/><path d="M19 5.8v12.4a.8.8 0 0 1-1.2.7L9 12.7a.8.8 0 0 1 0-1.4l8.8-6.2a.8.8 0 0 1 1.2.7z"/></svg></button>
+      <button aria-label="Pause" style="width: 56px; height: 56px; border-radius: 28px; background: {{t.primary}}; color: {{t.onPrimary}}; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg></button>
+      <button aria-label="Piste suivante" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="16.6" y="5" width="2.4" height="14" rx="1"/><path d="M5 5.8v12.4a.8.8 0 0 0 1.2.7L15 12.7a.8.8 0 0 0 0-1.4L6.2 5.1A.8.8 0 0 0 5 5.8z"/></svg></button>
+    </div>
+    <button style="height: 48px; border-radius: 24px; border: 1px solid {{t.outline}}; color: {{t.primary}}; font-size: 14px; font-weight: 600">File d'attente</button>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":915,"height":412}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = (this.props.theme ?? 'dark') === 'dark';
+    const t = dark ? {
+      surface: '#0F1522', surfContLow: '#161D2A', surfCont: '#1B2230', onSurface: '#DEE3EA', onSurfVar: '#BCC6D2',
+      outline: '#8A94A2', outlineVar: '#3B4555', primary: '#6FE3D0', onPrimary: '#00382F', secCont: '#24464A', onSecCont: '#CCE8E2',
+      tertiary: '#F2BF6B', tertCont: '#5C4300', onTertCont: '#FFDEA6', unavail: '#8A94A2', playRow: '#123036',
+      srcLocal: '#BCC6D2', src1: '#8AB4FF', src2: '#C5A8FF'
+    } : {
+      surface: '#F5FAFA', surfContLow: '#EFF5F5', surfCont: '#E9EFEF', onSurface: '#171D1E', onSurfVar: '#3F4949',
+      outline: '#6F797A', outlineVar: '#BEC8C9', primary: '#00695C', onPrimary: '#FFFFFF', secCont: '#CCE8E2', onSecCont: '#051F1C',
+      tertiary: '#7A5A1F', tertCont: '#FFDEA6', onTertCont: '#271900', unavail: '#6A7475', playRow: '#DDF3EE',
+      srcLocal: '#3F4949', src1: '#2F5DB8', src2: '#7048C2'
+    };
+    const raw = [
+      ['Aube sur le fleuve', 'Les Brumes', '4:18', ['#3E6B73', '#E8C77E', '50%', 'translate(6px, 8px)'], 'play'],
+      ['Auroral', 'Nodal · non connecté', '5:03', ['#5B4B73', '#C9B8E0', '4px', 'rotate(45deg)'], 'off'],
+      ['Avant-poste', 'Nodal · non connecté', '2:57', ['#5B4B73', '#C9B8E0', '4px', 'rotate(45deg)'], 'off'],
+      ['Balade du soir', 'Théo Lune', '4:01', ['#9A5B3C', '#F0D9C4', '50% 50% 0 0', 'translate(0, 10px)'], 'sd']
+    ];
+    const tracks = raw.map(([title, sub, dur, c, s]) => ({
+      circle: s === 'play' || s === '', square: s === 'off', diamond: s === 'sd',
+      srcColor: s === 'off' ? t.src1 : (s === 'sd' ? t.src2 : t.srcLocal),
+      title, sub, dur, aria: title + ', ' + sub + ', ' + dur,
+      off: s === 'off', coverBg: c[0], coverFg: c[1], shapeRadius: c[2], shift: c[3],
+      coverOpacity: s === 'off' ? 0.35 : 1,
+      rowBg: s === 'play' ? t.playRow : 'transparent',
+      titleColor: s === 'off' ? t.unavail : (s === 'play' ? t.primary : t.onSurface),
+      titleWeight: s === 'play' ? 600 : 500,
+      subColor: s === 'off' ? t.unavail : t.onSurfVar
+    }));
+    return { t, tracks };
+  }
+}
+</script>
+</body>
+</html>

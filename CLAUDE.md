@@ -44,7 +44,8 @@ lib/
   domain/<zone>/   Dart pur : model/, ports/ (interfaces), services/ (dont PlayerController)
   data/<zone>/     adaptateurs : base Drift, moteur media_kit, scanner
   platform/        côté Dart des canaux Android (SAF, événements de volume) ; le Kotlin est dans android/
-  features/<nom>/  présentation : widgets et notifiers Riverpod
+  features/<nom>/  présentation : écrans et notifiers Riverpod
+  ui/              thème, jetons et composants réutilisables (ADR-010) ; Flutter seul, sans logique métier
   l10n/            fichiers ARB et localisations générées
 ```
 
@@ -52,10 +53,18 @@ Règles de dépendance (vérifiées par `test/architecture/`, voir Outillage) :
 
 1. `domain/` n'importe que `dart:core`, `dart:async`, `dart:math`, `dart:convert`, `package:meta`, `package:collection` et lui-même. Jamais Flutter, `dart:io`, `dart:ui`, Drift, Riverpod, `media_kit`, `audio_service`.
 2. `data/` et `platform/` n'importent que `domain/` (plus leur propre paquet tiers). Jamais `features/` ni `app/`.
-3. `features/` n'importe que `domain/`, `l10n/` et `app/providers/`. Jamais `data/` ni `platform/`.
-4. `package:media_kit` n'est importé que sous `data/audio/`. Drift seulement sous `data/db/`. `package:flutter/services.dart` (canaux) seulement sous `platform/` et `app/`.
+3. `features/` n'importe que `domain/`, `l10n/`, `ui/` et `app/providers/`. Jamais `data/` ni `platform/`.
+4. `package:media_kit` n'est importé que sous `data/audio/`. Drift seulement sous `data/db/`. `package:flutter/services.dart` (canaux) seulement sous `platform/` et `app/`, et sous `ui/` pour `HapticFeedback` seulement.
 5. Toujours des imports de package (`always_use_package_imports`) ; aucun import relatif sous `lib/`.
-6. Un port par frontière réelle (moteur, événements de volume, ouverture des sources, dépôts). Un fake dans `test/` compte comme seconde implémentation. Pas de port sans frontière, pas de cérémonie « une classe par cas d'usage », pas de couche application séparée.
+6. `ui/` n'importe que Flutter, `l10n/` et lui-même. Jamais `domain/`, `data/`, `platform/`, `app/`, `features/` ni Riverpod : un composant reçoit des valeurs simples et des fonctions de rappel (ADR-010).
+7. Un port par frontière réelle (moteur, événements de volume, ouverture des sources, dépôts). Un fake dans `test/` compte comme seconde implémentation. Pas de port sans frontière, pas de cérémonie « une classe par cas d'usage », pas de couche application séparée.
+
+## Interface (MPL-016)
+
+- La conception (Claude Design v0.4) est dans `docs/design/` : `HANDOFF.md` fait foi, puis les jetons, puis les sources `*.dc.html`, puis les captures. Les règles d'interface sont dans BR-007 ; les composants dans FR-010.
+- Les couleurs, rayons, espacements et tailles viennent de `lib/ui/theme/tuneshell_tokens.dart` : jamais de littéral dans `features/` ni `ui/widgets/` (test `test/architecture/style_literals_test.dart`). Un jeton qui manque s'ajoute au fichier et se signale dans la PR.
+- Un état qui dure (source absente, erreur, progression) est un composant dans le flux au-dessus de la liste, jamais par-dessus (`StatusBanner`, `ProgressBanner`).
+- Pas de fichier golden : un test de widget par état de composant, des assertions de comportement (taille tactile, `Semantics`, saut de l'index).
 
 ## Contrat du moteur audio (D2)
 

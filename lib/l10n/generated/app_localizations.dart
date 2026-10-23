@@ -361,6 +361,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reading tags: {done} / {total}'**
   String tagsProgress(int done, int total);
+
+  /// Label of the Tracks tab (FR-009).
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks'**
+  String get navTracks;
+
+  /// Label of the Albums tab (FR-009).
+  ///
+  /// In en, this message translates to:
+  /// **'Albums'**
+  String get navAlbums;
+
+  /// Label of the Artists tab (FR-009).
+  ///
+  /// In en, this message translates to:
+  /// **'Artists'**
+  String get navArtists;
+
+  /// Label of the Settings tab (FR-009).
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// Shown by the tabs whose content is not built yet (FR-009).
+  ///
+  /// In en, this message translates to:
+  /// **'This view is coming soon.'**
+  String get comingSoon;
+
+  /// Entry of the settings tab that opens the component demo page (debug and profile builds only, FR-010).
+  ///
+  /// In en, this message translates to:
+  /// **'Component gallery'**
+  String get demoGallery;
+
+  /// Tooltip of the back arrow of the folder choice when it was opened from the library (FR-003).
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get foldersBack;
 }
 
 class _AppLocalizationsDelegate

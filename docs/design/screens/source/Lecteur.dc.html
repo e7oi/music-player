@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Lecteur plein écran</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 412px; height: 915px; box-sizing: border-box; background: {{t.surface}}; color: {{t.onSurface}}; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; position: relative; overflow: hidden">
+  <div style="height: 40px; flex-shrink: 0"></div>
+
+  <header style="height: 64px; flex-shrink: 0; display: flex; align-items: center; padding: 0 4px">
+    <button aria-label="Réduire le lecteur" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center">
+      <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{t.onSurfVar}}">Lecture depuis</span>
+      <span style="font-size: 14px; line-height: 20px; font-weight: 600">Pistes · Titre A→Z</span>
+    </div>
+    <button aria-label="Plus d'options" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+    </button>
+  </header>
+
+  <div style="flex-shrink: 0; padding: 16px 32px 0">
+    <div style="width: 348px; height: 348px; border-radius: 16px; background: {{coverBg}}; display: flex; align-items: center; justify-content: center; overflow: hidden">
+      <sc-if value="{{hasCover}}" hint-placeholder-val="{{ true }}">
+        <div style="width: 220px; height: 220px; border-radius: 50%; background: {{coverFg}}; transform: translate(44px, 58px)"></div>
+      </sc-if>
+      <sc-if value="{{noCover}}" hint-placeholder-val="{{ false }}">
+        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="{{t.onSurfVar}}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="flex-shrink: 0; margin: 16px 32px 0; padding: 4px 4px 4px 16px; border-radius: 12px; background: {{t.errorCont}}; color: {{t.onErrorCont}}; display: flex; align-items: center; gap: 10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.5"/></svg>
+      <span style="flex: 1; font-size: 14px; line-height: 20px">Fichier illisible (endommagé). Piste suivante dans 3 s.</span>
+      <button style="height: 48px; padding: 0 12px; font-size: 14px; font-weight: 600">Passer</button>
+    </div>
+  </sc-if>
+
+  <div style="flex-shrink: 0; padding: 20px 20px 0 32px; display: flex; align-items: flex-start; gap: 8px">
+    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-family: Manrope, sans-serif; font-size: 24px; line-height: 32px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{title}}</h1>
+      <span style="font-size: 16px; line-height: 24px; color: {{t.onSurfVar}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{artist}}</span>
+      <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0"><circle cx="6" cy="6" r="4.5" fill="{{t.srcLocal}}"/></svg>
+        <span>{{meta}}</span>
+      </span>
+    </div>
+    <button aria-label="Ajouter aux favoris (bientôt)" style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: {{t.onSurfVar}}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+    </button>
+  </div>
+
+  <div style="flex-shrink: 0; padding: 8px 32px 0">
+    <div role="slider" aria-label="Position dans la piste" aria-valuetext="{{posText}}" tabindex="0" style="height: 32px; display: flex; align-items: center; position: relative">
+      <div style="flex: 1; height: 4px; border-radius: 2px; background: {{t.outlineVar}}"><div style="width: {{pos}}; height: 4px; border-radius: 2px; background: {{t.primary}}"></div></div>
+      <div aria-hidden="true" style="position: absolute; left: {{pos}}; top: 8px; width: 16px; height: 16px; margin-left: -8px; border-radius: 8px; background: {{t.primary}}"></div>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums"><span>{{elapsed}}</span><span>{{total}}</span></div>
+  </div>
+
+  <div style="flex-shrink: 0; padding: 12px 24px 0; display: flex; align-items: center; justify-content: space-between">
+    <button aria-label="Lecture aléatoire, activée" aria-pressed="true" style="width: 48px; height: 48px; border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: {{t.primary}}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      <span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 2px; background: currentColor"></span>
+    </button>
+    <button aria-label="Piste précédente" style="width: 56px; height: 56px; border-radius: 28px; display: flex; align-items: center; justify-content: center">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="2.4" height="14" rx="1"/><path d="M19 5.8v12.4a.8.8 0 0 1-1.2.7L9 12.7a.8.8 0 0 1 0-1.4l8.8-6.2a.8.8 0 0 1 1.2.7z"/></svg>
+    </button>
+    <button aria-label="{{playLabel}}" style="width: 80px; height: 80px; border-radius: 28px; background: {{t.primary}}; color: {{t.onPrimary}}; display: flex; align-items: center; justify-content: center">
+      <sc-if value="{{isPlaying}}" hint-placeholder-val="{{ true }}">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
+      </sc-if>
+      <sc-if value="{{isPaused}}" hint-placeholder-val="{{ false }}">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8a1 1 0 0 0 1.5.9l10-6.4a1 1 0 0 0 0-1.7l-10-6.4A1 1 0 0 0 8 5.6z"/></svg>
+      </sc-if>
+    </button>
+    <button aria-label="Piste suivante" style="width: 56px; height: 56px; border-radius: 28px; display: flex; align-items: center; justify-content: center">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="16.6" y="5" width="2.4" height="14" rx="1"/><path d="M5 5.8v12.4a.8.8 0 0 0 1.2.7L15 12.7a.8.8 0 0 0 0-1.4L6.2 5.1A.8.8 0 0 0 5 5.8z"/></svg>
+    </button>
+    <button aria-label="Répéter, désactivé" aria-pressed="false" style="width: 48px; height: 48px; border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: {{t.onSurfVar}}">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>
+      <span aria-hidden="true" style="width: 4px; height: 4px"></span>
+    </button>
+  </div>
+
+  <div style="flex: 1"></div>
+
+  <button aria-label="Ouvrir la file d'attente" style="flex-shrink: 0; margin: 0 16px 28px; height: 64px; border-radius: 16px; background: {{t.surfContLow}}; display: flex; align-items: center; gap: 12px; padding: 0 12px 0 16px; text-align: left">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{t.onSurfVar}}" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h12M4 11h12M4 16h7"/><path d="M16 14l5 3-5 3z" fill="{{t.onSurfVar}}"/></svg>
+    <span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+      <span style="font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.onSurfVar}}">À suivre · 11 pistes</span>
+      <span style="font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Battements · Les Brumes</span>
+    </span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{t.onSurfVar}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
+  </button>
+
+  <sc-if value="{{isQueue}}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4)"></div>
+    <section role="dialog" aria-label="File d'attente" style="position: absolute; left: 0; right: 0; bottom: 0; height: 640px; border-radius: 28px 28px 0 0; background: {{t.surfContLow}}; display: flex; flex-direction: column; overflow: hidden">
+      <div style="height: 24px; display: flex; align-items: center; justify-content: center"><span aria-hidden="true" style="width: 32px; height: 4px; border-radius: 2px; background: {{t.outline}}"></span></div>
+      <div style="display: flex; align-items: center; padding: 4px 8px 8px 24px">
+        <div style="flex: 1; display: flex; flex-direction: column">
+          <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">File d'attente</h2>
+          <span style="font-size: 13px; line-height: 18px; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">12 pistes · 46 min · aléatoire</span>
+        </div>
+        <button style="height: 48px; padding: 0 16px; border-radius: 24px; color: {{t.primary}}; font-size: 14px; font-weight: 600">Vider la suite</button>
+      </div>
+      <p style="margin: 0; padding: 8px 24px 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{t.onSurfVar}}">En cours</p>
+      <div style="height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 24px; background: {{t.playRow}}">
+        <div style="width: 48px; height: 48px; border-radius: 8px; background: #3E6B73; overflow: hidden; display: flex; align-items: center; justify-content: center"><div style="width: 30px; height: 30px; border-radius: 50%; background: #E8C77E; transform: translate(6px, 8px)"></div></div>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+          <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.primary}}">Aube sur le fleuve</span>
+          <span style="display: flex; align-items: center; gap: 6px; font-size: 14px; line-height: 20px; color: {{t.onSurfVar}}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="{{t.srcLocal}}"/></svg>Les Brumes</span>
+        </div>
+        <span style="font-size: 12px; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">4:18</span>
+      </div>
+      <p style="margin: 0; padding: 12px 24px 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{t.onSurfVar}}">À suivre</p>
+      <div role="list">
+        <sc-for list="{{queue}}" as="q" hint-placeholder-count="6">
+          <div role="listitem" style="height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 24px">
+            <div style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 8px; background: {{q.bg}}; opacity: {{q.op}}; overflow: hidden; display: flex; align-items: center; justify-content: center"><div style="width: 30px; height: 30px; border-radius: {{q.r}}; background: {{q.fg}}; transform: {{q.tr}}"></div></div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+              <span style="font-size: 16px; line-height: 24px; font-weight: 500; color: {{q.titleColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{q.title}}</span>
+              <span style="display: flex; align-items: center; gap: 6px; font-size: 14px; line-height: 20px; color: {{q.subColor}}; white-space: nowrap; overflow: hidden">
+                <sc-if value="{{q.circle}}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0"><circle cx="6" cy="6" r="4.5" fill="{{q.srcColor}}"/></svg></sc-if>
+                <sc-if value="{{q.square}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="{{q.srcColor}}"/></svg></sc-if>
+                <sc-if value="{{q.triangle}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0"><path d="M6 1L11.4 10.8H0.6Z" fill="{{q.srcColor}}"/></svg></sc-if>
+                <span style="overflow: hidden; text-overflow: ellipsis">{{q.sub}}</span>
+              </span>
+            </div>
+            <span style="font-size: 12px; color: {{q.subColor}}; font-variant-numeric: tabular-nums">{{q.dur}}</span>
+            <button aria-label="{{q.dragLabel}}" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: {{t.onSurfVar}}">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 9h14M5 15h14"/></svg>
+            </button>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"state":{"editor":"enum","options":["lecture","pause","file","erreur"],"default":"lecture"},"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = (this.props.theme ?? 'dark') === 'dark';
+    const state = this.props.state ?? 'lecture';
+    const t = dark ? {
+      surface: '#0F1522', surfContLow: '#161D2A', surfContHigh: '#252D3A', onSurface: '#DEE3EA', onSurfVar: '#BCC6D2',
+      outline: '#8A94A2', outlineVar: '#3B4555', primary: '#6FE3D0', onPrimary: '#00382F',
+      errorCont: '#93000A', onErrorCont: '#FFDAD6', unavail: '#8A94A2', playRow: '#123036',
+      srcLocal: '#BCC6D2', src1: '#8AB4FF', src3: '#FF9EC4'
+    } : {
+      surface: '#F5FAFA', surfContLow: '#EFF5F5', surfContHigh: '#E3E9E9', onSurface: '#171D1E', onSurfVar: '#3F4949',
+      outline: '#6F797A', outlineVar: '#BEC8C9', primary: '#00695C', onPrimary: '#FFFFFF',
+      errorCont: '#FFDAD6', onErrorCont: '#410002', unavail: '#6A7475', playRow: '#DDF3EE',
+      srcLocal: '#3F4949', src1: '#2F5DB8', src3: '#B23B78'
+    };
+    const paused = state === 'pause';
+    const err = state === 'erreur';
+    const q = [
+      ['Battements', 'Les Brumes', '3:58', ['#3E6B73', '#E8C77E', '50%', 'translate(6px, 8px)'], false, 'triangle'],
+      ['Après la pluie', 'Clara Vey', '3:42', ['#6E7F5C', '#D9CBA3', '50%', 'translate(-6px, 6px)'], false, 'circle'],
+      ['Auroral', 'Nodal · non connecté, sera ignorée', '5:03', ['#5B4B73', '#C9B8E0', '4px', 'rotate(45deg)'], true, 'square'],
+      ['Balade du soir', 'Théo Lune', '4:01', ['#9A5B3C', '#F0D9C4', '50% 50% 0 0', 'translate(0, 10px)'], false, 'circle'],
+      ['Bastion', 'Clara Vey', '3:30', ['#6E7F5C', '#D9CBA3', '50%', 'translate(-6px, 6px)'], false, 'circle'],
+      ['Azur 74', 'Mona Ferrand', '3:15', [t.surfContHigh, 'transparent', '0', 'none'], false, 'circle']
+    ].map(([title, sub, dur, c, off, shape]) => ({
+      circle: shape === 'circle', square: shape === 'square', triangle: shape === 'triangle',
+      srcColor: shape === 'square' ? t.src1 : (shape === 'triangle' ? t.src3 : t.srcLocal),
+      title, sub, dur, bg: c[0], fg: c[1], r: c[2], tr: c[3], op: off ? 0.35 : 1,
+      titleColor: off ? t.unavail : t.onSurface, subColor: off ? t.unavail : t.onSurfVar,
+      dragLabel: 'Déplacer ' + title
+    }));
+    return {
+      t, queue: q,
+      hasCover: !paused, noCover: paused,
+      coverBg: paused ? t.surfContHigh : (err ? '#6E7F5C' : '#3E6B73'),
+      coverFg: err ? '#D9CBA3' : '#E8C77E',
+      title: paused ? '01 - piste sans titre.flac' : (err ? 'Bastion' : 'Aube sur le fleuve'),
+      artist: paused ? 'Artiste inconnu' : (err ? 'Clara Vey · Littoral' : 'Les Brumes · Littoral'),
+      meta: paused ? 'Local · FLAC · Download' : 'Local · Disque 1 · Piste 3 · 2019 · Ambient',
+      isPlaying: !paused, isPaused: paused,
+      playLabel: paused ? 'Lecture' : 'Pause',
+      pos: paused ? '12%' : (err ? '0%' : '38%'),
+      elapsed: paused ? '0:16' : (err ? '0:00' : '1:38'),
+      total: paused ? '2:12' : (err ? '3:30' : '4:18'),
+      posText: paused ? '0:16 sur 2:12' : '1:38 sur 4:18',
+      isError: err, isQueue: state === 'file'
+    };
+  }
+}
+</script>
+</body>
+</html>

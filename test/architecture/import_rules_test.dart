@@ -66,6 +66,34 @@ void main() {
         'package:tuneshell/l10n/generated/app_localizations.dart',
       );
       expectAllowed(file, 'package:flutter/material.dart');
+      expectAllowed(file, 'package:tuneshell/ui/theme/tuneshell_tokens.dart');
+    });
+
+    /// @verifies ADR-010
+    test('rule 6: ui/ imports Flutter, l10n/ and ui/ only', () {
+      const file = 'ui/widgets/x.dart';
+      expectForbidden(
+        file,
+        'package:tuneshell/domain/library/x.dart',
+        'rule 6',
+      );
+      expectForbidden(file, 'package:tuneshell/app/providers/x.dart', 'rule 6');
+      expectForbidden(file, 'package:tuneshell/features/x.dart', 'rule 6');
+      expectForbidden(file, 'package:tuneshell/platform/x.dart', 'rule 6');
+      expectForbidden(
+        file,
+        'package:flutter_riverpod/flutter_riverpod.dart',
+        'rule 6',
+      );
+      expectForbidden(file, 'dart:io', 'rule 6');
+      expectAllowed(file, 'package:flutter/material.dart');
+      expectAllowed(file, 'package:flutter/services.dart');
+      expectAllowed(file, 'package:tuneshell/ui/theme/tuneshell_tokens.dart');
+      expectAllowed(
+        file,
+        'package:tuneshell/l10n/generated/app_localizations.dart',
+      );
+      expectAllowed(file, 'dart:ui');
     });
 
     test('rule 4: media_kit, Drift and channels stay in their place', () {
@@ -88,6 +116,11 @@ void main() {
         'features/home/x.dart',
         'package:flutter/services.dart',
         'rule 4',
+      );
+      expectForbidden(
+        'domain/x.dart',
+        'package:flutter/services.dart',
+        'rule 1',
       );
       expectAllowed('data/audio/x.dart', 'package:media_kit/media_kit.dart');
       expectAllowed('data/db/x.dart', 'package:drift/drift.dart');
@@ -134,5 +167,28 @@ void main() {
     ];
 
     expect(violations, isEmpty, reason: violations.join('\n'));
+  });
+
+  /// @verifies ADR-010 `ui/` may import `services.dart` for haptics only.
+  test('ui/ uses services.dart for HapticFeedback only', () {
+    const forbidden = [
+      'MethodChannel',
+      'EventChannel',
+      'SystemChannels',
+      'SystemNavigator',
+      'SystemChrome',
+      'Clipboard',
+      'rootBundle',
+      'BinaryMessenger',
+    ];
+    final offenders = <String>[
+      for (final entity in Directory('lib/ui').listSync(recursive: true))
+        if (entity is File && entity.path.endsWith('.dart'))
+          for (final name in forbidden)
+            if (entity.readAsStringSync().contains(name))
+              '${entity.path}: $name',
+    ];
+
+    expect(offenders, isEmpty, reason: offenders.join('\n'));
   });
 }

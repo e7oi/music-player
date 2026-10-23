@@ -294,3 +294,22 @@ Pour le test à 10 000 pistes, copier chacun des 200 fichiers 50 fois, sous des 
 14. **10 000 pistes :** ajouter `TuneShellTest` entier. Noter : durée du parcours, durée de la lecture des tags, fluidité du défilement, taille des données de l'application avant et après (pochettes), mémoire (`adb shell dumpsys meminfo net.trtl3.tuneshell`).
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
+
+## 14. Tester les fondations du design (MPL-016)
+
+Build release (D14) installée par-dessus la précédente (`adb install -r`), bibliothèque déjà indexée, SSD branché pour l'étape 5. La page de démonstration n'existe pas en release : elle se teste avec une build **profile** (étape 7).
+
+1. **Thème :** dans les réglages d'Android, passer du thème clair au thème sombre, application ouverte. Attendu : l'application change de thème sans redémarrer ; titres en Manrope, texte en Inter ; barre de navigation et listes lisibles dans les deux thèmes.
+2. **Quatre onglets :** toucher Albums, Artistes, Réglages, puis Pistes. Attendu : Albums et Artistes affichent « Cette vue arrive bientôt. » ; Réglages aussi (en release) ; Pistes retrouve la liste à la même position.
+3. **Retour système :** depuis Albums, faire le geste Retour. Attendu : Pistes s'affiche ; un second Retour quitte l'application.
+4. **Paysage :** lancer une piste, faire pivoter le téléphone. Attendu : la barre du bas devient un rail à gauche ; la lecture, l'onglet courant et la position de la liste ne changent pas.
+5. **Écrans existants :** `HOWTO.md` §12 (étapes 1 et 12) et §13 (étapes 1, 4 et 6). Attendu : bibliothèque, disques et lecture comme avant ; la barre de lecture reste au-dessus de la navigation dans chaque onglet ; une indexation en échec montre un bandeau au-dessus de la liste, jamais par-dessus.
+6. **Réseau :** `aapt2 dump permissions app-release.apk`. Attendu : pas de `INTERNET`.
+7. **Page de démonstration (profile) :** `flutter build apk --profile`, `adb install -r build/app/outputs/flutter-apk/app-profile.apk`, Réglages › Galerie de composants. Comparer chaque section aux captures (`docs/design/screens/png/composants-clair.jpg` et `-sombre.jpg`) en clair et en sombre : lignes de piste, repères de source, cartes de disque, bandeaux, pochettes, bouton « En cours ».
+8. **Index sur 5 000 lignes (profile) :** « Open the 5,000-row list ». Attendu : poignée fine au bord droit ; un défilement normal n'ouvre pas l'index ; un glissé depuis la poignée ouvre la colonne « # A–Z », la lettre sous le doigt grossit avec ses voisines, une bulle indique la lettre et le nombre, la liste suit en temps réel, une vibration légère à chaque lettre, les lettres vides (Q, X, Y) sont grisées et sautées, la colonne disparaît 600 ms après le lâcher. Un toucher sans glisser sur la poignée ouvre la grille « Go to letter » (textes en anglais : la galerie n'est pas traduite). Avec l'interrupteur de la barre, l'index passe à gauche.
+9. **Index et geste Retour :** en navigation par gestes, glisser horizontalement depuis le bord droit **sur la poignée** : la page reste ; depuis le bord droit **ailleurs** : Retour s'exécute.
+10. **Rotation avec l'index :** ouvrir la liste de 5 000 lignes, faire pivoter le téléphone, puis glisser depuis la poignée à sa nouvelle place. Attendu : l'index répond et le Retour reste exclu sur la poignée (le rectangle d'exclusion suit la rotation).
+11. **Fluidité :** faire défiler la liste de 5 000 lignes au doigt et à la volée ; noter toute saccade. `adb shell dumpsys gfxinfo` ne compte pas les images de Flutter : le jugement est visuel (60 i/s visés).
+12. **TalkBack :** activer TalkBack ; la poignée de la galerie annonce « Go to letter » (« Aller à la lettre » dans l'application, quand l'index y sera branché) ; ses gestes d'ajustement changent de lettre ; chaque bouton-icône annonce un libellé. Texte agrandi à 200 % : pas de texte coupé dans les onglets et la galerie.
+
+Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).

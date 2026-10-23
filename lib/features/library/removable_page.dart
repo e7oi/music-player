@@ -6,6 +6,7 @@ import 'package:tuneshell/app/providers/tag_providers.dart';
 import 'package:tuneshell/domain/library/services/removable_indexer.dart';
 import 'package:tuneshell/features/library/removable_controller.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
+import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 
 /// Removable disks and their folders (UC-003). Temporary screen until the
 /// MPL-016 mock-ups exist.
@@ -58,7 +59,7 @@ class _RemovablePageState extends ConsumerState<RemovablePage> {
             child: state.disks.isEmpty
                 ? Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(TsSpace.xl),
                       child: Text(
                         l10n.removableNone,
                         textAlign: TextAlign.center,
@@ -73,7 +74,7 @@ class _RemovablePageState extends ConsumerState<RemovablePage> {
                   ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(TsSpace.l),
             child: Row(
               children: [
                 Expanded(
@@ -85,7 +86,7 @@ class _RemovablePageState extends ConsumerState<RemovablePage> {
                   ),
                 ),
                 if (state.busy || reading) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: TsSpace.s),
                   OutlinedButton(
                     onPressed: () => unawaited(_controller.cancel()),
                     child: Text(l10n.removableCancel),
@@ -134,7 +135,10 @@ class _DiskTile extends ConsumerWidget {
         ),
         for (final folder in folders)
           ListTile(
-            contentPadding: const EdgeInsets.only(left: 72, right: 8),
+            contentPadding: const EdgeInsets.only(
+              left: TsSpace.xxxl + TsSpace.xl,
+              right: TsSpace.s,
+            ),
             title: Text(folder.isEmpty ? l10n.removableRootFolder : folder),
             trailing: IconButton(
               tooltip: l10n.removableRemoveFolder,

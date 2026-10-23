@@ -32,6 +32,12 @@ void main() {
   LibraryController controller() =>
       container.read(libraryControllerProvider.notifier);
 
+  bool cancelable() => switch (state()) {
+    LibraryFolderChoice(:final cancelable) => cancelable,
+    LibraryLoadFailed(:final cancelable) => cancelable,
+    _ => false,
+  };
+
   setUp(() {
     repository = FakeLibraryRepository();
     source = FakeInternalAudioSource()
@@ -275,6 +281,42 @@ void main() {
       await controller().openFolderChoice();
 
       expect((state() as LibraryFolderChoice).selected, {'Music', 'Ringtones'});
+    });
+
+    /// @verifies FR-003.4 the choice opened by the user can be left unchanged.
+    test('cancelling the folder choice goes back to the library', () async {
+      await controller().start();
+      await controller().confirmFolders({'Music'});
+      await controller().openFolderChoice();
+      expect(cancelable(), isTrue);
+
+      controller().cancelFolderChoice();
+
+      expect(state(), isA<LibraryReady>());
+      expect((state() as LibraryReady).hasFolders, isTrue);
+      expect(cancelable(), isFalse);
+      expect(repository.tracks, hasLength(2));
+    });
+
+    /// @verifies FR-003.3 the first choice is not optional.
+    test('the first folder choice cannot be cancelled', () async {
+      await controller().start();
+
+      expect(state(), isA<LibraryFolderChoice>());
+      expect(cancelable(), isFalse);
+      controller().cancelFolderChoice();
+      expect(state(), isA<LibraryFolderChoice>());
+    });
+
+    test('confirming after reopening ends the choice for good', () async {
+      await controller().start();
+      await controller().confirmFolders({'Music'});
+      await controller().openFolderChoice();
+
+      await controller().confirmFolders({'Music', 'Ringtones'});
+
+      expect(state(), isA<LibraryReady>());
+      expect(cancelable(), isFalse);
     });
 
     /// @verifies UC-001
