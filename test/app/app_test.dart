@@ -70,4 +70,24 @@ void main() {
 
     expect(shown(), Brightness.dark);
   });
+
+  /// @verifies FR-014.7
+  testWidgets('the first-launch screens are full screen, the library is not', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(412, 915)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await pumpApp(tester, const Locale('en'));
+
+    expect(find.text('Allow access to your music'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+
+    await tester.tap(find.text('Not now'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Access to your music not granted'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
+  });
 }

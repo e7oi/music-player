@@ -86,6 +86,11 @@ final class LibraryReady extends LibraryViewState {
   final bool indexFailed;
 }
 
+/// The welcome, the explanation and the blocked screen fill the window
+/// (FR-014.7); the library with its navigation does not.
+bool isFirstLaunchScreen(LibraryViewState state) =>
+    state is LibraryWelcome || state is LibraryPermissionNeeded;
+
 final libraryControllerProvider =
     NotifierProvider<LibraryController, LibraryViewState>(
       LibraryController.new,

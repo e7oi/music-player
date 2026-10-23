@@ -35,5 +35,6 @@ Livré par MPL-044 (2026-10-23), test appareil en attente (D14).
 - Écrans : `WelcomePage`, `AccessExplanationPage`, `AccessBlockedPage`, `AccessDeclinedView` ; logo dessiné par `TuneShellLogo` (`lib/ui/widgets/`), simplifié par rapport aux SVG de marque.
 - « Choisir un dossier à la place » : `chooseFolderInstead()` (écran bloqué seulement) ajoute un dossier de disque ; si un dossier est ajouté, la bibliothèque s'affiche sans accès (`_withoutAccess`). Les pastilles « Dossiers » ramènent alors à l'explication, « Actualiser » ne relit que les disques, et le retour des réglages avec accès accordé propose les dossiers.
 - Limite : sans accès, au lancement suivant l'écran bloqué revient, même si un disque est connu.
+- Plein écran (exigence 7, demande du propriétaire du 2026-10-23) : `HomeShell(immersive:)` retire la navigation et la barre de lecture pendant l'accueil, l'explication et l'écran bloqué (`isFirstLaunchScreen`) ; la vue garde son état ; « Pas maintenant » et le reste de la bibliothèque les remettent.
 - Retour (geste) depuis l'explication : accueil. Une erreur de la demande (par exemple sans activité) est ignorée en silence, comme avant.
 - Mise en page : corps défilant, boutons toujours visibles ; à 200 % en paysage le corps peut devenir étroit (vérifié par tests de widgets, pas sur appareil).

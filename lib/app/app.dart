@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tuneshell/features/library/library_controller.dart';
 import 'package:tuneshell/features/library/library_page.dart';
 import 'package:tuneshell/features/library/player_bar.dart';
 import 'package:tuneshell/features/shell/home_shell.dart';
@@ -17,6 +19,14 @@ class TuneShellApp extends StatelessWidget {
     // MPL-048.
     theme: TsTheme.light(),
     darkTheme: TsTheme.dark(),
-    home: const HomeShell(tracks: LibraryPage(), playerBar: PlayerBar()),
+    home: Consumer(
+      builder: (context, ref, _) => HomeShell(
+        immersive: ref.watch(
+          libraryControllerProvider.select(isFirstLaunchScreen),
+        ),
+        tracks: const LibraryPage(),
+        playerBar: const PlayerBar(),
+      ),
+    ),
   );
 }
