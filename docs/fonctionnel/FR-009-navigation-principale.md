@@ -35,4 +35,7 @@ MPL-016, 2026-10-23. `HomeShell` (`lib/features/shell/`), branché dans `lib/app
 - Le contenu des vues reste dans une `GlobalKey` : à la rotation, la barre devient un rail sans perdre l'état des vues (l'arbre de widgets change, la clé le préserve).
 - Le rail affiche les libellés sous les icônes ; la barre du bas hérite de la hauteur de `TsSize.navBar`.
 - Retour système : `PopScope` sur la coquille.
-- **Non testé sur appareil** : paysage, geste Retour entre onglets.
+- La barre de lecture, montée dans la coquille, est maintenant présente aussi pendant le chargement, le refus de permission et le choix des dossiers ; elle est vide tant que rien ne joue. Avant, elle n'apparaissait que dans la bibliothèque prête ou le choix des dossiers.
+- Le rail est dans une `SafeArea` (encoche en paysage), non vérifiée sur appareil.
+- Hors périmètre, nécessaire pour que les tests de page passent : `playerStateProvider` (`app/providers/player_providers.dart`) s'abonne au flux avant de lire l'état courant. Avant, un état émis entre les deux se perdait (disques disponibles non reçus : pistes grisées à tort). Les tests de page de `library_page_test.dart` étaient rouges sans ce correctif ; `test/app/player_state_provider_test.dart` est un garde qui ne reproduit pas la course de façon déterministe.
+- **Non testé sur appareil** : paysage, geste Retour entre onglets, sous-écrans (exigence 6, couverte seulement par les écrans existants).
