@@ -19,6 +19,7 @@ void main() {
     mark: mark,
     unavailableLabel: 'Nodal · non connecté',
     unreadableLabel: 'Fichier illisible',
+    playingLabel: 'en lecture',
     onTap: onTap,
   );
 
@@ -194,5 +195,80 @@ void main() {
     final artist = tester.getRect(find.text('Les Brumes'));
     expect(mark.right, lessThanOrEqualTo(artist.left));
     expect((mark.center.dy - artist.center.dy).abs(), lessThan(8));
+  });
+
+  /// @verifies FR-010.6
+  group('TalkBack says the state in words', () {
+    for (final (state, said) in [
+      (
+        TrackTileState.playing,
+        'Aube sur le fleuve, Les Brumes, 4:18, en lecture',
+      ),
+      (
+        TrackTileState.unavailable,
+        'Aube sur le fleuve, Les Brumes, 4:18, Nodal · non connecté',
+      ),
+      (
+        TrackTileState.unreadable,
+        'Aube sur le fleuve, Les Brumes, 4:18, Fichier illisible',
+      ),
+    ]) {
+      testWidgets('${state.name}: $said', (tester) async {
+        final handle = tester.ensureSemantics();
+        await pumpUi(tester, tile(state: state, onTap: () {}));
+
+        expect(find.bySemanticsLabel(said), findsOneWidget);
+        handle.dispose();
+      });
+    }
+  });
+
+  /// @verifies BR-007 rule 9
+  group('text size', () {
+    Future<void> pumpScaled(WidgetTester tester, double scale) async {
+      tester.view
+        ..physicalSize = const Size(412, 915)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: TsTheme.light(),
+          home: MediaQuery(
+            data: MediaQueryData(textScaler: TextScaler.linear(scale)),
+            child: const Scaffold(
+              body: Column(
+                children: [
+                  TrackTile(
+                    title:
+                        'Un titre de piste assez long pour passer à la ligne',
+                    artist: 'Les Brumes · un nom d artiste long aussi',
+                    duration: '4:18',
+                    state: TrackTileState.unavailable,
+                    unavailableLabel: 'Nodal · non connecté à ce téléphone',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('fixed at 64 dp up to 1.3 times', (tester) async {
+      await pumpScaled(tester, 1.3);
+
+      expect(tester.getSize(find.byType(TrackTile)).height, TsSize.trackRow);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('grows at 200 % and never overflows', (tester) async {
+      await pumpScaled(tester, 2);
+
+      expect(
+        tester.getSize(find.byType(TrackTile)).height,
+        greaterThanOrEqualTo(TsSize.trackRow),
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 }

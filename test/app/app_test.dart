@@ -46,4 +46,28 @@ void main() {
 
     expect(find.text('Allow access'), findsOneWidget);
   });
+
+  /// @verifies FR-008.2
+  testWidgets('follows the system theme', (tester) async {
+    await pumpApp(tester, const Locale('en'));
+
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.system);
+    expect(app.theme?.brightness, Brightness.light);
+    expect(app.darkTheme?.brightness, Brightness.dark);
+  });
+
+  /// @verifies FR-008.2
+  testWidgets('turns dark with the system, without restarting', (tester) async {
+    await pumpApp(tester, const Locale('en'));
+    Brightness shown() =>
+        Theme.of(tester.element(find.byType(Scaffold).first)).brightness;
+    expect(shown(), Brightness.light);
+
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+    await tester.pumpAndSettle();
+
+    expect(shown(), Brightness.dark);
+  });
 }

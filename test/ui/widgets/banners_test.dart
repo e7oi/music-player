@@ -85,6 +85,15 @@ void main() {
       );
     });
 
+    /// @verifies BR-007 rule 4
+    test('a close button must carry a label', () {
+      expect(
+        () =>
+            StatusBanner(kind: BannerKind.info, message: 'm', onDismiss: () {}),
+        throwsAssertionError,
+      );
+    });
+
     testWidgets('at least 56 dp high, even for one short line', (tester) async {
       await pumpUi(
         tester,

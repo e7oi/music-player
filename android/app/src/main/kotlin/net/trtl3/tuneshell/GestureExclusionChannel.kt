@@ -24,12 +24,15 @@ class GestureExclusionChannel : MethodChannel.MethodCallHandler {
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
-            "setRects" -> {
+            "setRects" -> try {
                 @Suppress("UNCHECKED_CAST")
                 val raw = call.arguments as List<Map<String, Int>>
                 rects = raw.map { Rect(it["left"]!!, it["top"]!!, it["right"]!!, it["bottom"]!!) }
                 apply()
                 result.success(null)
+            } catch (e: Exception) {
+                // A badly formed call must not take the handler down.
+                result.error("bad_arguments", e.message, null)
             }
             else -> result.notImplemented()
         }

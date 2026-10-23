@@ -181,6 +181,22 @@ void main() {
       expect(handleRects.last, isNull);
     });
 
+    /// @verifies FR-010.5
+    testWidgets('the reported rectangle follows a rotation', (tester) async {
+      await pumpUi(tester, host());
+      await tester.pump();
+      final portrait = handleRects.last!;
+
+      tester.view.physicalSize = const Size(915, 412);
+      await tester.pump();
+      await tester.pump();
+
+      final landscape = handleRects.last!;
+      expect(landscape, isNot(portrait));
+      expect(landscape.right, 915);
+      expect(landscape.center.dy, closeTo(412 / 2, 1));
+    });
+
     testWidgets('reports its rectangle for the gesture exclusion', (
       tester,
     ) async {
@@ -191,6 +207,18 @@ void main() {
       expect(handleRects.last!.size, TsSize.indexHandleTouch);
       expect(handleRects.last!.right, tester.view.physicalSize.width);
     });
+  });
+
+  /// @verifies BR-007 rule 6
+  testWidgets('works the same in the dark theme', (tester) async {
+    await pumpUi(tester, host(), dark: true);
+
+    final gesture = await dragTo(tester, 'C');
+
+    expect(selected.last, 'C');
+    expect(find.text('200 pistes'), findsOneWidget);
+    await gesture.up();
+    await tester.pumpAndSettle();
   });
 
   /// @verifies FR-010.4

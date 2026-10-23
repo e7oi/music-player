@@ -53,6 +53,7 @@ abstract final class TsSize {
   static const double playerPanelWidth = 280;
   static const double progressBar = 4;
   static const double bannerMin = 56; // status banner
+  static const double fixedRowMaxTextScale = 1.3; // above: rows grow
   static const double sourceMark = 12; // source mark on a TrackTile
   static const double fab = 56; // "jump to current" button
   static const double listBottomInset =

@@ -24,7 +24,11 @@ class _ProbeState extends State<_Probe> {
 }
 
 void main() {
-  Future<void> pump(WidgetTester tester, {required Size size}) async {
+  Future<void> pump(
+    WidgetTester tester, {
+    required Size size,
+    String locale = 'en',
+  }) async {
     tester.view
       ..physicalSize = size
       ..devicePixelRatio = 1;
@@ -35,7 +39,7 @@ void main() {
           theme: TsTheme.light(),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('en'),
+          locale: Locale(locale),
           home: const HomeShell(
             tracks: _Probe(),
             playerBar: SizedBox(key: Key('player'), height: 10),
@@ -73,6 +77,19 @@ void main() {
         .map((d) => d.label);
     expect(labels, ['Tracks', 'Albums', 'Artists', 'Settings']);
     expect(find.text('taps 0'), findsOneWidget);
+  });
+
+  /// @verifies FR-009.9
+  testWidgets('the labels are those of the mock-ups in French', (tester) async {
+    await pump(tester, size: const Size(412, 915), locale: 'fr');
+
+    final labels = tester
+        .widgetList<NavigationDestination>(find.byType(NavigationDestination))
+        .map((d) => d.label);
+    expect(labels, ['Pistes', 'Albums', 'Artistes', 'Réglages']);
+    await tester.tap(find.text('Albums'));
+    await tester.pumpAndSettle();
+    expect(find.text('Cette vue arrive bientôt.'), findsOneWidget);
   });
 
   /// @verifies FR-009.2

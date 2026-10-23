@@ -73,17 +73,20 @@ class _HomeShellState extends State<HomeShell> {
             return Scaffold(
               body: Row(
                 children: [
-                  NavigationRail(
-                    selectedIndex: _index,
-                    onDestinationSelected: _select,
-                    labelType: NavigationRailLabelType.all,
-                    destinations: [
-                      for (final (icon, label) in destinations)
-                        NavigationRailDestination(
-                          icon: Icon(icon),
-                          label: Text(label),
-                        ),
-                    ],
+                  SafeArea(
+                    right: false,
+                    child: NavigationRail(
+                      selectedIndex: _index,
+                      onDestinationSelected: _select,
+                      labelType: NavigationRailLabelType.all,
+                      destinations: [
+                        for (final (icon, label) in destinations)
+                          NavigationRailDestination(
+                            icon: Icon(icon),
+                            label: Text(label),
+                          ),
+                      ],
+                    ),
                   ),
                   Expanded(child: content),
                 ],

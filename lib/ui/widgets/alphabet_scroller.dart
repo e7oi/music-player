@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -106,7 +107,7 @@ class _AlphabetScrollerState extends State<AlphabetScroller> {
 
   double get _columnTop => TsSpace.l;
 
-  double get _columnHeight => _box.size.height - 2 * TsSpace.l;
+  double get _columnHeight => math.max(1, _box.size.height - 2 * TsSpace.l);
 
   void _dragStart(DragStartDetails details) {
     _hideTimer?.cancel();
@@ -171,7 +172,7 @@ class _AlphabetScrollerState extends State<AlphabetScroller> {
         countLabel: widget.countLabel,
       ),
     );
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() => _current = picked);
       widget.onLetterSelected(picked);
     }
@@ -200,7 +201,6 @@ class _AlphabetScrollerState extends State<AlphabetScroller> {
       }
       return widget.child;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) => _reportHandle());
     final scheme = Theme.of(context).colorScheme;
     final still = MediaQuery.disableAnimationsOf(context);
     final handleLit = _recentlyScrolled || _dragging;
@@ -215,6 +215,24 @@ class _AlphabetScrollerState extends State<AlphabetScroller> {
             _current!,
             widget.letters.firstWhere((l) => l.label == _current).count,
           );
+    return LayoutBuilder(
+      // Also runs when the window or the list is resized (rotation, a banner
+      // above the list), so that the excluded rectangle follows the handle.
+      builder: (context, constraints) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _reportHandle());
+        return _stack(context, scheme, handleLit, still, alignment, stamp);
+      },
+    );
+  }
+
+  Widget _stack(
+    BuildContext context,
+    ColorScheme scheme,
+    bool handleLit,
+    bool still,
+    AlignmentGeometry alignment,
+    String? stamp,
+  ) {
     return Stack(
       children: [
         NotificationListener<ScrollNotification>(

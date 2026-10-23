@@ -28,6 +28,7 @@ class TrackTile extends StatelessWidget {
     this.artwork,
     this.unavailableLabel,
     this.unreadableLabel,
+    this.playingLabel,
     this.semanticsLabel,
     this.onTap,
     this.onLongPress,
@@ -51,6 +52,9 @@ class TrackTile extends StatelessWidget {
   /// Second line of an unreadable track, for example "Fichier illisible".
   final String? unreadableLabel;
 
+  /// Said by TalkBack for a playing track, for example "en lecture".
+  final String? playingLabel;
+
   /// Read by TalkBack instead of the visible texts (title, artist, duration,
   /// state, source).
   final String? semanticsLabel;
@@ -63,6 +67,9 @@ class TrackTile extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final colors = TsColors.of(context);
     final text = Theme.of(context).textTheme;
+    final fixedHeight =
+        MediaQuery.textScalerOf(context).scale(1) <=
+        TsSize.fixedRowMaxTextScale;
     final playing = state == TrackTileState.playing;
     final unavailable = state == TrackTileState.unavailable;
     final unreadable = state == TrackTileState.unreadable;
@@ -98,8 +105,13 @@ class TrackTile extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           onLongPress: onLongPress,
-          child: SizedBox(
-            height: TsSize.trackRow,
+          // BR-007, rule 9: a fixed height up to 1.3 times the text, a minimum
+          // height beyond, so that large text is never cut.
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: TsSize.trackRow,
+              maxHeight: fixedHeight ? TsSize.trackRow : double.infinity,
+            ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: TsSpace.screenMargin,
@@ -186,7 +198,15 @@ class TrackTile extends StatelessWidget {
     );
   }
 
-  String _defaultLabel() => [title, ?artist, ?duration].join(', ');
+  /// Title, artist, duration, then the state in words (FR-010.6).
+  String _defaultLabel() => [
+    title,
+    ?artist,
+    ?duration,
+    if (state == TrackTileState.playing) ?playingLabel,
+    if (state == TrackTileState.unavailable) ?unavailableLabel,
+    if (state == TrackTileState.unreadable) ?unreadableLabel,
+  ].join(', ');
 }
 
 /// Skeleton row shown while a list loads.

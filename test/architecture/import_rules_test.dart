@@ -168,4 +168,27 @@ void main() {
 
     expect(violations, isEmpty, reason: violations.join('\n'));
   });
+
+  /// @verifies ADR-010 `ui/` may import `services.dart` for haptics only.
+  test('ui/ uses services.dart for HapticFeedback only', () {
+    const forbidden = [
+      'MethodChannel',
+      'EventChannel',
+      'SystemChannels',
+      'SystemNavigator',
+      'SystemChrome',
+      'Clipboard',
+      'rootBundle',
+      'BinaryMessenger',
+    ];
+    final offenders = <String>[
+      for (final entity in Directory('lib/ui').listSync(recursive: true))
+        if (entity is File && entity.path.endsWith('.dart'))
+          for (final name in forbidden)
+            if (entity.readAsStringSync().contains(name))
+              '${entity.path}: $name',
+    ];
+
+    expect(offenders, isEmpty, reason: offenders.join('\n'));
+  });
 }

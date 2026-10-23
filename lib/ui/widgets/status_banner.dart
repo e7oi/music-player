@@ -21,7 +21,10 @@ class StatusBanner extends StatelessWidget {
       vertical: TsSpace.xs,
     ),
     super.key,
-  });
+  }) : assert(
+         onDismiss == null || dismissTooltip != null,
+         'A close button needs a label',
+       );
 
   final BannerKind kind;
   final String message;
