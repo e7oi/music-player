@@ -14,7 +14,7 @@ Préfixe : MPL · Prochaine clé : MPL-040 · Dernière MAJ : 2026-10-22
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-016 | Tâche technique | P0 | Maquettes UI/UX dans Claude Design (note : prévoir l'état « sources indisponibles » sans écraser la liste de pistes, défaut observé dans le prototype MPL-003) | À faire | — | — |
-| MPL-037 | Récit | P0 | Bibliothèque du SSD par SAF : choix du dossier, droit d'accès persistant, parcours, lecture des tags et des pochettes dans les fichiers en arrière-plan, pochettes du stockage interne aussi (décision du 2026-10-15) (≈ 39 ms par fichier mesurés sur SAF, ≈ 100 s pour 2 600 fichiers), ouverture `fd://`, test à 10 000 pistes. Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | MPL-018 |
+| MPL-037 | Récit | P0 | Bibliothèque du SSD par SAF : choix du dossier, droit d'accès persistant, parcours, lecture des tags et des pochettes dans les fichiers en arrière-plan, pochettes du stockage interne aussi (décision du 2026-10-15) (≈ 39 ms par fichier mesurés sur SAF, ≈ 100 s pour 2 600 fichiers), ouverture `fd://`, test à 10 000 pistes. Repris de MPL-018 le 2026-10-15. Cadré le 2026-10-22 (fiches `Active` le 2026-10-22) | À faire | MPL-001 | — |
 | MPL-038 | Récit | P1 | Réassociation d'un nouveau disque dont les chemins relatifs correspondent à ceux d'un disque absent (D23) et retrait d'un disque externe de la bibliothèque (demande du propriétaire du 2026-10-15 ; sort des playlists, favoris et statistiques du disque à trancher au cadrage). Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | MPL-037 |
 | MPL-019 | Récit | P2 | Normalisation du volume (ReplayGain, préampli) | À faire | MPL-004 | — |
 | MPL-020 | Épique | P0 | Épique « Qualité, CI et documentation » | En cours | — | — |
@@ -29,6 +29,128 @@ Préfixe : MPL · Prochaine clé : MPL-040 · Dernière MAJ : 2026-10-22
 | MPL-035 | Tâche technique | P2 | Retrait du stockage amovible pendant la lecture : écouteur natif d'éjection puis `stop()` et fermeture du descripteur dans `PlayerController` (indépendant du moteur) ; vérifier la marge sous charge et avec d'autres descripteurs ouverts ; retirer le récepteur `ACTION_MEDIA_*` ; pas de reprise au rebranchement (décidé le 2026-10-15) ; descripteur proxy gardé comme alternative non testée. Voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.3 🔗 MPL-017, D25. Depuis le 2026-10-15 : MPL-017 livre le port `VolumeEvents` et la réaction du contrôleur (BR-002) ; ce ticket livre l'adaptateur natif et le test sur le Pixel. À couvrir aussi (2026-10-15) : mesurer sur le Pixel le temps entre l'annonce d'éjection et la fermeture du fichier par mpv ; décider si l'éjection doit passer avant la commande en cours (elle attend aujourd'hui dans la file de `PlayerController`) ; garder le descripteur proxy comme plan B si la marge d'environ 1 s ne suffit pas | À faire | MPL-001 | — |
 
 ## Détails
+### MPL-037
+**Description.** Ajouter à la bibliothèque les pistes d'un disque amovible (SSD USB-C) choisi par le sélecteur Android (SAF, D25), avec leurs tags lus dans les fichiers, et les pochettes des pistes du SSD et du stockage interne. Cadrage du 2026-10-22, suite de MPL-018 (cf. découpage du 2026-10-15). Le propriétaire a gardé un seul ticket, malgré la recommandation de sortir les pochettes.
+
+**Inclus.**
+- Canal natif de stockage amovible (sélecteur de dossiers, droit persistant en lecture seule, parcours par `DocumentsContract`, ouverture en `fd://N`), ports et adaptateurs (ADR-008, FR-006).
+- Disque identifié par l'UUID du système de fichiers, plusieurs dossiers par disque, actualisation, garde-fou contre un parcours incomplet (FR-006, BR-004).
+- Disque absent ou accès à renouveler : pistes grisées et sautées (BR-001, BR-004 règle 5, FR-006.10 et 11) ; `VolumeEvents.availableDisks()` rend les disques montés.
+- Schéma Drift v2 et migration testée depuis le dump v1 (ADR-008).
+- Lecture des tags des pistes du SSD en arrière-plan, reprise, état par piste (FR-007, ADR-009).
+- Pochettes du SSD et du stockage interne : lecture, réduction, enregistrement unique par image, affichage temporaire dans la liste et la barre de lecture (FR-007, ADR-009).
+- Descripteurs : aucune fuite, lectures annulables (BR-006).
+- Test à 10 000 pistes : jeu d'essai synthétique, hors dépôt (D27) ; procédure dans `HOWTO.md`.
+- Textes en ARB.
+
+**Exclusions.** Réassociation d'un disque et retrait d'un disque (MPL-038) ; écouteur natif d'éjection et arrêt du parcours à l'éjection (MPL-035) ; pochettes en ligne (MPL-029) ; recherche, tri, filtres ; écrans définitifs (MPL-016) ; indexation quand l'application est fermée ; renommage du disque.
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Bibliothèque d'un disque amovible, tags et pochettes
+
+  Scénario: Ajouter un dossier du SSD
+    Soit un SSD monté et l'accès aux fichiers audio accordé
+    Quand l'utilisateur choisit un dossier du SSD dans le sélecteur d'Android
+    Alors le dossier et le disque sont enregistrés
+    Et les pistes du dossier apparaissent dans la liste avec le nom de fichier comme titre
+
+  Scénario: Droit d'accès conservé
+    Soit un dossier du SSD déjà ajouté
+    Quand l'utilisateur ferme l'application, redémarre le téléphone puis rouvre l'application avec le SSD branché
+    Alors les pistes du SSD sont disponibles sans nouveau choix de dossier
+
+  Scénario: Tags lus en arrière-plan
+    Soit un dossier du SSD ajouté dont les pistes n'ont pas encore leurs tags
+    Quand la lecture des tags s'exécute
+    Alors les titres, artistes et albums remplacent peu à peu les noms de fichiers
+    Et l'écran reste utilisable et une piste du SSD se lit pendant ce temps
+
+  Scénario: Lecture d'une piste du SSD
+    Soit une piste du SSD dans la liste
+    Quand l'utilisateur la touche puis enchaîne dix pistes
+    Alors chaque piste se lit, en arrière-plan comme au premier plan
+    Et le nombre de descripteurs ouverts sur le volume revient à son niveau de départ
+
+  Scénario: SSD absent
+    Soit des pistes du SSD indexées et le SSD débranché
+    Quand l'utilisateur ouvre l'application
+    Alors les pistes du SSD sont grisées et gardées dans la bibliothèque
+    Et une lecture qui les rencontre les saute avec un message
+
+  Scénario: Retour du SSD
+    Soit des pistes du SSD grisées
+    Quand l'utilisateur rebranche le SSD et revient dans l'application
+    Alors les pistes sont de nouveau disponibles sans nouveau choix de dossier
+
+  Scénario: Accès à renouveler
+    Soit un SSD monté dont le droit d'accès n'est plus valable
+    Quand l'utilisateur ouvre la liste des dossiers
+    Alors le disque est signalé "accès à renouveler" avec un bouton qui rouvre le sélecteur
+    Et aucune piste n'est retirée
+
+  Scénario: Fichiers ignorés
+    Soit un dossier avec des fichiers "._" écrits par macOS, un sous-dossier caché et un dossier contenant ".nomedia"
+    Quand le dossier est parcouru
+    Alors ces fichiers et dossiers ne sont pas indexés
+
+  Scénario: Actualiser
+    Soit un SSD indexé
+    Quand l'utilisateur ajoute un fichier, en supprime un et en modifie un sur le SSD puis touche "Actualiser"
+    Alors la piste ajoutée apparaît, la supprimée disparaît et la modifiée est relue
+    Et les autres pistes gardent leur identité
+
+  Scénario: Parcours échoué sans perte
+    Soit un SSD indexé
+    Quand le SSD est débranché pendant l'actualisation
+    Alors un message signale l'échec
+    Et la bibliothèque est gardée telle quelle
+
+  Scénario: Lecture des tags reprise
+    Soit une lecture de tags en cours sur le SSD
+    Quand l'utilisateur ferme l'application puis la rouvre
+    Alors seules les pistes encore en attente sont lues
+
+  Scénario: Pochettes des deux sources
+    Soit une piste du SSD et une piste du stockage interne dont le fichier contient une pochette
+    Quand les pochettes sont lues
+    Alors la liste et la barre de lecture affichent la pochette de chaque piste
+    Et deux pistes du même album n'enregistrent qu'un seul fichier d'image
+
+  Scénario: Piste sans pochette ni tags
+    Soit un fichier lisible sans tags ni pochette
+    Quand il est indexé
+    Alors il garde le nom du fichier comme titre et une image de remplacement
+    Et la lecture des autres pistes continue
+
+  Scénario: Décocher un dossier du SSD
+    Soit deux dossiers du SSD cochés et leurs pistes indexées
+    Quand l'utilisateur décoche l'un des deux
+    Alors ses pistes et ses pochettes devenues inutiles sont retirées
+    Et le droit d'accès à ce dossier est libéré
+
+  Scénario: Bibliothèque de 10 000 pistes
+    Soit un SSD de 10 000 pistes d'essai synthétiques
+    Quand l'utilisateur ajoute le dossier puis laisse les tags et les pochettes se lire
+    Alors la liste reste fluide à faire défiler et l'écran réagit pendant le parcours
+    Et les durées du parcours et de la lecture des tags, le nombre de descripteurs et la place des pochettes sont notés
+```
+
+**Test appareil (Pixel, release).** SSD réel (exFAT, USB-C, `adb` en Wi-Fi), build release, téléphone débranché pour l'arrière-plan : ajout d'un dossier, redémarrage du téléphone, tags et pochettes, lecture et enchaînement avec comptage des descripteurs (`/proc/<pid>/fd`), SSD absent et retour, actualisation, parcours coupé par un débranchement (comportement connu sans MPL-035), 10 000 pistes synthétiques. Procédure à écrire dans `HOWTO.md`.
+
+**Fiches liées.** UC-003, FR-006, FR-007, BR-006 (`Active`, validées par le propriétaire le 2026-10-22) ; ADR-008, ADR-009 (`Active`). Utilise UC-001, FR-001, FR-003, BR-001, BR-002, BR-004 et ADR-002, ADR-004, ADR-005, ADR-006 (`Active`).
+
+**À valider (PO).** Tous les points ci-dessous ont été validés par le propriétaire le 2026-10-22, sans modification.
+- Ejection pendant un parcours non protégée avant MPL-035 : acceptée jusqu'à MPL-035 (FR-006.10, BR-006) ?
+- `.nomedia`, noms en `.` et `._*` ignorés ; liste d'extensions (WMA compris) (FR-006.6).
+- Parcours au premier plan seulement (FR-006.14).
+- Pas de `cover.jpg` du dossier ; pochette dans la notification et l'écran verrouillé dans ce ticket ou plus tard ; taille de 512 pixels (FR-007.6).
+- `MediaMetadataRetriever` comme lecteur de tags et de pochettes, sans nouvelle dépendance (ADR-009).
+- Jeu d'essai de 10 000 pistes : script de génération hors dépôt (D27) ou dans le dépôt sous `tool/` ?
+- BR-006 règle 5 : étend BR-002 sans la modifier.
+- Au début du ticket, deux mesures sur le Pixel (UUID du volume, débit des lectures de tags) : si l'UUID ne se déduit pas, retour à `/cadrer`.
+
 ### MPL-039
 **Description.** Appliquer le nom définitif choisi par le propriétaire, **TuneShell** (D4, 2026-10-21), partout où le nom de travail « MusicPlayer » apparaît : nom visible, dépôt, identifiants techniques et documentation. Choix du propriétaire : tout renommer, identifiants compris (ADR-007).
 
@@ -453,4 +575,5 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | À numéroter | Le focus audio et le débranchement du casque (`audio_session`) font partie de MPL-036 ; l'autorisation de notification est déclarée sans être demandée | Tranchée 2026-10-21 | `media_kit` ne gère ni focus ni débranchement ; la notification d'une session média s'affiche sans l'autorisation (MPL-012) · BR-005, FR-005, MPL-036 |
 | À numéroter | Un seul moteur Flutter par processus dès MPL-018 (`MainActivity` fournit un moteur qui survit à l'activité), sans attendre `audio_service` ; MPL-036 suit immédiatement MPL-018 | Tranchée 2026-10-21 | Fermer l'activité (geste de retour) détruisait l'isolat Dart pendant que mpv tournait : plantages de mpv (rappel de réveil libéré) et deux lecteurs simultanés, constatés sur le Pixel · MPL-018, MPL-036 |
 | À numéroter | Stockage interne : l'utilisateur choisit les dossiers à indexer (D23 appliquée au disque « Local »), par une liste tirée de MediaStore, `Music/` proposé par défaut | Tranchée 2026-10-15 | Ne pas indexer sonneries, notes vocales et sons reçus par les messageries ; remplace le choix « tout le stockage interne » du même jour · FR-003, MPL-018 |
+| À numéroter | MPL-037 n'est pas découpé : SSD par SAF, tags et pochettes (SSD et stockage interne) restent un seul ticket, un seul test sur le Pixel | Tranchée 2026-10-22 | Choix du propriétaire au cadrage, malgré la recommandation de sortir les pochettes dans un ticket à part · MPL-037 |
 | D30 | Dépendances et versions : dernière version stable compatible avec le Flutter épinglé, tout épinglé, Dependabot hebdomadaire, avis de sécurité traités hors cycle, dérogations dans `docs/dependency-exceptions.md`. Détail : `CLAUDE.md` | Provisoire | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |
