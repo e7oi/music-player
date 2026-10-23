@@ -13,12 +13,11 @@ Préfixe : MPL · Prochaine clé : MPL-051 · Dernière MAJ : 2026-10-23
 | MPL-010 | Bug | P2 | Avertissements de décodage `media_kit` sans effet audible constaté : FLAC avec étiquettes ID3 ; MP3 avec données non-MPEG après la dernière trame (MP3 A, MP3 B ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.5) — (origine des octets et fréquence dans la bibliothèque non établies ; pas de changement de code) | À faire | — | — |
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
-| MPL-016 | Tâche technique | P0 | Fondations du design (lot 0 de la conception Claude Design, v0.4 « Carapace sonore ») : intégration du dossier de conception, thème clair et sombre et jetons, polices Manrope et Inter embarquées, navigation à 4 onglets adaptative, huit composants réutilisables avec page de démonstration, dossier `lib/ui/` (ADR-010, ADR-011). Remplace le ticket « Maquettes UI/UX » : les maquettes sont livrées. Cadré le 2026-10-23 (fiches `Active` le 2026-10-23) | À tester | MPL-001 | — |
-| MPL-044 | Récit | P1 | Design lot 1 — Accès et dossiers : premier lancement (accueil, demande d'accès, refus simple et définitif) et choix des dossiers de musique refaits selon les maquettes 1a–1e et 2a–2e de `docs/design/HANDOFF.md` ; reprend FR-003 et FR-004, qui existent déjà. À cadrer après MPL-016 | À faire | MPL-001 | MPL-016 |
-| MPL-045 | Récit | P1 | Design lot 2 — Bibliothèque : liste de pistes refaite (écran 3, états 6a–6c) avec repère de source sur chaque ligne (`markIndex` en base, schéma v3), bouton « En cours » (idée MPL-042) et index alphabétique (idée MPL-043), bandeaux dans le flux, pastilles d'action avec badge. À cadrer après MPL-016 | À faire | MPL-001 | MPL-016 |
-| MPL-046 | Récit | P1 | Design lot 3 — Disques amovibles : écran 4 refait (4a–4e), repère de source modifiable, détection du branchement en direct, parcours dans un service au premier plan avec notification et « Arrêter » ; recoupe MPL-035 et MPL-038. À cadrer après MPL-016 | À faire | MPL-001 | MPL-016, MPL-045 |
-| MPL-047 | Récit | P1 | Design lot 4 — Lecture : mini-lecteur, lecteur plein écran, file d'attente (feuille), pistes illisibles (5d, 6d) ; prolonge MPL-036. À cadrer après MPL-016 | À faire | MPL-001 | MPL-016 |
-| MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : albums, artistes (regroupés par artiste de l'album), réglages persistés (thème, Material You par `dynamic_color`, index à gauche), paysage avec panneau lecteur (6e). À cadrer après MPL-016 | À faire | MPL-001 | MPL-016, MPL-045 |
+| MPL-044 | Récit | P1 | Design lot 1 — Accès et dossiers : premier lancement (accueil, demande d'accès, refus simple et définitif) et choix des dossiers de musique refaits selon les maquettes 1a–1e et 2a–2e de `docs/design/HANDOFF.md` ; reprend FR-003 et FR-004, qui existent déjà. À cadrer après MPL-016 | À faire | MPL-001 | — |
+| MPL-045 | Récit | P1 | Design lot 2 — Bibliothèque : liste de pistes refaite (écran 3, états 6a–6c) avec en-tête et pastilles d'action (Actualiser, Dossiers, Disques avec badge), bandeaux dans le flux (progression, source absente), ligne de compte, repère de source sur chaque ligne (`markIndex` en base, schéma v3), tri sans accents, lignes grisées touchables avec explication, états vides, index alphabétique (idée MPL-043) et bouton « En cours » (idée MPL-042), fluide pour plus de 5 000 pistes. Cadré le 2026-10-23 (fiches `Active` le 2026-10-23) ; le périmètre pourra être complété avec d'autres éléments du design (demande du propriétaire) | À tester | MPL-001 | — |
+| MPL-046 | Récit | P1 | Design lot 3 — Disques amovibles : écran 4 refait (4a–4e), repère de source modifiable, détection du branchement en direct, parcours dans un service au premier plan avec notification et « Arrêter » ; recoupe MPL-035 et MPL-038. À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
+| MPL-047 | Récit | P1 | Design lot 4 — Lecture : mini-lecteur, lecteur plein écran, file d'attente (feuille), pistes illisibles (5d, 6d) ; prolonge MPL-036. À cadrer après MPL-016 | À faire | MPL-001 | — |
+| MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : albums, artistes (regroupés par artiste de l'album), réglages persistés (thème, Material You par `dynamic_color`, index à gauche), paysage avec panneau lecteur (6e). À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
 | MPL-049 | Tâche technique | P2 | Design lot 6 — Finitions : icône d'application et de notification finales (`docs/design/brand/`), écran de démarrage, liste de contrôle d'accessibilité (TalkBack, texte à 200 %), profilage. À cadrer après MPL-016 | À faire | MPL-001 | MPL-047, MPL-048 |
 | MPL-050 | Bug | P1 | Deux cartes de TuneShell dans les applications récentes : toucher la notification de lecture (action `NOTIFICATION_CLICK` d'`audio_service`, drapeau « nouvelle tâche ») crée une seconde tâche, car `MainActivity` a `taskAffinity=""` (réglage par défaut de Flutter) et Android ne retrouve pas la tâche ouverte ; plus de deux cartes possibles. Pistes : retirer `taskAffinity=""` ou passer en `launchMode="singleTask"` ; à retester avec `HOWTO.md` §12 (étapes 9 et 12). **Ordre voulu par le propriétaire le 2026-10-23 : juste après le design complet (MPL-044 à MPL-049).** Origine : MPL-036. À cadrer le moment venu | À faire | MPL-001 | — |
 | MPL-038 | Récit | P1 | Réassociation d'un nouveau disque dont les chemins relatifs correspondent à ceux d'un disque absent (D23) et retrait d'un disque externe de la bibliothèque (demande du propriétaire du 2026-10-15 ; sort des playlists, favoris et statistiques du disque à trancher au cadrage). Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | — |
@@ -147,6 +146,152 @@ Revue QA : ✅ (1 tour, sous-agent à contexte neuf ; aucun bloquant). Majeurs c
 Description de PR : titre `feat(ui): add the design foundations: theme, navigation and components (MPL-016)`. What: the Claude Design handoff enters the repository (specification, mock-up sources, four reduced captures, six OFL fonts); TuneShell tokens and light/dark themes that follow the system; four-tab shell with a bottom bar under 600 dp and a rail beyond, keeping each view's state on rotation, with the player bar in the shell; eight reusable components (ArtworkTile, SourceMark, TrackTile, StatusBanner, ProgressBanner, DiskCard, JumpToCurrentFab, AlphabetScroller) with a debug and profile gallery; a native channel that keeps the index handle out of the Back gesture; the current screens moved to the tokens with persistent states in the flow; `lib/ui/` rules in CLAUDE.md and the architecture tests, plus a no-literal style test; backlog MPL-044 to MPL-049 for the next design lots. Why: the owner chose to build the design lot by lot (lot 0 first), and the existing screens must keep working while the new ones arrive (ADR-010, ADR-011). How tested: format, analyses and 385 unit and widget tests green; release APK built (79.7 MB, no INTERNET); one review round without blocker; device: Pixel 10 Pro through adb in release and profile (see delivery block), owner confirmation pending. Known gaps: dark theme, landscape, TalkBack and fluidity not tested on the device; column fade-in and teardrop bubble of the index not done; the style test misses some literals; the gesture-exclusion rectangle is last-writer-wins; `playerStateProvider` now subscribes before it reads the state (out of scope, found by the page tests).
 Décisions prises en route : `playerStateProvider` corrigé (hors périmètre, trouvé par les tests de page) ; barre de lecture montée dans la coquille ; jetons `coverDetail`, `bannerMin` et `fixedRowMaxTextScale` ajoutés ; captures versionnées en JPEG ; galerie ouverte depuis Réglages en debug et profile ; courbe de l'effet loupe ajustée sur les valeurs de Design.
 À valider (PO) : écarts du dossier de conception consignés dans les As-built de FR-010 (fondu, bulle, échelle de texte) et BR-007 (test des jetons) ; sortir `ClaudeDesign/` de l'arbre de travail (il gêne `flutter analyze`) ; passer le ticket à « Terminé » après le test sur le Pixel (`HOWTO.md` §14, avec une build profile pour les étapes 7 à 11).
+
+### MPL-045
+**Description.** Refaire l'onglet Pistes selon le lot 2 de la conception Claude Design (`docs/design/HANDOFF.md`, écran 3 et états 6a à 6d), avec les composants de MPL-016 : une liste de `TrackTile` qui montre d'où vient chaque piste, des bandeaux dans le flux, un index alphabétique et un bouton « En cours » pour les longues listes. Cadrage du 2026-10-23. Le propriétaire complétera plus tard le périmètre avec d'autres éléments du design : cette section sera alors mise à jour. Absorbe les idées MPL-041 (pastille de source), MPL-042 (bouton « En cours ») et MPL-043 (index alphabétique) pour la liste de pistes.
+
+**Inclus.**
+- En-tête « Pistes », bouton Rechercher désactivé, pastilles Actualiser, Dossiers et Disques avec badge « N absent » (FR-011).
+- Bandeaux dans le flux : progression de la lecture des tags et du premier parcours ; source absente avec « Voir » et masquage (FR-011, BR-008).
+- Ligne de compte « 2 600 pistes · 12 indisponibles » et libellé du tri « Titre A→Z » (FR-011).
+- Lignes `TrackTile` : en lecture, sans pochette, indisponible, illisible, chargement ; toucher une ligne grisée explique ; tri par clé sans accents (FR-011, BR-008).
+- Repère de source : `markIndex` en base (schéma v3, migration testée), attribution à l'enregistrement, affichage sur chaque ligne, nom de la source dans le libellé TalkBack (FR-012, ADR-012).
+- Index alphabétique branché sur la liste, poignée exclue du geste Retour ; bouton « En cours » et « Dernière jouée » (FR-013).
+- États vides : bibliothèque vide et aucun dossier choisi (FR-011).
+- Architecture de la liste : modèle de vue pur testé d'abord, `SliverFixedExtentList`, mises à jour limitées (ADR-013).
+- Textes en français et en anglais dans les ARB ; clair, sombre, portrait et paysage.
+
+**Exclusions.** Recherche, autres tris, filtres ; menu « plus d'options » ; action « Détails » du message d'illisibilité ; modifier le repère d'un disque (MPL-046) ; mini-lecteur et lecteur plein écran (MPL-047) ; Albums, Artistes, réglages, côté gauche de l'index, « Reprendre là où j'en étais » (MPL-048) ; choix des dossiers et écran des disques eux-mêmes (MPL-044, MPL-046) ; doublons (MPL-040).
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Bibliothèque de pistes selon le design
+
+  Scénario: Chaque ligne montre sa source
+    Soit des pistes du téléphone et d'un disque
+    Quand l'utilisateur ouvre l'onglet Pistes
+    Alors chaque ligne montre le repère de sa source avant l'artiste
+    Et le téléphone est un cercle neutre et le disque une forme colorée distincte
+
+  Scénario: Repère propre à chaque disque
+    Soit un premier disque enregistré puis un second
+    Quand l'utilisateur regarde leurs pistes
+    Alors les deux disques ont des repères différents
+    Et le repère d'un disque absent garde sa couleur
+
+  Scénario: Migration des disques existants
+    Soit une bibliothèque du schéma v2 avec un disque amovible
+    Quand l'application démarre avec le schéma v3
+    Alors le disque a un repère et ses pistes sont intactes
+
+  Scénario: Tri sans accents
+    Soit une piste « Écris-moi » et des pistes en E, en F et en Z
+    Quand la liste s'affiche
+    Alors « Écris-moi » est rangée parmi les titres en E
+    Et les titres qui commencent par un chiffre ou un symbole sont en tête
+
+  Scénario: Ligne de compte
+    Soit 2 600 pistes dont 12 d'un disque absent
+    Quand la liste s'affiche
+    Alors la ligne dit "2 600 pistes · 12 indisponibles"
+    Et sans piste indisponible elle dit seulement le nombre de pistes
+
+  Scénario: Pastilles d'action
+    Soit l'onglet Pistes ouvert
+    Quand l'utilisateur touche Actualiser, Dossiers puis Disques
+    Alors la bibliothèque est réindexée, le choix des dossiers s'ouvre puis l'écran des disques s'ouvre
+    Et la pastille Disques porte "1 absent" quand un disque est absent
+
+  Scénario: Progression dans le flux
+    Soit des étiquettes en cours de lecture
+    Quand la liste s'affiche
+    Alors un bandeau "Lecture des étiquettes : 340 / 2 600" est au-dessus de la liste
+    Et il disparaît à la fin sans masquer aucune ligne
+
+  Scénario: Source absente
+    Soit un disque débranché
+    Quand l'utilisateur ouvre l'onglet Pistes, en portrait comme en paysage
+    Alors un bandeau "12 pistes ignorées : T7 Shield absent" est au-dessus de la liste avec "Voir"
+    Et la première piste reste visible et touchable sous le bandeau
+
+  Scénario: Masquer le bandeau
+    Soit le bandeau de source absente affiché
+    Quand l'utilisateur le masque puis rebranche et débranche le disque
+    Alors il reste masqué tant que l'état n'a pas changé
+    Et il revient au changement d'état
+
+  Scénario: Piste grisée touchable
+    Soit une piste d'un disque absent
+    Quand l'utilisateur la touche
+    Alors un message dit "Branche T7 Shield pour lire cette piste"
+    Et aucune erreur de lecture n'apparaît et rien ne se lance
+
+  Scénario: Fichier illisible
+    Soit une piste dont la lecture échoue
+    Quand la lecture saute à la suivante
+    Alors la ligne de la piste dit "Fichier illisible" pour la session
+    Et un message dit que la piste suivante est lancée
+
+  Scénario: États vides
+    Soit une bibliothèque vide puis aucun dossier choisi
+    Quand l'onglet Pistes s'affiche
+    Alors "Ta bibliothèque est vide" propose "Choisir des dossiers" et "Actualiser"
+    Et "Aucun dossier choisi" propose "Choisir des dossiers"
+
+  Scénario: Index alphabétique
+    Soit une liste de plus de 100 pistes
+    Quand l'utilisateur glisse depuis la poignée jusqu'à la lettre M
+    Alors la liste se place sur le premier titre en M en temps réel
+    Et les lettres sans titre sont grisées et sautées et le geste Retour reste exclu sur la poignée
+
+  Scénario: Bouton En cours
+    Soit une piste en cours loin de l'écran
+    Quand l'utilisateur fait défiler la liste
+    Alors le bouton "En cours" apparaît avec la flèche vers la piste
+    Et le toucher centre la ligne et le bouton disparaît quand elle est visible
+
+  Scénario: Dernière jouée
+    Soit une lecture arrêtée après une piste jouée
+    Quand cette piste est hors de l'écran
+    Alors le bouton "Dernière jouée" mène à elle
+
+  Scénario: Fluidité
+    Soit la bibliothèque réelle de plus de 5 000 pistes en build profile
+    Quand l'utilisateur fait défiler au doigt et à la volée
+    Alors le défilement reste fluide
+    Et la dernière ligne reste atteignable sous le bouton
+
+  Scénario: Accessibilité
+    Soit TalkBack activé
+    Quand il lit une ligne de piste
+    Alors il dit titre, artiste, durée, état et "source T7 Shield"
+    Et le texte à 200 % ne coupe aucune ligne
+```
+
+**Test appareil (Pixel, release).** SSD branché puis débranché ; bibliothèque réelle (7 562 pistes) ; thèmes clair et sombre ; portrait et paysage ; HOWTO §15 à écrire à la livraison (repères, bandeaux, index, bouton « En cours », états vides, migration d'une base v2). La fluidité se juge en profile.
+
+**Fiches liées.** UC-005, FR-011, FR-012, FR-013, BR-008 ; ADR-012, ADR-013 (toutes `Active`, validées par le propriétaire le 2026-10-23). Utilise UC-001, UC-003, FR-003, FR-006, FR-007, FR-010, BR-001, BR-003, BR-004, BR-007 et ADR-004, ADR-008, ADR-010 (`Active`).
+
+**À valider (PO).** Tous les points ci-dessous ont été validés par le propriétaire le 2026-10-23, sans modification ; un repère par dossier (au lieu de par disque) reste une option ouverte, à trancher à l'usage.
+- Pas de menu « plus d'options » ; libellé de tri non interactif ; « N trouvés » non affiché (FR-011).
+- Tri sans accents : l'ordre affiché change (FR-011, ADR-013).
+- Nom d'une source = nom Android (« T7 Shield ») ; repères attribués dans l'ordre d'enregistrement (FR-012).
+- Phrases du bandeau pour plusieurs disques et pour l'accès à renouveler ; message court de BR-001 conservé ; pas de bouton « Détails » (BR-008).
+- Repli du bouton pendant le défilement ; dernière jouée et illisibles en mémoire de session ; pas de bouton si la piste n'est pas dans la liste (FR-013).
+- Schéma v3 et sa migration ; en-tête fixe au-dessus de la liste (ADR-012, ADR-013).
+
+#### Livraison — 2026-10-23
+Statut : ✅ fait (validé par le propriétaire le 2026-10-23 après son test sur le Pixel ; les points « Non vu » ci-dessous restent à son appréciation)
+Résumé : la liste de pistes du design est en place (en-tête, pastilles, bandeaux dans le flux, repères de source, tri sans accents, index, bouton « En cours », états vides) sur le schéma v3. Build release installée sur le Pixel : la migration v2→v3 a réussi et la liste affiche les 7 562 pistes avec leurs repères ; le reste du protocole HOWTO §15 n'est pas fait.
+Fiches touchées : UC-005, FR-011, FR-012, FR-013, BR-008, ADR-012, ADR-013 (as-built écrits) ; HOWTO §15 ajouté.
+Vérification : `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && dart analyze --fatal-infos && flutter test` → au vert, 462 tests (modèle de vue, fournisseurs de session, migration v2→v3, page : bandeau, compte, toucher une ligne grisée, états vides, bouton « En cours », saut par lettre, repères et libellé TalkBack, texte à 200 %) ; `.github/scripts/check-repo.sh` au vert.
+Test appareil (Pixel, release) : non testé, hors un lancement après installation par-dessus la v2 (liste et repères visibles). HOWTO §15 à faire par le propriétaire (index et geste Retour, bouton, bandeaux, paysage, TalkBack, texte à 200 %) ; fluidité à mesurer en build profile.
+Revue QA : ⚠️ — un tour. Corrigé : le bandeau masqué revient quand l'état des sources change (BR-008.3), saut et bouton exacts à tout niveau de texte (lignes de 64 × échelle au-delà de 1,3), tri mis en cache hors du modèle, pas de modèle avant la lecture des disques. Restent : pas de test pour l'envoi du rectangle d'exclusion du geste Retour, le bandeau de progression, la navigation des pastilles et la ligne « Fichier illisible » rendue ; `libraryTracksProvider` (barre de lecture) n'est pas limité à deux émissions par seconde ; l'éclairage du bouton « En cours » peut viser une autre ligne si un lot de tags re-trie la liste pendant la seconde ; `ensureDisk` du fake n'émet pas ; deux littéraux (opacité et durée de l'éclairage). — Non vérifié : fluidité et coût du tri sur 7 562 pistes, exclusion du geste Retour, rotation, TalkBack, migration d'une vraie base v2 (hors l'essai du lancement).
+Description de PR : feat(library): redesign the library list with sources, banners and index (MPL-045) ; what: new Tracks view from the design lot 2, schema v3 with a source mark per disk, pure view model, accent-folded order (the displayed order changes), alphabet index and "now playing" button ; why: long libraries, sources visible, nothing over the list ; tested: 462 unit and widget tests, release build installed over v2 on the Pixel (migration and list OK), rest of the device protocol not tested ; limits: gaps listed above, search and other sorts out of scope.
+Décisions prises en route : texte du corps de l'état vide général (sans nommer le dossier) ; rangées proportionnelles au texte au-delà de 1,3 ; effacement du masquage du bandeau à tout changement de l'état des sources.
+À valider (PO) : les trois décisions ci-dessus ; effacement du marquage « Fichier illisible » à tout changement de l'état des disques (écart à BR-008 règle 7, voulu par le propriétaire le 2026-10-23) ; accepter les écarts de la revue ou demander de les corriger avant « À tester ».
+Test appareil, passage du 2026-10-23 (SSD, portrait, paysage, TalkBack par l'arbre d'accessibilité, texte à 200 %) : migration, repères, bandeau, masquage, toucher d'une piste grisée, saut de lecture, index, bouton « En cours », pastilles, paysage et 200 % OK ; deux correctifs faits (pastilles tronquées puis passées sur deux lignes, marquage illisible effacé). Limite connue : la liste ne suit pas en direct le branchement ou le retrait d'un disque avant MPL-035. Non vu : retour du bandeau masqué au débranchement suivant, voix TalkBack et ses gestes, fluidité en profile, états vides et progression à l'écran.
 
 ### MPL-037
 **Description.** Ajouter à la bibliothèque les pistes d'un disque amovible (SSD USB-C) choisi par le sélecteur Android (SAF, D25), avec leurs tags lus dans les fichiers, et les pochettes des pistes du SSD et du stockage interne. Cadrage du 2026-10-22, suite de MPL-018 (cf. découpage du 2026-10-15). Le propriétaire a gardé un seul ticket, malgré la recommandation de sortir les pochettes.
@@ -649,6 +794,7 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | MPL-036 | Lecture en arrière-plan et contrôles du système (`audio_service`), interruptions (`audio_session`), moteur branché par `MusicPlayerApplication` | 21/10/2026 | Validé par le propriétaire, PR #10 fusionnée (21/10/2026). Pixel 10 Pro, release : `HOWTO.md` §12, étapes 1 à 12 OK ; touche média à froid corrigée pendant le test (écran de chargement bloqué) ; non observé : état du service au premier plan à l'instant exact de la reprise après un appel |
 | MPL-039 | Renommer l'application en TuneShell : nom visible, dépôt GitHub, identifiant Android `net.trtl3.tuneshell`, paquets Kotlin et Dart, canaux natifs, documentation | 22/10/2026 | Validé par le propriétaire, PR #12 fusionnée (22/10/2026). Pixel 10 Pro, release : ancienne application désinstallée, premier lancement, nom « TuneShell » partout, `HOWTO.md` §12 étapes 1, 2 (5 minutes) et 12 OK ; dépôt et dossier local renommés `tuneshell` |
 | MPL-037 | Bibliothèque d'un disque amovible (SSD par SAF) : sélecteur de dossiers, droit persistant, parcours, lecture par `fd://`, tags et pochettes lus dans les fichiers (SSD et stockage interne), schéma Drift v2, écrans temporaires | 23/10/2026 | Validé par le propriétaire, PR #15 fusionnée (23/10/2026). Pixel 10 Pro, SSD exFAT, release : étapes de `HOWTO.md` §13 faites avec 7 562 pistes (tags à ≈ 38 fichiers/s à 2 lectures en parallèle) ; non testés : redémarrage du téléphone, fichiers `._` et `.nomedia`, débranchement pendant l'actualisation ; limites connues dans le bloc Livraison |
+| MPL-016 | Fondations du design (lot 0 de la conception Claude Design v0.4) : dossier de conception intégré, thème clair et sombre et jetons, polices Manrope et Inter embarquées, navigation à 4 onglets adaptative, huit composants réutilisables avec galerie en debug et profile, dossier `lib/ui/` | 23/10/2026 | Validé par le propriétaire, PR #16 fusionnée (23/10/2026). Pixel 10 Pro, release et profile : thème clair et sombre suivant le système, 4 onglets, retour système, rail en paysage ; retour depuis « Dossiers de musique » et rail avec encoche corrigés pendant le test ; non testés : TalkBack, texte à 200 %, fluidité mesurée, vibration ressentie à la main ; limites connues dans le bloc Livraison |
 | MPL-003 | Sources de bibliothèque : stockage amovible (SSD USB-C), test Pixel (titre proposé) 🔗 ⚠️ | 08/10/2026 | Terminé avec réserves (08/10/2026) : SSD lu par SAF avec les deux moteurs ; tags non lus pendant le parcours (≈ 39 ms par fichier mesurés) ; retrait pendant la lecture traité en spike seulement (MPL-035) ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4 |
 | MPL-006 | Auto-test sur échantillon, isolé, exporté | 07/10/2026 | Clos (07/10/2026) : 13 pistes par moteur ; élargissement de l'échantillon MP3 : MPL-034 |
 | MPL-007 | Console de test : recherche, tri, filtre par format | 07/10/2026 | Clos (07/10/2026) |
@@ -708,4 +854,5 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | À numéroter | Stockage interne : l'utilisateur choisit les dossiers à indexer (D23 appliquée au disque « Local »), par une liste tirée de MediaStore, `Music/` proposé par défaut | Tranchée 2026-10-15 | Ne pas indexer sonneries, notes vocales et sons reçus par les messageries ; remplace le choix « tout le stockage interne » du même jour · FR-003, MPL-018 |
 | À numéroter | MPL-037 n'est pas découpé : SSD par SAF, tags et pochettes (SSD et stockage interne) restent un seul ticket, un seul test sur le Pixel | Tranchée 2026-10-22 | Choix du propriétaire au cadrage, malgré la recommandation de sortir les pochettes dans un ticket à part · MPL-037 |
 | À numéroter | Mise en œuvre du design (dossier Claude Design v0.4) : MPL-016 devient le lot 0 (fondations) ; les lots 1 à 6 sont des tickets séparés (MPL-044 à MPL-049), cadrés un par un et adaptés à l'existant (les lots Accès, Bibliothèque, Disques et Lecture refont des écrans déjà livrés) | Tranchée 2026-10-23 | Choix du propriétaire au cadrage ; le dossier suppose un projet vide · MPL-016, MPL-044 à MPL-049 |
+| À numéroter | Repère de source : un repère par disque (D23), retenu pour MPL-045 ; un repère par dossier reste une option ouverte, à trancher à l'usage | Ouverte 2026-10-23 | Demande du propriétaire : sur un téléphone, plusieurs disques externes branchés ensemble sont rares · FR-012, ADR-012, MPL-045 |
 | D30 | Dépendances et versions : dernière version stable compatible avec le Flutter épinglé, tout épinglé, Dependabot hebdomadaire, avis de sécurité traités hors cycle, dérogations dans `docs/dependency-exceptions.md`. Détail : `CLAUDE.md` | Provisoire | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |

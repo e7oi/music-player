@@ -93,7 +93,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String noticeTrackFailed(String title) {
-    return 'Lecture impossible : $title';
+    return 'Impossible de lire « $title » : fichier endommagé. Piste suivante lancée.';
   }
 
   @override
@@ -193,4 +193,199 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get foldersBack => 'Retour';
+
+  @override
+  String get searchSoon => 'Rechercher (bientôt)';
+
+  @override
+  String get chipDisks => 'Disques';
+
+  @override
+  String disksAbsentBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count absents',
+      one: '$count absent',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get libraryScanning => 'Recherche des fichiers audio…';
+
+  @override
+  String get libraryCountSearching => 'Recherche en cours…';
+
+  @override
+  String libraryCount(int total, int unavailable) {
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String totalString = totalNumberFormat.format(total);
+    final intl.NumberFormat unavailableNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String unavailableString = unavailableNumberFormat.format(
+      unavailable,
+    );
+
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$totalString pistes',
+      one: '$totalString piste',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      unavailable,
+      locale: localeName,
+      other: ' · $unavailableString indisponibles',
+      one: ' · $unavailableString indisponible',
+      zero: '',
+    );
+    return '$_temp0$_temp1';
+  }
+
+  @override
+  String get librarySortTitle => 'Titre A→Z';
+
+  @override
+  String bannerAbsentOne(int tracks, String disk) {
+    final intl.NumberFormat tracksNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String tracksString = tracksNumberFormat.format(tracks);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      tracks,
+      locale: localeName,
+      other: '$tracksString pistes ignorées',
+      one: '$tracksString piste ignorée',
+    );
+    return '$_temp0 : $disk absent';
+  }
+
+  @override
+  String bannerAbsentMany(int tracks, int count) {
+    final intl.NumberFormat tracksNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String tracksString = tracksNumberFormat.format(tracks);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      tracks,
+      locale: localeName,
+      other: '$tracksString pistes ignorées',
+      one: '$tracksString piste ignorée',
+    );
+    return '$_temp0 : $count disques absents';
+  }
+
+  @override
+  String bannerAccessOne(int tracks, String disk) {
+    final intl.NumberFormat tracksNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String tracksString = tracksNumberFormat.format(tracks);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      tracks,
+      locale: localeName,
+      other: '$tracksString pistes ignorées',
+      one: '$tracksString piste ignorée',
+    );
+    return '$_temp0 : accès à $disk à renouveler';
+  }
+
+  @override
+  String bannerOther(int tracks, int count) {
+    final intl.NumberFormat tracksNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String tracksString = tracksNumberFormat.format(tracks);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      tracks,
+      locale: localeName,
+      other: '$tracksString pistes ignorées',
+      one: '$tracksString piste ignorée',
+    );
+    return '$_temp0 : $count disques indisponibles';
+  }
+
+  @override
+  String get bannerSee => 'Voir';
+
+  @override
+  String get bannerDismiss => 'Masquer ce message';
+
+  @override
+  String get trackUnknownArtist => 'Artiste inconnu';
+
+  @override
+  String trackNotConnected(String artist) {
+    return '$artist · non connecté';
+  }
+
+  @override
+  String get trackUnreadable => 'Fichier illisible';
+
+  @override
+  String get trackPlaying => 'en lecture';
+
+  @override
+  String trackSource(String name) {
+    return 'source $name';
+  }
+
+  @override
+  String get sourceLocal => 'Local';
+
+  @override
+  String trackNeedsDisk(String disk) {
+    return 'Branche $disk pour lire cette piste';
+  }
+
+  @override
+  String trackNeedsAccess(String disk) {
+    return 'Renouvelle l\'accès à $disk pour lire cette piste';
+  }
+
+  @override
+  String get emptyLibraryTitle => 'Ta bibliothèque est vide';
+
+  @override
+  String get emptyLibraryBody =>
+      'Aucun fichier audio dans les dossiers choisis. Ajoute d\'autres dossiers ou actualise.';
+
+  @override
+  String get emptyNoFoldersTitle => 'Aucun dossier choisi';
+
+  @override
+  String get emptyNoFoldersBody =>
+      'Choisis au moins un dossier pour que TuneShell trouve ta musique.';
+
+  @override
+  String get chooseFoldersAction => 'Choisir des dossiers';
+
+  @override
+  String get jumpCurrent => 'En cours';
+
+  @override
+  String get jumpLastPlayed => 'Dernière jouée';
+
+  @override
+  String get indexGoToLetter => 'Aller à la lettre';
+
+  @override
+  String indexCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString pistes';
+  }
+
+  @override
+  String indexLetter(String letter, int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'Lettre $letter, $countString pistes';
+  }
 }

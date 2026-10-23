@@ -49,10 +49,14 @@ abstract interface class LibraryRepository {
   /// Every registered disk.
   Future<List<Disk>> disks();
 
+  /// The registered disks, emitted again whenever one changes (FR-012).
+  Stream<List<Disk>> watchDisks();
+
   /// Null when the disk was never registered.
   Future<Disk?> disk(DiskId id);
 
-  /// Registers [disk] if needed; keeps the stored one otherwise.
+  /// Registers [disk] if needed; keeps the stored one otherwise. A new
+  /// removable disk gets the first free mark index (FR-012.2).
   Future<void> ensureDisk(Disk disk);
 
   /// Folders of [disk] chosen by the user, relative to the disk (FR-003).

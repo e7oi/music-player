@@ -9,6 +9,7 @@ part 'library_database.g.dart';
 /// `dart run drift_dev make-migrations` and a migration test (CLAUDE.md,
 /// Tests).
 @DataClassName('DiskRow')
+@TableIndex(name: 'disks_mark_index', columns: {#markIndex}, unique: true)
 class Disks extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -20,6 +21,10 @@ class Disks extends Table {
 
   /// `DiskKind.index`.
   IntColumn get kind => integer()();
+
+  /// Source mark of a removable disk (ADR-012); null for the internal
+  /// storage. Unique through an index: SQLite accepts several nulls.
+  IntColumn get markIndex => integer().nullable()();
 }
 
 @DataClassName('DiskFolderRow')
@@ -81,7 +86,7 @@ class LibraryDatabase extends _$LibraryDatabase {
   new([QueryExecutor? executor]) : super(executor ?? _open());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -90,6 +95,18 @@ class LibraryDatabase extends _$LibraryDatabase {
         // Existing tracks are pending: their artwork is still to be read.
         await migrator.addColumn(schema.tracks, schema.tracks.artwork);
         await migrator.addColumn(schema.tracks, schema.tracks.tagsState);
+      },
+      from2To3: (migrator, schema) async {
+        await migrator.addColumn(schema.disks, schema.disks.markIndex);
+        // Removable disks (`DiskKind.removable` is 1) get 0, 1, 2 by order of
+        // registration; the internal storage keeps none.
+        await migrator.database.customStatement(
+          'UPDATE disks SET mark_index = '
+          '(SELECT COUNT(*) FROM disks AS earlier '
+          'WHERE earlier.kind = 1 AND earlier.id < disks.id) '
+          'WHERE kind = 1',
+        );
+        await migrator.createIndex(schema.disksMarkIndex);
       },
     ),
     beforeOpen: (details) async {

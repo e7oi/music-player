@@ -13,6 +13,10 @@ import 'package:tuneshell/features/library/player_bar.dart';
 import 'package:tuneshell/features/shell/home_shell.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/platform/internal_storage.dart';
+import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
+import 'package:tuneshell/ui/widgets/jump_to_current_fab.dart';
+import 'package:tuneshell/ui/widgets/source_mark.dart';
+import 'package:tuneshell/ui/widgets/track_tile.dart';
 
 import '../../fakes/fake_audio_engine.dart';
 import '../../fakes/fake_library.dart';
@@ -37,7 +41,10 @@ void main() {
     engine = FakeAudioEngine();
   });
 
-  Future<void> pumpPage(WidgetTester tester) async {
+  Future<void> pumpPage(
+    WidgetTester tester, {
+    Locale locale = const Locale('en'),
+  }) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -53,11 +60,12 @@ void main() {
           tagReaderProvider.overrideWithValue(FakeTagReader()),
           artworkDirectoryProvider.overrideWith((ref) => '/artwork'),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
+          theme: TsTheme.light(),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale('en'),
-          home: HomeShell(tracks: LibraryPage(), playerBar: PlayerBar()),
+          locale: locale,
+          home: const HomeShell(tracks: LibraryPage(), playerBar: PlayerBar()),
         ),
       ),
     );
@@ -124,7 +132,7 @@ void main() {
       await pumpPage(tester);
       await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Folders'));
+      await tester.tap(find.widgetWithText(ActionChip, 'Folders'));
       await tester.pumpAndSettle();
       expect(find.text('Music folders'), findsOneWidget);
     }
@@ -166,7 +174,7 @@ void main() {
     await tester.tap(find.text('Alpha'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Folders'));
+    await tester.tap(find.widgetWithText(ActionChip, 'Folders'));
     await tester.pumpAndSettle();
 
     expect(find.text('Music folders'), findsOneWidget);
@@ -196,8 +204,8 @@ void main() {
     await tester.tap(find.text('Confirm'));
     await tester.pumpAndSettle();
 
-    expect(find.text('No folder chosen.'), findsOneWidget);
-    await tester.tap(find.text('Choose folders'));
+    expect(find.text('No folder chosen'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Choose folders'));
     await tester.pumpAndSettle();
 
     expect(find.text('Music folders'), findsOneWidget);
@@ -214,9 +222,203 @@ void main() {
     await repository.setChosenFolders(Disk.internal, {'Music'});
     await pumpPage(tester);
 
-    ListTile tile(String title) =>
-        tester.widget<ListTile>(find.widgetWithText(ListTile, title));
-    expect(tile('Gone').enabled, isFalse);
-    expect(tile('Alpha').enabled, isTrue);
+    TrackTileState state(String title) =>
+        tester.widget<TrackTile>(find.widgetWithText(TrackTile, title)).state;
+    expect(state('Gone'), TrackTileState.unavailable);
+    expect(state('Alpha'), TrackTileState.noArtwork);
   });
+
+  /// Tracks of an absent SSD among the local ones (BR-008).
+  Future<void> pumpWithAbsentDisk(
+    WidgetTester tester, {
+    Locale locale = const Locale('en'),
+  }) async {
+    const ssd = DiskId('1234-ABCD');
+    await repository.ensureDisk(Disk.internal);
+    await repository.ensureDisk(
+      const Disk(id: ssd, label: 'SSD', kind: DiskKind.removable),
+    );
+    await repository.applyScan(ssd, [info('Gone.mp3', title: 'Gone')]);
+    await repository.setChosenFolders(Disk.internal, {'Music'});
+    await pumpPage(tester, locale: locale);
+  }
+
+  group('the sources banner', () {
+    /// @verifies BR-008.2
+    testWidgets('names the absent disk and counts its tracks', (tester) async {
+      await pumpWithAbsentDisk(tester);
+
+      expect(find.text('1 track skipped: SSD missing'), findsOneWidget);
+      expect(find.text('See'), findsOneWidget);
+      expect(find.text('1 missing'), findsOneWidget);
+    });
+
+    /// @verifies BR-008.3
+    testWidgets('can be hidden', (tester) async {
+      await pumpWithAbsentDisk(tester);
+
+      await tester.tap(find.byTooltip('Hide this message'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('skipped'), findsNothing);
+    });
+
+    /// @verifies FR-011.5
+    testWidgets('the count line tells how many are unavailable', (
+      tester,
+    ) async {
+      await pumpWithAbsentDisk(tester);
+
+      expect(find.text('4 tracks · 1 unavailable'), findsOneWidget);
+      expect(find.text('Title A→Z'), findsOneWidget);
+    });
+
+    /// @verifies BR-008.5
+    testWidgets('touching an unavailable track says what to plug in', (
+      tester,
+    ) async {
+      await pumpWithAbsentDisk(tester);
+
+      await tester.tap(find.text('Gone'));
+      await tester.pump();
+
+      expect(find.text('Plug in SSD to play this track'), findsOneWidget);
+      expect(engine.loadedSource, isNull);
+    });
+  });
+
+  /// @verifies FR-011.9
+  testWidgets('an empty library offers the folders and a refresh', (
+    tester,
+  ) async {
+    source.files = [info('Ringtones/r.ogg', title: 'Ring')];
+    await repository.ensureDisk(Disk.internal);
+    await repository.setChosenFolders(Disk.internal, {'Music'});
+    await pumpPage(tester);
+
+    expect(find.text('Your library is empty'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Refresh'), findsOneWidget);
+  });
+
+  /// @verifies FR-011.1
+  testWidgets('the search button is there, and disabled', (tester) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+
+    final button = tester.widget<IconButton>(
+      find.widgetWithIcon(IconButton, Icons.search_rounded),
+    );
+    expect(button.onPressed, isNull);
+    expect(find.byTooltip('Search (soon)'), findsOneWidget);
+  });
+
+  /// @verifies FR-013.3
+  /// @verifies FR-013.5
+  testWidgets('the now playing button leads back to the track', (tester) async {
+    source.files = [
+      for (var i = 0; i < 300; i++)
+        info('Music/$i.mp3', title: 'T${i.toString().padLeft(3, '0')}'),
+    ];
+    await pumpPage(tester);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('T000'));
+    await tester.pumpAndSettle();
+    final list = find.byType(CustomScrollView);
+    Finder fab() => find.byType(JumpToCurrentFab);
+    expect(fab(), findsOneWidget);
+    expect(
+      tester.widget<AnimatedScale>(find.byType(AnimatedScale)).scale,
+      0,
+      reason: 'the playing row is on screen',
+    );
+
+    await tester.drag(list, const Offset(0, -6000));
+    await tester.pumpAndSettle();
+    expect(tester.widget<AnimatedScale>(find.byType(AnimatedScale)).scale, 1);
+
+    await tester.tap(
+      find.descendant(of: fab(), matching: find.byType(InkWell)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('T000'), findsWidgets);
+    expect(tester.widget<AnimatedScale>(find.byType(AnimatedScale)).scale, 0);
+    // The timers of the fold and of the highlight end.
+    await tester.pump(const Duration(seconds: 2));
+  });
+
+  /// @verifies FR-012.4
+  /// @verifies FR-012.5
+  testWidgets('every row carries its source mark and names it for TalkBack', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    await pumpPage(tester);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SourceMark), findsNWidgets(3));
+    expect(
+      find.bySemanticsLabel(RegExp(r'^Alpha, Unknown artist.*, source Local$')),
+      findsOneWidget,
+    );
+    semantics.dispose();
+  });
+
+  /// @verifies FR-011.10
+  testWidgets('at 200 % text the rows grow and nothing overflows', (
+    tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await pumpPage(tester);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getSize(find.byType(TrackTile).first).height,
+      TsSize.trackRow * 2,
+    );
+  });
+
+  /// @verifies FR-013.1
+  testWidgets(
+    'choosing a letter in the grid puts the list on its first title',
+    (tester) async {
+      tester.view
+        ..physicalSize = const Size(412, 915)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      source.files = [
+        for (var i = 0; i < 150; i++)
+          info('Music/a$i.mp3', title: 'A${i.toString().padLeft(3, '0')}'),
+        for (var i = 0; i < 150; i++)
+          info('Music/m$i.mp3', title: 'M${i.toString().padLeft(3, '0')}'),
+      ];
+      await pumpPage(tester);
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      final handle = find.byWidgetPredicate(
+        (w) => w is GestureDetector && w.onVerticalDragStart != null,
+      );
+      expect(handle, findsOneWidget);
+      await tester.tap(handle);
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'M'));
+      await tester.pumpAndSettle();
+
+      final scroll = tester.state<ScrollableState>(
+        find.descendant(
+          of: find.byType(CustomScrollView),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      expect(scroll.position.pixels, 150 * TsSize.trackRow);
+      expect(find.text('M000'), findsOneWidget);
+    },
+  );
 }

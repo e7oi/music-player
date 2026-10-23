@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' show DatabaseConnection;
+import 'package:drift/drift.dart' show DatabaseConnection, Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tuneshell/data/db/drift_library_repository.dart';
@@ -438,6 +438,102 @@ void main() {
       );
 
       expect((await repository.disk(ssd))?.label, 'Renamed');
+    });
+  });
+
+  /// @verifies FR-012
+  group('source marks (ADR-012)', () {
+    const ssd = Disk(
+      id: DiskId('SSD-1'),
+      label: 'SSD',
+      kind: DiskKind.removable,
+    );
+    const card = Disk(
+      id: DiskId('SD-2'),
+      label: 'Card',
+      kind: DiskKind.removable,
+    );
+
+    Future<Map<String, int?>> marks() async => {
+      for (final d in await repository.disks()) d.id.value: d.markIndex,
+    };
+
+    test('the internal storage has no index: its mark is fixed', () async {
+      expect((await repository.disk(internalDisk))?.markIndex, isNull);
+    });
+
+    /// @verifies FR-012.2
+    test('disks get 0, 1, 2 in the order they are registered', () async {
+      await repository.ensureDisk(ssd);
+      await repository.ensureDisk(card);
+      await repository.ensureDisk(
+        const Disk(id: DiskId('USB-3'), label: 'USB', kind: DiskKind.removable),
+      );
+
+      expect(await marks(), {
+        'internal': null,
+        'SSD-1': 0,
+        'SD-2': 1,
+        'USB-3': 2,
+      });
+    });
+
+    test('choosing folders registers the disk with its mark', () async {
+      await repository.setChosenFolders(ssd, {'Music'});
+
+      expect((await repository.disk(ssd.id))?.markIndex, 0);
+    });
+
+    test('the mark never changes once given', () async {
+      await repository.ensureDisk(ssd);
+      await repository.ensureDisk(card);
+
+      await repository.ensureDisk(ssd);
+      await repository.setChosenFolders(card, {'Music'});
+      await repository.setChosenFolders(ssd, {'Jazz'});
+
+      expect(await marks(), containsPair('SSD-1', 0));
+      expect(await marks(), containsPair('SD-2', 1));
+    });
+
+    test('two disks never share a mark', () async {
+      for (var i = 0; i < 6; i++) {
+        await repository.ensureDisk(
+          Disk(id: DiskId('D$i'), label: 'D$i', kind: DiskKind.removable),
+        );
+      }
+
+      final indexes = (await marks()).values.nonNulls.toList();
+      expect(indexes.toSet(), hasLength(6));
+    });
+
+    /// @verifies ADR-012 the unique index backs the attribution.
+    test('the database refuses two disks with the same mark', () async {
+      Future<int> insert(String key) => db
+          .into(db.disks)
+          .insert(
+            DisksCompanion.insert(
+              key: key,
+              label: key,
+              kind: DiskKind.removable.index,
+              markIndex: const Value(0),
+            ),
+          );
+      await insert('one');
+
+      await expectLater(insert('two'), throwsA(anything));
+    });
+
+    test('watchDisks emits the disks with their mark', () async {
+      final seen = repository.watchDisks().first;
+      await repository.ensureDisk(ssd);
+
+      final disks = await repository.watchDisks().first;
+      expect(
+        {for (final d in disks) d.id.value: d.markIndex},
+        {'internal': null, 'SSD-1': 0},
+      );
+      expect(await seen, isNotEmpty);
     });
   });
 }

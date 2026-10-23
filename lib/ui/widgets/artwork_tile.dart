@@ -34,6 +34,7 @@ class ArtworkTile extends StatelessWidget {
       ),
     );
     final cover = image;
+    final pixels = (size * MediaQuery.devicePixelRatioOf(context)).round();
     return ExcludeSemantics(
       child: Opacity(
         opacity: unavailable ? 0.35 : 1,
@@ -44,7 +45,8 @@ class ArtworkTile extends StatelessWidget {
             child: cover == null
                 ? placeholder
                 : Image(
-                    image: cover,
+                    // Decoded at the size shown: a cached miniature.
+                    image: ResizeImage(cover, width: pixels),
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => placeholder,
                   ),

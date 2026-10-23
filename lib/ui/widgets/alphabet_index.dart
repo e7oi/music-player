@@ -80,6 +80,20 @@ String alphabetKey(String text) {
   return _letters.contains(folded) && folded.length == 1 ? folded : '#';
 }
 
+/// A key that sorts [text] without regard to case or accents: the folded
+/// letters first (digits, symbols and other scripts under "#" come before
+/// any letter, as the "#" group leads the index).
+String sortKey(String text) {
+  final folded = StringBuffer();
+  for (final rune in text.trimLeft().runes) {
+    final char = String.fromCharCode(rune);
+    final upper = char.toUpperCase();
+    folded.write((_folded[upper] ?? upper).toLowerCase());
+  }
+  final group = alphabetKey(text) == '#' ? '0' : '1';
+  return '$group$folded';
+}
+
 /// "#" then A to Z, each with the number of [titles] that fall under it.
 List<AlphabetLetter> buildLetters(Iterable<String> titles) {
   final counts = <String, int>{};

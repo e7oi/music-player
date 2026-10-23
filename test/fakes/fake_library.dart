@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:tuneshell/domain/library/model/file_tags.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/mark_index.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
 import 'package:tuneshell/domain/library/ports/library_repository.dart';
@@ -35,15 +36,36 @@ class FakeLibraryRepository implements LibraryRepository {
 
   @override
   Future<void> ensureDisk(Disk disk) async =>
-      _disks.putIfAbsent(disk.id, () => disk);
+      _disks.putIfAbsent(disk.id, () => _withMark(disk));
+
+  /// A new removable disk gets the first free mark, like the Drift one.
+  Disk _withMark(Disk disk) => disk.kind == DiskKind.removable
+      ? Disk(
+          id: disk.id,
+          label: disk.label,
+          kind: disk.kind,
+          markIndex: nextFreeMarkIndex([
+            for (final d in _disks.values) ?d.markIndex,
+          ]),
+        )
+      : disk;
 
   @override
   Future<Set<String>> chosenFolders(DiskId disk) async => {...?_folders[disk]};
 
   @override
   Future<void> setChosenFolders(Disk disk, Set<String> folders) async {
-    _disks[disk.id] = disk;
+    final known = _disks[disk.id];
+    _disks[disk.id] = known == null
+        ? _withMark(disk)
+        : Disk(
+            id: disk.id,
+            label: disk.label,
+            kind: disk.kind,
+            markIndex: known.markIndex,
+          );
     _folders[disk.id] = {...folders};
+    _diskChanges.add(_disks.values.toList());
   }
 
   @override
@@ -85,6 +107,14 @@ class FakeLibraryRepository implements LibraryRepository {
 
   @override
   Future<List<Disk>> disks() async => _disks.values.toList();
+
+  final _diskChanges = StreamController<List<Disk>>.broadcast();
+
+  @override
+  Stream<List<Disk>> watchDisks() async* {
+    yield _disks.values.toList();
+    yield* _diskChanges.stream;
+  }
 
   @override
   Future<IndexResult> applyScan(DiskId disk, List<TrackInfo> found) async {
