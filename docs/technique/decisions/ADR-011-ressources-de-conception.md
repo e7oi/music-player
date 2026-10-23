@@ -1,6 +1,6 @@
 # ADR-011 — Ressources de conception dans le dépôt
 
-**Statut :** Brouillon (2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-016 · **Décisions :** D1, D21, D27 · **Fiches :** FR-008 · **Complète :** ADR-010
+**Statut :** Active (validée le 2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-016 · **Décisions :** D1, D21, D27 · **Fiches :** FR-008 · **Complète :** ADR-010
 
 ## Contexte
 

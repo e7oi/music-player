@@ -1,6 +1,6 @@
 # FR-010 — Composants d'interface réutilisables
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 · **Lié :** FR-008, FR-009, BR-007, ADR-010 · **Source :** `docs/design/HANDOFF.md` §4, §6, §6.1
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 · **Lié :** FR-008, FR-009, BR-007, ADR-010 · **Source :** `docs/design/HANDOFF.md` §4, §6, §6.1
 
 ## Besoin
 

@@ -1,6 +1,6 @@
 # FR-008 — Thème et jetons de conception
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 · **Décisions :** D4, D15, D26 · **Lié :** BR-007, FR-009, FR-010, ADR-010, ADR-011 · **Source :** `docs/design/HANDOFF.md` §2 (conception v0.4 « Carapace sonore »)
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 · **Décisions :** D4, D15, D26 · **Lié :** BR-007, FR-009, FR-010, ADR-010, ADR-011 · **Source :** `docs/design/HANDOFF.md` §2 (conception v0.4 « Carapace sonore »)
 
 ## Besoin
 

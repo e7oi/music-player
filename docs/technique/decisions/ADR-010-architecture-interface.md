@@ -1,6 +1,6 @@
 # ADR-010 — Architecture de l'interface : `lib/ui/`, navigation sans routeur, icônes intégrées, pas de goldens
 
-**Statut :** Brouillon (2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-016 · **Décisions :** D2, D15, D30 · **Fiches :** FR-008, FR-009, FR-010, BR-007 · **Complète :** ADR-001
+**Statut :** Active (validée le 2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-016 · **Décisions :** D2, D15, D30 · **Fiches :** FR-008, FR-009, FR-010, BR-007 · **Complète :** ADR-001
 
 ## Contexte
 

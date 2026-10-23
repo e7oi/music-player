@@ -1,6 +1,6 @@
 # BR-007 — Règles d'interface
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 (puis tous les tickets d'écran) · **Décisions :** D15, D26 · **Lié :** FR-008, FR-009, FR-010, ADR-010 · **Source :** `CLAUDE.md` du dossier de conception, `docs/design/HANDOFF.md` §1 et §7
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 (puis tous les tickets d'écran) · **Décisions :** D15, D26 · **Lié :** FR-008, FR-009, FR-010, ADR-010 · **Source :** `CLAUDE.md` du dossier de conception, `docs/design/HANDOFF.md` §1 et §7
 
 ## Règles
 

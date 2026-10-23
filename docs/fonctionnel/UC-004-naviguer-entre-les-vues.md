@@ -1,6 +1,6 @@
 # UC-004 — Naviguer entre les vues de l'application
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 · **Lié :** FR-008, FR-009, FR-010, BR-007, UC-001
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 · **Lié :** FR-008, FR-009, FR-010, BR-007, UC-001
 
 ## Acteur et but
 

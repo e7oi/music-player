@@ -1,6 +1,6 @@
 # FR-009 — Navigation principale
 
-**Statut :** Brouillon (2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 · **Lié :** UC-004, FR-008, FR-010, BR-007, ADR-010 · **Source :** `docs/design/HANDOFF.md` §3
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-016 · **Lié :** UC-004, FR-008, FR-010, BR-007, ADR-010 · **Source :** `docs/design/HANDOFF.md` §3
 
 ## Besoin
 
