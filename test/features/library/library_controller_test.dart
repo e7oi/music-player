@@ -1,22 +1,29 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/app/providers/player_providers.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
 import 'package:tuneshell/features/library/library_controller.dart';
 
 import '../../fakes/fake_library.dart';
+import '../../fakes/fake_storage.dart';
 
 void main() {
   late FakeLibraryRepository repository;
   late FakeInternalAudioSource source;
   late FakeAudioPermission permission;
+  late FakeRemovableAudioSource removable;
   late ProviderContainer container;
 
-  ProviderContainer create() => ProviderContainer(
+  ProviderContainer create([InternalAudioSource? audio]) => ProviderContainer(
     overrides: [
       libraryRepositoryProvider.overrideWithValue(repository),
-      internalAudioSourceProvider.overrideWithValue(source),
+      internalAudioSourceProvider.overrideWithValue(audio ?? source),
       audioPermissionProvider.overrideWithValue(permission),
+      removableAudioSourceProvider.overrideWithValue(removable),
+      tagReaderProvider.overrideWithValue(FakeTagReader()),
+      volumeEventsProvider.overrideWithValue(FakeVolumeEvents({internalDisk})),
     ],
   );
 
@@ -34,6 +41,7 @@ void main() {
         info('Ringtones/r.ogg'),
       ];
     permission = FakeAudioPermission(AudioPermissionStatus.notRequested);
+    removable = FakeRemovableAudioSource();
     container = create();
   });
 
@@ -348,13 +356,7 @@ void main() {
       source.files = [];
       final failing = FailingAudioSource();
       container.dispose();
-      container = ProviderContainer(
-        overrides: [
-          libraryRepositoryProvider.overrideWithValue(repository),
-          internalAudioSourceProvider.overrideWithValue(failing),
-          audioPermissionProvider.overrideWithValue(permission),
-        ],
-      );
+      container = create(failing);
 
       await controller().start();
 

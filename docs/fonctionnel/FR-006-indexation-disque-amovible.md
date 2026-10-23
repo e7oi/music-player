@@ -35,6 +35,23 @@ Réassociation et retrait d'un disque (MPL-038), suivi en direct de l'éjection 
 - Exigence 14 : parcours uniquement au premier plan (pas de service au premier plan dédié).
 - Comment obtenir l'UUID du volume à partir du dossier choisi : à établir sur le Pixel au début du ticket (ADR-008).
 
+## Écarts constatés à la livraison (À valider, PO)
+
+- Exigence 6 : le code ignore tout nom qui commence par `.`, fichiers compris (`.x.mp3`), pas seulement `._*` ; plus strict que la fiche.
+- Exigence 15 : seule la progression des tags est affichée ; le parcours montre une barre indéterminée sans nombre de fichiers trouvés.
+- Exigence 12 et ADR-008 : voir les écarts de l'ADR.
+
 ## As-built
 
-À écrire à la livraison de MPL-037.
+MPL-037, 2026-10-22. `RemovableIndexer` (domaine), port `RemovableAudioSource`, adaptateur `lib/platform/removable_storage_channel.dart`, Kotlin `RemovableStorageChannel.kt`, base : `applyScan`, `trackCount` (`lib/data/db/drift_library_repository.dart`). Tests : `test/domain/library/removable_indexer_test.dart`, `test/data/db/`, `test/platform/removable_storage_channel_test.dart`.
+
+- Le chemin relatif d'une piste est celui du document Android (`UUID:chemin`, sans le préfixe) : relatif à la racine du volume (exigence 3). L'identifiant du disque garde la casse donnée par Android ; le Kotlin compare sans tenir compte de la casse et construit les identifiants de document avec l'écriture du droit accordé.
+- Aucune URI n'est enregistrée : Android garde les droits (`persistedUriPermissions`), et l'état « accès à renouveler » vient de leur absence.
+- Garde-fou (exigence 9) : un parcours qui échoue, qui est annulé, qui reçoit une erreur du fournisseur dans le curseur, ou qui ne trouve rien alors que le disque a des pistes, ne change rien.
+- Le retrait d'un dossier scanne d'abord les dossiers restants ; si le parcours échoue, le dossier reste coché et son droit est gardé. Il est désactivé pour un disque absent.
+- Choisir de nouveau un dossier déjà coché et devenu vide ne libère pas son droit.
+- Le nom du disque est mis à jour à chaque ajout de dossier (exigence 4).
+- « Actualiser » relit aussi les pistes dont la lecture avait échoué (FR-007.3) ; le démarrage non.
+- Les fichiers de playlist (`.m3u`, `.m3u8`, `.pls`, `.xspf`, `.wpl`, `.asx`) sont exclus du parcours : Android les annonce comme `audio/*` et le SSD réel en contenait 14 qui étaient indexés comme pistes (constaté sur le Pixel le 2026-10-23, corrigé).
+- Le parcours est un seul appel qui rend la liste entière. Mesuré sur le SSD réel : environ 5 000 fichiers en 10 s.
+- Testé sur le Pixel 10 Pro le 2026-10-23 (voir le bloc Livraison de MPL-037) : sélecteur, UUID déduit du dossier choisi, droit conservé après un arrêt forcé, disque absent puis retour, retrait d'un dossier, 4 952 pistes d'un SSD exFAT. **Non testé** : droit conservé après redémarrage du téléphone, curseur en erreur à l'éjection, actualisation avec ajout, suppression et modification de fichiers, accès à renouveler, fichiers ignorés (`._`, `.nomedia`).

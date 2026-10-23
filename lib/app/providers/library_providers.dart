@@ -5,8 +5,13 @@ import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
 import 'package:tuneshell/domain/library/ports/library_repository.dart';
+import 'package:tuneshell/domain/library/ports/removable_audio_source.dart';
+import 'package:tuneshell/domain/library/ports/tag_reader.dart';
 import 'package:tuneshell/domain/library/services/library_indexer.dart';
+import 'package:tuneshell/domain/library/services/removable_indexer.dart';
+import 'package:tuneshell/platform/file_tags_channel.dart';
 import 'package:tuneshell/platform/media_store_channel.dart';
+import 'package:tuneshell/platform/removable_storage_channel.dart';
 
 final libraryDatabaseProvider = Provider<LibraryDatabase>((ref) {
   final db = LibraryDatabase();
@@ -35,6 +40,29 @@ final libraryIndexerProvider = Provider<LibraryIndexer>(
     repository: ref.watch(libraryRepositoryProvider),
     source: ref.watch(internalAudioSourceProvider),
   ),
+);
+
+final removableStorageProvider = Provider<RemovableStorageChannel>(
+  (ref) => RemovableStorageChannel(),
+);
+
+final removableAudioSourceProvider = Provider<RemovableAudioSource>(
+  (ref) => ref.watch(removableStorageProvider),
+);
+
+final removableIndexerProvider = Provider<RemovableIndexer>(
+  (ref) => RemovableIndexer(
+    repository: ref.watch(libraryRepositoryProvider),
+    source: ref.watch(removableAudioSourceProvider),
+  ),
+);
+
+final fileTagsProvider = Provider<FileTagsChannel>(
+  (ref) => FileTagsChannel(internalDisk),
+);
+
+final tagReaderProvider = Provider<TagReader>(
+  (ref) => ref.watch(fileTagsProvider),
 );
 
 final libraryTracksProvider = StreamProvider<List<LibraryTrack>>(

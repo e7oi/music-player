@@ -30,6 +30,9 @@ class TuneShellApplication : Application() {
     lateinit var mediaStore: MediaStoreChannel
         private set
 
+    lateinit var removableStorage: RemovableStorageChannel
+        private set
+
     override fun onCreate() {
         super.onCreate()
         val engine = AudioServicePlugin.getFlutterEngine(this)
@@ -37,6 +40,11 @@ class TuneShellApplication : Application() {
         mediaStore = MediaStoreChannel(this)
         MethodChannel(engine.dartExecutor.binaryMessenger, MediaStoreChannel.NAME)
             .setMethodCallHandler(mediaStore)
+        removableStorage = RemovableStorageChannel(this)
+        MethodChannel(engine.dartExecutor.binaryMessenger, RemovableStorageChannel.NAME)
+            .setMethodCallHandler(removableStorage)
+        MethodChannel(engine.dartExecutor.binaryMessenger, FileTagsChannel.NAME)
+            .setMethodCallHandler(FileTagsChannel(this, removableStorage))
         engine.addEngineLifecycleListener(EndProcessWithEngine)
     }
 }

@@ -9,7 +9,11 @@ import 'package:tuneshell/domain/storage/ports/volume_events.dart';
 class FakeVolumeEvents implements VolumeEvents {
   new(Set<DiskId> available) : _available = {...available};
 
-  final Set<DiskId> _available;
+  Set<DiskId> _available;
+
+  /// Replaces the disks readable right now.
+  // ignore: avoid_setters_without_getters
+  set available(Set<DiskId> value) => _available = {...value};
   final _events = StreamController<VolumeEvent>.broadcast();
 
   @override
@@ -19,6 +23,11 @@ class FakeVolumeEvents implements VolumeEvents {
   Stream<VolumeEvent> get events => _events.stream;
 
   void emit(VolumeEvent event) => _events.add(event);
+
+  int refreshes = 0;
+
+  @override
+  Future<void> refresh() async => refreshes++;
 }
 
 /// Opens every track as a file named after its disk and path, except the

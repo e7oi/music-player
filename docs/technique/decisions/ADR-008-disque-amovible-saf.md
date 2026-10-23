@@ -35,6 +35,19 @@ Le SSD n'est visible que par le sélecteur Android (D25). Le prototype a établi
 - Paquet Flutter de sélection de dossier SAF : maintenance non vérifiée, besoin couvert par quelques méthodes natives (même raisonnement qu'ADR-005). Écarté.
 - Une seule racine par disque : plus simple, mais impose de choisir toute la racine du SSD. Plusieurs dossiers par disque gardés, comme pour le stockage interne (FR-003).
 
+## Écarts constatés à la livraison (À valider, PO)
+
+- Voir les écarts ci-dessus (`tree_uri`, état des pistes internes, lots).
+
 ## As-built
 
-À écrire à la livraison de MPL-037.
+MPL-037, 2026-10-22. Canal `net.trtl3.tuneshell/removable_storage` (`RemovableStorageChannel.kt`, `lib/platform/removable_storage_channel.dart`), enregistré par `TuneShellApplication`, activité attachée par `MainActivity` (résultat du sélecteur). Schéma v2 (`drift_schemas/library/drift_schema_v2.json`), migration par `stepByStep` testée depuis v1.
+
+Écarts avec la section Décision ci-dessus :
+- Pas de colonne `disk_folders.tree_uri` : les droits restent chez Android et se retrouvent par `persistedUriPermissions` (aucune URI dans la base, D27).
+- Les pistes du stockage interne existantes passent « en attente » (et non « lues »), pour lire leurs pochettes (ADR-009).
+- Le parcours rend la liste en un seul appel, pas des lots.
+- L'UUID vient de l'identifiant de document du dossier choisi ; `StorageManager` sert au nom du volume et à la liste des volumes montés, avec un repli par requête sur les dossiers accordés. L'UUID a été établi sur le SSD réel le 2026-10-23 (Samsung T7, exFAT) : `sm list-volumes` le montre et il se déduit de l'identifiant du dossier choisi, comme prévu.
+- `VolumeEvents` gagne `refresh()`, appelé au démarrage et au retour au premier plan ; il annonce `VolumeMounted` et `VolumeRemoved`.
+- Le parcours et les clients de l'identifiant (`grantedFolders`, `mountedVolumes`) ont des threads différents : l'état des disques se met à jour pendant un long parcours.
+- Une erreur du fournisseur de documents dans le curseur est un échec du parcours.

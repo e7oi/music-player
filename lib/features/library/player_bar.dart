@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/library_providers.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
 import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/features/library/track_artwork.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 
 /// Temporary playback bar until the MPL-016 mock-ups exist (UC-001).
@@ -18,9 +19,8 @@ class PlayerBar extends ConsumerWidget {
     final current = state?.currentTrack;
     if (state == null || current == null) return const SizedBox.shrink();
     final tracks = ref.watch(libraryTracksProvider).value ?? const [];
-    final title =
-        tracks.where((t) => t.track == current).firstOrNull?.displayTitle ??
-        current.relativePath;
+    final track = tracks.where((t) => t.track == current).firstOrNull;
+    final title = track?.displayTitle ?? current.relativePath;
     final player = ref.read(playerControllerProvider);
     return Material(
       elevation: 3,
@@ -30,6 +30,8 @@ class PlayerBar extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
+              TrackArtwork(artwork: track?.artwork, size: 40),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   title,

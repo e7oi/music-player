@@ -38,4 +38,7 @@ class InternalVolumeEvents implements VolumeEvents {
 
   @override
   Stream<VolumeEvent> get events => const Stream.empty();
+
+  @override
+  Future<void> refresh() async {}
 }

@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tuneshell/app/providers/library_providers.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
+import 'package:tuneshell/app/providers/tag_providers.dart';
+import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
 import 'package:tuneshell/domain/storage/model/media_source.dart';
 import 'package:tuneshell/features/library/library_page.dart';
@@ -43,6 +46,11 @@ void main() {
           audioEngineProvider.overrideWithValue(engine),
           trackSourceOpenerProvider.overrideWithValue(FakeTrackSourceOpener()),
           volumeEventsProvider.overrideWithValue(InternalVolumeEvents()),
+          removableAudioSourceProvider.overrideWithValue(
+            FakeRemovableAudioSource(),
+          ),
+          tagReaderProvider.overrideWithValue(FakeTagReader()),
+          artworkDirectoryProvider.overrideWith((ref) => '/artwork'),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -153,5 +161,22 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Music folders'), findsOneWidget);
+  });
+
+  /// @verifies BR-004 rule 5: the tracks of an absent disk are greyed.
+  testWidgets('tracks of an absent disk are greyed', (tester) async {
+    const ssd = DiskId('1234-ABCD');
+    await repository.ensureDisk(Disk.internal);
+    await repository.ensureDisk(
+      const Disk(id: ssd, label: 'SSD', kind: DiskKind.removable),
+    );
+    await repository.applyScan(ssd, [info('Gone.mp3', title: 'Gone')]);
+    await repository.setChosenFolders(Disk.internal, {'Music'});
+    await pumpPage(tester);
+
+    ListTile tile(String title) =>
+        tester.widget<ListTile>(find.widgetWithText(ListTile, title));
+    expect(tile('Gone').enabled, isFalse);
+    expect(tile('Alpha').enabled, isTrue);
   });
 }

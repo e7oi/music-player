@@ -28,6 +28,17 @@ MediaStore donne les tags du stockage interne, mais ni ceux du SSD ni les pochet
 - Pochettes de MediaStore (`loadThumbnail`) pour le stockage interne seulement : deux mécanismes, et rien pour le SSD. Écarté.
 - Pochettes dans la base (BLOB) : gonfle la base et `watchTracks()`. Écarté.
 
+## Écarts constatés à la livraison (À valider, PO)
+
+- Voir les écarts ci-dessus.
+
 ## As-built
 
-À écrire à la livraison de MPL-037.
+MPL-037, 2026-10-22. `FileTagsChannel.kt` / `lib/platform/file_tags_channel.dart`, `TagIndexer`, `TrackArtwork`.
+
+Écarts avec la section Décision ci-dessus :
+- Pas de table `artworks` ni de colonne `artwork_id` : `tracks.artwork` contient l'empreinte SHA-1 de l'image intégrée ; l'empreinte, la réduction et l'écriture du fichier sont faites par le Kotlin (pas de dépendance Dart de hachage).
+- Pas d'annulation d'une lecture en cours : l'annulation joue entre deux fichiers.
+- Le nettoyage des images est fait à la fin d'une passe complète, pas dans la transaction de suppression.
+- Chaque appel natif répond même en cas d'`Error` (décodage d'une image trop grande).
+- Mesures du 2026-10-23 (Pixel 10 Pro) : à 2 lectures en parallèle, environ 38 fichiers par seconde sur le SSD (4 952 fichiers en environ 2 min) et 50 sur le stockage interne ; 202 images pour 7,4 Mo (environ 37 Ko chacune) pour 7 562 pistes. **Non faites** : 1 et 4 lectures en parallèle, effet sur une lecture en cours ; `parallelism` reste à 2.

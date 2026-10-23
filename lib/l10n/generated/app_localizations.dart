@@ -265,6 +265,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Playback controls: previous, pause, next.'**
   String get notificationChannelDescription;
+
+  /// Tooltip of the button that opens the removable disks (FR-006)
+  ///
+  /// In en, this message translates to:
+  /// **'Removable disks'**
+  String get libraryDisks;
+
+  /// Title of the removable disks screen
+  ///
+  /// In en, this message translates to:
+  /// **'Removable disks'**
+  String get removableTitle;
+
+  /// Shown when no removable disk is in the library
+  ///
+  /// In en, this message translates to:
+  /// **'No removable disk yet. Plug in your drive, then add one of its folders.'**
+  String get removableNone;
+
+  /// Button that opens the Android folder picker
+  ///
+  /// In en, this message translates to:
+  /// **'Add a folder'**
+  String get removableAddFolder;
+
+  /// Name of the folder that is the root of the disk
+  ///
+  /// In en, this message translates to:
+  /// **'Whole disk'**
+  String get removableRootFolder;
+
+  /// State of a removable disk that is not mounted
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get removableAbsent;
+
+  /// State of a mounted disk whose access was lost
+  ///
+  /// In en, this message translates to:
+  /// **'Access to renew'**
+  String get removableAccessLost;
+
+  /// State of a readable removable disk
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get removableAvailable;
+
+  /// Button that reopens the folder picker for a disk whose access was lost
+  ///
+  /// In en, this message translates to:
+  /// **'Renew access'**
+  String get removableRenew;
+
+  /// Tooltip of the button that removes a folder from the library
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this folder'**
+  String get removableRemoveFolder;
+
+  /// Button that stops the scan and the reading of tags
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get removableCancel;
+
+  /// Message after choosing a folder without audio
+  ///
+  /// In en, this message translates to:
+  /// **'No audio file was found in this folder.'**
+  String get removableNoAudio;
+
+  /// Message when the scan of a new folder fails
+  ///
+  /// In en, this message translates to:
+  /// **'The folder could not be read. Check that the disk is connected, then try again.'**
+  String get removableAddFailed;
+
+  /// Message when the picked folder is on the internal storage
+  ///
+  /// In en, this message translates to:
+  /// **'This folder is on the phone\'s own storage. Choose a folder of the removable disk.'**
+  String get removableNotRemovable;
+
+  /// Message when refreshing a disk fails
+  ///
+  /// In en, this message translates to:
+  /// **'The disk could not be read. The library was kept as it was.'**
+  String get removableRefreshFailed;
+
+  /// Progress of the reading of tags and artwork
+  ///
+  /// In en, this message translates to:
+  /// **'Reading tags: {done} / {total}'**
+  String tagsProgress(int done, int total);
 }
 
 class _AppLocalizationsDelegate

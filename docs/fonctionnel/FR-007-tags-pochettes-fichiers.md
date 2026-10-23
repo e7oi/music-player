@@ -31,6 +31,18 @@ Les pistes des disques amovibles ont des titres, artistes, albums et durées, co
 - Pochette dans la notification et l'écran verrouillé (MPL-036 l'excluait) : à inclure dans ce ticket, ou plus tard ?
 - Taille de 512 pixels : à confirmer avec les maquettes (MPL-016).
 
+## Écarts constatés à la livraison (À valider, PO)
+
+- L'exigence 10 dit que retirer une piste libère sa pochette ; le code la libère à la fin de la passe suivante.
+- Pochette de la notification et de l'écran verrouillé : non faite dans ce ticket.
+
 ## As-built
 
-À écrire à la livraison de MPL-037.
+MPL-037, 2026-10-22. `TagIndexer` (`lib/domain/library/services/`), port `TagReader`, adaptateur `lib/platform/file_tags_channel.dart`, Kotlin `FileTagsChannel.kt`, base `applyFileTags`, `pendingTracks`, `resetFailedTags`. Affichage : `track_artwork.dart` (liste et barre de lecture). Tests : `test/domain/library/tag_indexer_test.dart`, `test/data/db/drift_library_repository_test.dart`.
+
+- Lecteur : `MediaMetadataRetriever`. L'image intégrée est identifiée par le SHA-1 de ses octets, réduite à 512 pixels (côté le plus long), enregistrée en JPEG qualité 85 sous `files/artwork/<empreinte>.jpg`, une fois par image distincte. Aucune image n'est enregistrée si le fichier de destination n'existe pas à la fin.
+- Une lecture qui échoue parce que le disque ou son accès a disparu laisse la piste « en attente » et termine la passe ; une piste n'est « en échec » que si son disque est encore là.
+- Les pistes en échec sont relues sur « Actualiser » (`run(retryFailed: true)`), pas au démarrage.
+- Les pistes du stockage interne existantes passent « en attente » à la migration : leur pochette est lue au premier lancement qui suit.
+- Le nettoyage des images inutilisées a lieu à la fin d'une passe complète (pas dans la transaction de suppression) ; il n'a pas lieu si la passe est annulée ou interrompue.
+- Testé sur le Pixel 10 Pro le 2026-10-23 : 2 624 pistes du téléphone et 4 938 du SSD lues ; 23 % des pistes du téléphone et 26 % de celles du SSD ont une pochette ; 202 images distinctes, 7,4 Mo ; les WMA (64 fichiers) et 6 MP3 vides ou tronqués passent en échec et restent listés avec leur nom de fichier ; 2,7 % des pistes lues n'ont pas de titre et 3,6 % pas d'artiste. Reprise après arrêt forcé : seules les pistes en attente sont relues. **Non testé** : 10 000 pistes (7 562 au total), fluidité du défilement mesurée, notification et écran verrouillé (hors périmètre).
