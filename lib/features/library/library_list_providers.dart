@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/library_providers.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
@@ -75,7 +76,14 @@ final unreadableTracksProvider = NotifierProvider<UnreadableTracks, Set<Track>>(
 /// Fingerprint of the sources banner the user closed (BR-008, rule 3).
 class DismissedBanner extends Notifier<String?> {
   @override
-  String? build() => null;
+  String? build() {
+    // A disk that leaves, comes back or changes state ends the dismissal, even
+    // if the state later returns to the one that was closed.
+    ref.listen(unavailableDisksProvider, (previous, next) {
+      if (!mapEquals(previous, next)) state = null;
+    });
+    return null;
+  }
 
   // ignore: use_setters_to_change_properties, the notifier API is a method
   void dismiss(String fingerprint) => state = fingerprint;
@@ -85,13 +93,22 @@ final dismissedBannerProvider = NotifierProvider<DismissedBanner, String?>(
   DismissedBanner.new,
 );
 
-/// What the list shows; null until the tracks are first read.
-final libraryListModelProvider = Provider<LibraryListModel?>((ref) {
+/// The tracks in display order. Apart from the model so that a change of
+/// track or of source state does not sort the whole library again.
+final sortedTracksProvider = Provider<List<LibraryTrack>?>((ref) {
   final tracks = ref.watch(listedTracksProvider).value;
-  if (tracks == null) return null;
+  return tracks == null ? null : LibraryListModel.sortTracks(tracks);
+});
+
+/// What the list shows; null until the tracks and the disks are first read.
+final libraryListModelProvider = Provider<LibraryListModel?>((ref) {
+  final tracks = ref.watch(sortedTracksProvider);
+  final disks = ref.watch(libraryDisksProvider).value;
+  if (tracks == null || disks == null) return null;
   return LibraryListModel.build(
     tracks: tracks,
-    disks: ref.watch(libraryDisksProvider).value ?? const [],
+    presorted: true,
+    disks: disks,
     unavailable: ref.watch(unavailableDisksProvider),
     unreadable: ref.watch(unreadableTracksProvider),
     current: ref.watch(

@@ -28,4 +28,7 @@ Mémoire de la dernière piste jouée entre deux lancements (« Reprendre là o�
 
 ## As-built
 
-À écrire à la livraison de MPL-045.
+Livré par MPL-045 (2026-10-23), test appareil en attente (D14).
+- Index : `AlphabetScroller` entoure le `CustomScrollView` ; `onLetterSelected` fait `jumpTo(premier indice × 64)`. Le rectangle de la poignée part vers `gestureExclusionProvider` converti en pixels ; il est retiré à la sortie de la vue et quand la vue n'est plus au premier plan (`TickerMode`).
+- Bouton : `jumpDirection` et `jumpOffset` (fonctions pures testées) ; visibilité déduite du défilement, repli pendant le défilement et dépliage 600 ms après l'arrêt, `animateTo` qui centre la ligne puis éclairage d'une seconde. « Dernière jouée » : `lastPlayedProvider`, session seulement.
+- Limite : au-delà de 1,3 fois le texte, la position est estimée (lignes de 64 dp).

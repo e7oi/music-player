@@ -32,4 +32,4 @@ La conception veut un repère (forme et couleur) par source, stable, jamais part
 
 ## As-built
 
-À écrire à la livraison de MPL-045.
+Livré par MPL-045 (2026-10-23). Conforme à la décision : colonne nullable `mark_index`, index unique, attribution dans la transaction d'`ensureDisk`, migration par étapes avec les indices 0, 1, 2… dans l'ordre d'enregistrement. Aucun écart.

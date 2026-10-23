@@ -142,7 +142,7 @@ void main() {
   });
 
   /// @verifies BR-008.3
-  test('a closed banner stays closed until the sources change', () async {
+  test('a closed banner returns when the sources change', () async {
     await container.read(removableIndexerProvider).addFolder();
     removable.mounted = [];
     listen();
@@ -163,7 +163,7 @@ void main() {
     removable.mounted = [];
     await container.read(removableControllerProvider.notifier).load();
     await settle();
-    // The state is the same again: still the one the user closed.
-    expect(model()!.banner, isNull);
+    // The disk left, came back and left again: the banner returns.
+    expect(model()!.banner, isNotNull);
   });
 }

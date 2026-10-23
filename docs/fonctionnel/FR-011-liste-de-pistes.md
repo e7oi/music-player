@@ -42,4 +42,14 @@ Recherche, autres tris, filtres, playlists, favoris, menu « plus d'options », 
 
 ## As-built
 
-À écrire à la livraison de MPL-045.
+Livré par MPL-045 (2026-10-23), test appareil en attente (D14).
+- Exigences 1 à 3 : `LibraryTitleBar`, `LibraryActionChips` (`ActionChip`, badge ambre « N absent »), `SourcesBanner`, `LibraryCountRow` dans `library_header.dart`, assemblés par `_ReadyView` dans l'ordre de l'exigence 3. Le titre de l'ancienne barre d'application ne subsiste que pour la permission et le choix des dossiers.
+- Exigence 4 : `ProgressBanner` déterminé (tags) ou indéterminé (premier parcours, avec 12 lignes en squelette). Les tags arrivent déjà limités par le fournisseur de progression existant.
+- Exigence 5 : `libraryCount` (pluriels et nombres selon la langue en ARB) ; le tri est un libellé.
+- Exigence 6 : `TrackTile` par ligne ; la pochette est décodée à la taille affichée (`ResizeImage` dans `ArtworkTile`). L'état « illisible » vient de `unreadableTracksProvider` (session).
+- Exigence 7 : `sortKey` (`alphabet_index.dart`) et `LibraryListModel.build`. Le tri se fait à chaque émission, côté Dart.
+- Exigence 8 : toucher une ligne disponible lance la file de toute la liste affichée ; une ligne indisponible montre un `SnackBar` (BR-008 règle 5).
+- Exigence 9 : `_EmptyLibrary`. Le texte du corps est général (« Aucun fichier audio dans les dossiers choisis. ») au lieu de nommer le dossier de la maquette : écart noté.
+- Exigence 10 : `SliverFixedExtentList` jusqu'à 1,3 fois le texte, `SliverList` au-delà. Limite : au-delà de 1,3, le décalage du bouton « En cours » et de l'index est estimé avec 64 dp par ligne.
+- Exigence 11 : `throttleLatest` de 500 ms sur le flux de pistes (`listedTracksProvider`).
+- Exigence 12 : `Semantics` de la ligne : « titre, artiste, durée, état, source X ».

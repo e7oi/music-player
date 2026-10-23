@@ -39,4 +39,8 @@ La liste actuelle est un `ListView` de `ListTile` qui reconstruit tout à chaque
 
 ## As-built
 
-À écrire à la livraison de MPL-045.
+Livré par MPL-045 (2026-10-23). Conforme à la décision, avec ces précisions :
+- `throttleLatest` (500 ms) s'ajoute à `throttle` dans `app/providers/throttle.dart` : il garde la dernière valeur et émet la fin d'une série.
+- Les fournisseurs de session sont dans `library_list_providers.dart` ; la page est coupée en `library_page.dart`, `library_header.dart` et `library_track_list.dart`.
+- La mise en évidence du bouton « En cours » est un état local de la liste (`ValueNotifier`), pas du modèle de vue.
+- Au-delà de 1,3 fois le texte, le décalage du bouton et de l'index est estimé sur 64 dp par ligne.

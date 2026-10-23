@@ -98,8 +98,14 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
     );
   }
 
-  bool get _fixedRows =>
-      MediaQuery.textScalerOf(context).scale(1) <= TsSize.fixedRowMaxTextScale;
+  /// Row height: 64 dp up to 1.3 times the text, proportional beyond so that
+  /// large text is not cut and the jumps stay exact (BR-007 rule 9).
+  double get _rowExtent {
+    final scale = MediaQuery.textScalerOf(context).scale(1);
+    return scale <= TsSize.fixedRowMaxTextScale
+        ? TsSize.trackRow
+        : TsSize.trackRow * scale;
+  }
 
   bool _onScroll(ScrollNotification notification) {
     if (notification is ScrollStartNotification ||
@@ -116,7 +122,7 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
     final index = widget.model.firstIndex[letter];
     if (index == null || !_scroll.hasClients) return;
     _scroll.jumpTo(
-      (index * TsSize.trackRow).clamp(0, _scroll.position.maxScrollExtent),
+      (index * _rowExtent).clamp(0, _scroll.position.maxScrollExtent),
     );
   }
 
@@ -127,7 +133,7 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
     final offset = jumpOffset(
       index: target.index,
       viewport: position.viewportDimension,
-      rowExtent: TsSize.trackRow,
+      rowExtent: _rowExtent,
       maxScroll: position.maxScrollExtent,
     );
     if (MediaQuery.disableAnimationsOf(context)) {
@@ -179,21 +185,13 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
     final list = CustomScrollView(
       controller: _scroll,
       slivers: [
-        if (_fixedRows)
-          SliverFixedExtentList(
-            itemExtent: TsSize.trackRow,
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => _row(index),
-              childCount: model.entries.length,
-            ),
-          )
-        else
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => _row(index),
-              childCount: model.entries.length,
-            ),
+        SliverFixedExtentList(
+          itemExtent: _rowExtent,
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => _row(index),
+            childCount: model.entries.length,
           ),
+        ),
         const SliverToBoxAdapter(
           child: SizedBox(height: TsSize.listBottomInset),
         ),
@@ -239,7 +237,7 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
           index: target.index,
           offset: position.pixels,
           viewport: position.viewportDimension,
-          rowExtent: TsSize.trackRow,
+          rowExtent: _rowExtent,
         );
       }
     }

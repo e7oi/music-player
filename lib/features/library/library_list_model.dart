@@ -84,6 +84,7 @@ final class LibraryListModel {
   /// track of the player, [lastPlayed] the last one played in the session,
   /// [unreadable] the tracks the engine failed on in the session.
   /// [dismissedBanner] is the fingerprint of the banner the user closed.
+  /// [presorted] says [tracks] already come from [sortTracks].
   factory build({
     required List<LibraryTrack> tracks,
     required List<Disk> disks,
@@ -92,15 +93,13 @@ final class LibraryListModel {
     Track? current,
     Track? lastPlayed,
     String? dismissedBanner,
+    bool presorted = false,
   }) {
-    final keyed = [
-      for (final track in tracks)
-        (key: sortKey(track.displayTitle), track: track),
-    ]..sort(_compare);
+    final ordered = presorted ? tracks : sortTracks(tracks);
     final byId = {for (final disk in disks) disk.id: disk};
 
     final entries = [
-      for (final (key: _, :track) in keyed)
+      for (final track in ordered)
         LibraryEntry(
           track: track,
           disk: byId[track.disk],
@@ -125,6 +124,16 @@ final class LibraryListModel {
       firstIndex: firstIndexes(titles),
       jumpTarget: _jumpTarget(entries, current, lastPlayed),
     );
+  }
+
+  /// [tracks] in display order (FR-011.7): by title without case or accents,
+  /// then path, then id.
+  static List<LibraryTrack> sortTracks(List<LibraryTrack> tracks) {
+    final keyed = [
+      for (final track in tracks)
+        (key: sortKey(track.displayTitle), track: track),
+    ]..sort(_compare);
+    return [for (final (key: _, :track) in keyed) track];
   }
 
   final List<LibraryEntry> entries;

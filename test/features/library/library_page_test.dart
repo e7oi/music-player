@@ -15,6 +15,7 @@ import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/platform/internal_storage.dart';
 import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 import 'package:tuneshell/ui/widgets/jump_to_current_fab.dart';
+import 'package:tuneshell/ui/widgets/source_mark.dart';
 import 'package:tuneshell/ui/widgets/track_tile.dart';
 
 import '../../fakes/fake_audio_engine.dart';
@@ -341,4 +342,77 @@ void main() {
     // The timers of the fold and of the highlight end.
     await tester.pump(const Duration(seconds: 2));
   });
+
+  /// @verifies FR-012.4
+  /// @verifies FR-012.5
+  testWidgets('every row carries its source mark and names it for TalkBack', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    await pumpPage(tester);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SourceMark), findsNWidgets(3));
+    expect(
+      find.bySemanticsLabel(RegExp(r'^Alpha, Unknown artist.*, source Local$')),
+      findsOneWidget,
+    );
+    semantics.dispose();
+  });
+
+  /// @verifies FR-011.10
+  testWidgets('at 200 % text the rows grow and nothing overflows', (
+    tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await pumpPage(tester);
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getSize(find.byType(TrackTile).first).height,
+      TsSize.trackRow * 2,
+    );
+  });
+
+  /// @verifies FR-013.1
+  testWidgets(
+    'choosing a letter in the grid puts the list on its first title',
+    (tester) async {
+      tester.view
+        ..physicalSize = const Size(412, 915)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      source.files = [
+        for (var i = 0; i < 150; i++)
+          info('Music/a$i.mp3', title: 'A${i.toString().padLeft(3, '0')}'),
+        for (var i = 0; i < 150; i++)
+          info('Music/m$i.mp3', title: 'M${i.toString().padLeft(3, '0')}'),
+      ];
+      await pumpPage(tester);
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      final handle = find.byWidgetPredicate(
+        (w) => w is GestureDetector && w.onVerticalDragStart != null,
+      );
+      expect(handle, findsOneWidget);
+      await tester.tap(handle);
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'M'));
+      await tester.pumpAndSettle();
+
+      final scroll = tester.state<ScrollableState>(
+        find.descendant(
+          of: find.byType(CustomScrollView),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      expect(scroll.position.pixels, 150 * TsSize.trackRow);
+      expect(find.text('M000'), findsOneWidget);
+    },
+  );
 }

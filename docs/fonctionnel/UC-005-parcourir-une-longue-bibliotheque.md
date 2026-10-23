@@ -34,4 +34,6 @@ Recherche, tri autre que par titre, playlists, favoris, modification du repère 
 
 ## As-built
 
-À écrire à la livraison de MPL-045.
+Livré par MPL-045 (2026-10-23), test appareil en attente (D14).
+- La vue Pistes est `LibraryPage` (`lib/features/library/library_page.dart`) : en-tête, pastilles, bandeaux et ligne de compte dans une colonne, puis `LibraryTrackList` (`library_track_list.dart`) avec l'index et le bouton « En cours ». Le calcul est dans `LibraryListModel` (`library_list_model.dart`), alimenté par `library_list_providers.dart`.
+- Parcours couverts par des tests de widgets (`test/features/library/library_page_test.dart`) ; la fluidité, TalkBack et le texte à 200 % restent à voir sur l'appareil (HOWTO §15).

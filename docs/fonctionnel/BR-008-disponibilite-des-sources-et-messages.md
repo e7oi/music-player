@@ -21,4 +21,6 @@
 
 ## As-built
 
-À écrire à la livraison de MPL-045.
+Livré par MPL-045 (2026-10-23), test appareil en attente (D14).
+- Règle 1 : `unavailableDisksProvider` (état des disques amovibles) ; règles 2 et 3 : `SourceBanner` et son empreinte dans `LibraryListModel`, masquage dans `dismissedBannerProvider` (session) ; règle 4 : pas de piste, pas de bandeau.
+- Règle 5 : `_onTap` de `LibraryTrackList`. Règles 6 et 7 : message court et ligne « Fichier illisible » (`unreadableTracksProvider`, alimenté par `TrackFailed`).
