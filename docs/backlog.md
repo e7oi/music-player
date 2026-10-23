@@ -13,7 +13,7 @@ Préfixe : MPL · Prochaine clé : MPL-051 · Dernière MAJ : 2026-10-23
 | MPL-010 | Bug | P2 | Avertissements de décodage `media_kit` sans effet audible constaté : FLAC avec étiquettes ID3 ; MP3 avec données non-MPEG après la dernière trame (MP3 A, MP3 B ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.5) — (origine des octets et fréquence dans la bibliothèque non établies ; pas de changement de code) | À faire | — | — |
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
-| MPL-044 | Récit | P1 | Design lot 1 — Accès et dossiers : premier lancement (accueil, demande d'accès, refus simple et définitif) et choix des dossiers de musique refaits selon les maquettes 1a–1e et 2a–2e de `docs/design/HANDOFF.md` ; reprend FR-003 et FR-004, qui existent déjà. À cadrer après MPL-016 | À faire | MPL-001 | — |
+| MPL-044 | Récit | P1 | Design lot 1 — Accès et dossiers : accueil en deux étapes, demande d'accès au toucher d'un bouton (plus au démarrage), refus simple et définitif, « Choisir un dossier à la place », écran des dossiers de musique refait (résumé, « Continuer », états vides, chargement et erreur) selon les maquettes 1a–1e et 2a–2e de `docs/design/HANDOFF.md` ; révise FR-004 (demande d'accès) et la présentation de FR-003. Cadré le 2026-10-23, fiches en `Brouillon` | À faire | MPL-001 | — |
 | MPL-046 | Récit | P1 | Design lot 3 — Disques amovibles : écran 4 refait (4a–4e), repère de source modifiable, détection du branchement en direct, parcours dans un service au premier plan avec notification et « Arrêter » ; recoupe MPL-035 et MPL-038. À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
 | MPL-047 | Récit | P1 | Design lot 4 — Lecture : mini-lecteur, lecteur plein écran, file d'attente (feuille), pistes illisibles (5d, 6d) ; prolonge MPL-036. À cadrer après MPL-016 | À faire | MPL-001 | — |
 | MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : albums, artistes (regroupés par artiste de l'album), réglages persistés (thème, Material You par `dynamic_color`, index à gauche), paysage avec panneau lecteur (6e). À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
@@ -291,6 +291,127 @@ Description de PR : feat(library): redesign the library list with sources, banne
 Décisions prises en route : texte du corps de l'état vide général (sans nommer le dossier) ; rangées proportionnelles au texte au-delà de 1,3 ; effacement du masquage du bandeau à tout changement de l'état des sources.
 À valider (PO) : les trois décisions ci-dessus ; effacement du marquage « Fichier illisible » à tout changement de l'état des disques (écart à BR-008 règle 7, voulu par le propriétaire le 2026-10-23) ; accepter les écarts de la revue ou demander de les corriger avant « À tester ».
 Test appareil, passage du 2026-10-23 (SSD, portrait, paysage, TalkBack par l'arbre d'accessibilité, texte à 200 %) : migration, repères, bandeau, masquage, toucher d'une piste grisée, saut de lecture, index, bouton « En cours », pastilles, paysage et 200 % OK ; deux correctifs faits (pastilles tronquées puis passées sur deux lignes, marquage illisible effacé). Limite connue : la liste ne suit pas en direct le branchement ou le retrait d'un disque avant MPL-035. Non vu : retour du bandeau masqué au débranchement suivant, voix TalkBack et ses gestes, fluidité en profile, états vides et progression à l'écran.
+
+### MPL-044
+**Description.** Refaire le parcours du premier lancement selon le lot 1 de la conception Claude Design (`docs/design/HANDOFF.md`, écrans 1 et 2) : un accueil, une explication avant la demande d'accès, les trois cas de refus, puis l'écran des dossiers de musique avec son résumé. Cadrage du 2026-10-23, suite de MPL-045. Les écrans actuels (message de permission, liste de cases, bouton « Valider ») sont remplacés ; la logique d'accès (FR-004) et d'indexation (FR-003) ne change que sur la date de la demande.
+
+**Recommandation du cadrage.** Faire le lot en gardant D25 : le sélecteur d'Android ne sert qu'aux disques amovibles, donc « Choisir un dossier à la place » et « Ajouter un dossier » n'acceptent pas un dossier du téléphone (la maquette laisse croire le contraire). Pas d'indicateur « accueil vu » : l'accueil se déduit de « accès jamais demandé ». Pas de nouveau code Kotlin, pas de dépendance.
+
+**Inclus.**
+- Accueil (1a) et explication (1b) avec indicateur d'étape ; le dialogue d'Android n'apparaît qu'au toucher de « Autoriser l'accès » (FR-014).
+- Refus simple (1d) : bandeau et bouton « Réessayer » ; refus définitif (1e) : étapes dans les réglages, « Ouvrir les réglages », « Choisir un dossier à la place » (disques amovibles) ; retour des réglages avec accès accordé (FR-014).
+- « Pas maintenant » : bibliothèque avec un état « accès non accordé » qui propose d'autoriser (FR-014).
+- Écran des dossiers refait : intertitre « Stockage interne », comptages « N fichiers audio », résumé « 1 dossier · 1 842 fichiers », « Continuer » désactivé sans dossier coché, chargement en squelettes, aucun fichier audio, erreur dans le flux, « Ajouter un dossier » (FR-015).
+- Logo dessiné dans le code ; textes en français et en anglais dans les ARB ; clair, sombre, portrait, paysage, texte à 200 %, TalkBack.
+
+**Exclusions.** Dialogue système d'Android ; écran de démarrage et icône (MPL-049) ; écran des disques (MPL-046) ; réglages et langue (MPL-048) ; indexer un dossier du téléphone par le sélecteur d'Android ; comptages progressifs et erreur par dossier (la lecture est une seule requête) ; doublons (MPL-040).
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Premier lancement selon le design
+
+  Scénario: Accueil au premier lancement
+    Soit l'accès à la musique jamais demandé
+    Quand l'utilisateur ouvre l'application
+    Alors l'accueil s'affiche avec « Commencer » et « Étape 1 sur 2 »
+    Et le dialogue d'Android n'apparaît pas
+
+  Scénario: Demande d'accès après l'explication
+    Soit l'accueil affiché
+    Quand l'utilisateur touche « Commencer » puis « Autoriser l'accès »
+    Alors l'explication « Étape 2 sur 2 » s'affiche avant le dialogue d'Android
+    Et le dialogue d'Android s'affiche au toucher du bouton
+
+  Scénario: Accès accordé
+    Soit le dialogue d'Android affiché
+    Quand l'utilisateur autorise
+    Alors l'écran des dossiers s'affiche avec « Music » coché s'il existe
+
+  Scénario: Refus simple
+    Soit le dialogue d'Android refusé
+    Quand l'explication se réaffiche
+    Alors un bandeau « Accès refusé… » est au-dessus du contenu
+    Et le bouton principal dit « Réessayer »
+
+  Scénario: Refus définitif
+    Soit Android qui n'affiche plus le dialogue
+    Quand l'utilisateur touche le bouton principal
+    Alors « L'accès est bloqué » s'affiche avec « Ouvrir les réglages » et « Choisir un dossier à la place »
+
+  Scénario: Retour des réglages
+    Soit l'écran « L'accès est bloqué »
+    Quand l'utilisateur accorde l'accès dans les réglages puis revient
+    Alors l'écran des dossiers s'affiche sans autre geste
+
+  Scénario: Choisir un dossier à la place
+    Soit l'écran « L'accès est bloqué » et un disque amovible branché
+    Quand l'utilisateur touche « Choisir un dossier à la place » et choisit un dossier du disque
+    Alors le dossier est ajouté et sa musique s'affiche
+    Et un dossier du téléphone est refusé avec le message existant
+
+  Scénario: Pas maintenant
+    Soit l'explication affichée
+    Quand l'utilisateur touche « Pas maintenant »
+    Alors la bibliothèque s'affiche avec « Autoriser l'accès »
+    Et aucune indexation ne démarre
+
+  Scénario: Dossiers cochables
+    Soit l'écran des dossiers
+    Quand l'utilisateur touche une ligne
+    Alors la case se coche et le résumé « N dossiers · M fichiers » suit
+    Et toute la ligne est la zone tactile, annoncée comme case à cocher
+
+  Scénario: Aucun dossier coché
+    Soit l'écran des dossiers
+    Quand l'utilisateur décoche tous les dossiers
+    Alors « Continuer » est désactivé
+    Et le message « Coche au moins un dossier pour continuer. » s'affiche
+
+  Scénario: Chargement des dossiers
+    Soit la liste des dossiers en cours de lecture
+    Quand l'écran s'affiche
+    Alors « Recherche des fichiers audio… » est dans le flux avec des squelettes à la place des comptages
+
+  Scénario: Aucun fichier audio
+    Soit un téléphone sans fichier audio
+    Quand l'écran des dossiers s'affiche
+    Alors « Aucun fichier audio trouvé » propose « Ajouter un dossier » et « Actualiser »
+
+  Scénario: Erreur de lecture des dossiers
+    Soit une lecture des dossiers qui échoue
+    Quand l'écran des dossiers s'affiche
+    Alors un bandeau d'erreur avec « Réessayer » est dans le flux, jamais sur la liste
+
+  Scénario: Continuer lance l'indexation
+    Soit au moins un dossier coché
+    Quand l'utilisateur touche « Continuer »
+    Alors l'indexation démarre et la bibliothèque s'affiche (UC-005)
+
+  Scénario: Modifier le choix plus tard
+    Soit la bibliothèque affichée
+    Quand l'utilisateur touche « Dossiers » puis le retour
+    Alors la bibliothèque revient sans changement
+    Et le bouton de validation s'appelle « Valider »
+
+  Scénario: Accessibilité et mise en page
+    Soit TalkBack activé, le texte à 200 %, le téléphone en paysage
+    Quand l'utilisateur parcourt l'accueil, l'explication et les dossiers
+    Alors tous les boutons font 48 dp au moins et sont lus avec leur libellé
+    Et rien n'est coupé et les boutons restent atteignables
+```
+
+**Test appareil (Pixel, release).** À écrire dans `HOWTO.md` §16 à la livraison : première installation (effacer les données de l'application ou désinstaller), refus simple, refus définitif, retour des réglages, « Choisir un dossier à la place » avec le SSD, « Pas maintenant », dossiers (cases, résumé, aucun dossier coché), clair et sombre, paysage, TalkBack, texte à 200 %.
+
+**Fiches liées.** UC-006, FR-014, FR-015 ; ADR-014 (toutes `Brouillon`). Révisent FR-003 (exigence 3) et FR-004 (exigences 1, 3 et 4), qui restent `Active`. Utilisent UC-001, UC-003, FR-006, FR-011, BR-004, BR-007 et ADR-005, ADR-010 (`Active`).
+
+**À valider (PO).**
+- FR-004.1 révisée : l'accès est demandé au toucher de « Autoriser l'accès », plus au démarrage.
+- Accueil déduit de « accès jamais demandé » : il revient à chaque lancement tant que l'accès n'a pas été demandé (après « Pas maintenant » par exemple).
+- « Choisir un dossier à la place » et « Ajouter un dossier » : disques amovibles seulement (D25) ; texte de la note ajusté.
+- État « accès non accordé » (texte proposé) à la place de l'état 6b après « Pas maintenant ».
+- « Continuer » désactivé sans dossier ; vider la bibliothèque depuis « Dossiers » reste-t-il permis (« Valider » actif) ?
+- Comptages en une fois et erreur globale (pas par dossier) ; « Continuer » au premier lancement, « Valider » ensuite ; logo dessiné en code.
 
 ### MPL-037
 **Description.** Ajouter à la bibliothèque les pistes d'un disque amovible (SSD USB-C) choisi par le sélecteur Android (SAF, D25), avec leurs tags lus dans les fichiers, et les pochettes des pistes du SSD et du stockage interne. Cadrage du 2026-10-22, suite de MPL-018 (cf. découpage du 2026-10-15). Le propriétaire a gardé un seul ticket, malgré la recommandation de sortir les pochettes.
@@ -855,4 +976,5 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | À numéroter | MPL-037 n'est pas découpé : SSD par SAF, tags et pochettes (SSD et stockage interne) restent un seul ticket, un seul test sur le Pixel | Tranchée 2026-10-22 | Choix du propriétaire au cadrage, malgré la recommandation de sortir les pochettes dans un ticket à part · MPL-037 |
 | À numéroter | Mise en œuvre du design (dossier Claude Design v0.4) : MPL-016 devient le lot 0 (fondations) ; les lots 1 à 6 sont des tickets séparés (MPL-044 à MPL-049), cadrés un par un et adaptés à l'existant (les lots Accès, Bibliothèque, Disques et Lecture refont des écrans déjà livrés) | Tranchée 2026-10-23 | Choix du propriétaire au cadrage ; le dossier suppose un projet vide · MPL-016, MPL-044 à MPL-049 |
 | À numéroter | Repère de source : un repère par disque (D23), retenu pour MPL-045 ; un repère par dossier reste une option ouverte, à trancher à l'usage | Ouverte 2026-10-23 | Demande du propriétaire : sur un téléphone, plusieurs disques externes branchés ensemble sont rares · FR-012, ADR-012, MPL-045 |
+| À numéroter | Premier lancement : « Choisir un dossier à la place » et « Ajouter un dossier » n'acceptent que les disques amovibles (D25 : MediaStore pour le stockage interne, SAF pour les disques) ; la maquette suppose le contraire | Provisoire 2026-10-23 | Cadrage de MPL-044 ; à confirmer par le propriétaire · MPL-044 |
 | D30 | Dépendances et versions : dernière version stable compatible avec le Flutter épinglé, tout épinglé, Dependabot hebdomadaire, avis de sécurité traités hors cycle, dérogations dans `docs/dependency-exceptions.md`. Détail : `CLAUDE.md` | Provisoire | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |
