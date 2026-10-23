@@ -131,5 +131,77 @@
   },
   "@notificationChannelDescription": {
     "description": "Description of the playback notification channel, shown in the Android settings."
+  },
+  "libraryDisks": "Removable disks",
+  "@libraryDisks": {
+    "description": "Tooltip of the button that opens the removable disks (FR-006)"
+  },
+  "removableTitle": "Removable disks",
+  "@removableTitle": {
+    "description": "Title of the removable disks screen"
+  },
+  "removableNone": "No removable disk yet. Plug in your drive, then add one of its folders.",
+  "@removableNone": {
+    "description": "Shown when no removable disk is in the library"
+  },
+  "removableAddFolder": "Add a folder",
+  "@removableAddFolder": {
+    "description": "Button that opens the Android folder picker"
+  },
+  "removableRootFolder": "Whole disk",
+  "@removableRootFolder": {
+    "description": "Name of the folder that is the root of the disk"
+  },
+  "removableAbsent": "Not connected",
+  "@removableAbsent": {
+    "description": "State of a removable disk that is not mounted"
+  },
+  "removableAccessLost": "Access to renew",
+  "@removableAccessLost": {
+    "description": "State of a mounted disk whose access was lost"
+  },
+  "removableAvailable": "Connected",
+  "@removableAvailable": {
+    "description": "State of a readable removable disk"
+  },
+  "removableRenew": "Renew access",
+  "@removableRenew": {
+    "description": "Button that reopens the folder picker for a disk whose access was lost"
+  },
+  "removableRemoveFolder": "Remove this folder",
+  "@removableRemoveFolder": {
+    "description": "Tooltip of the button that removes a folder from the library"
+  },
+  "removableCancel": "Stop",
+  "@removableCancel": {
+    "description": "Button that stops the scan and the reading of tags"
+  },
+  "removableNoAudio": "No audio file was found in this folder.",
+  "@removableNoAudio": {
+    "description": "Message after choosing a folder without audio"
+  },
+  "removableAddFailed": "The folder could not be read. Check that the disk is connected, then try again.",
+  "@removableAddFailed": {
+    "description": "Message when the scan of a new folder fails"
+  },
+  "removableNotRemovable": "This folder is on the phone's own storage. Choose a folder of the removable disk.",
+  "@removableNotRemovable": {
+    "description": "Message when the picked folder is on the internal storage"
+  },
+  "removableRefreshFailed": "The disk could not be read. The library was kept as it was.",
+  "@removableRefreshFailed": {
+    "description": "Message when refreshing a disk fails"
+  },
+  "tagsProgress": "Reading tags: {done} / {total}",
+  "@tagsProgress": {
+    "description": "Progress of the reading of tags and artwork",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   }
 }

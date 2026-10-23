@@ -116,4 +116,58 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationChannelDescription =>
       'Playback controls: previous, pause, next.';
+
+  @override
+  String get libraryDisks => 'Removable disks';
+
+  @override
+  String get removableTitle => 'Removable disks';
+
+  @override
+  String get removableNone =>
+      'No removable disk yet. Plug in your drive, then add one of its folders.';
+
+  @override
+  String get removableAddFolder => 'Add a folder';
+
+  @override
+  String get removableRootFolder => 'Whole disk';
+
+  @override
+  String get removableAbsent => 'Not connected';
+
+  @override
+  String get removableAccessLost => 'Access to renew';
+
+  @override
+  String get removableAvailable => 'Connected';
+
+  @override
+  String get removableRenew => 'Renew access';
+
+  @override
+  String get removableRemoveFolder => 'Remove this folder';
+
+  @override
+  String get removableCancel => 'Stop';
+
+  @override
+  String get removableNoAudio => 'No audio file was found in this folder.';
+
+  @override
+  String get removableAddFailed =>
+      'The folder could not be read. Check that the disk is connected, then try again.';
+
+  @override
+  String get removableNotRemovable =>
+      'This folder is on the phone\'s own storage. Choose a folder of the removable disk.';
+
+  @override
+  String get removableRefreshFailed =>
+      'The disk could not be read. The library was kept as it was.';
+
+  @override
+  String tagsProgress(int done, int total) {
+    return 'Reading tags: $done / $total';
+  }
 }

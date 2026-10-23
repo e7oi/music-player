@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meta/meta.dart';
 import 'package:tuneshell/app/providers/library_providers.dart';
 import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
 import 'package:tuneshell/domain/library/services/library_indexer.dart';
+import 'package:tuneshell/features/library/removable_controller.dart';
 
 sealed class LibraryViewState {
   const new();
@@ -57,7 +60,8 @@ final libraryControllerProvider =
       LibraryController.new,
     );
 
-/// Permission, folder choice and indexing of the internal storage.
+/// Permission, folder choice and indexing of the internal storage; each
+/// index is followed by the removable disks and the tags.
 ///
 /// @implements UC-001
 /// @implements FR-003
@@ -103,6 +107,7 @@ class LibraryController extends Notifier<LibraryViewState> {
 
   /// FR-004.5: access may have changed in the settings while away.
   Future<void> onResumed() async {
+    unawaited(ref.read(removableControllerProvider.notifier).onResumed());
     final status = await _permission.status();
     final waiting = state is LibraryPermissionNeeded;
     if (status == AudioPermissionStatus.granted) {
@@ -189,5 +194,8 @@ class LibraryController extends Notifier<LibraryViewState> {
     } on Exception {
       state = LibraryReady(hasFolders: hasFolders, indexFailed: true);
     }
+    // The removable disks and the files' tags follow the internal index
+    // (FR-006.8, FR-007).
+    unawaited(ref.read(removableControllerProvider.notifier).refresh());
   }
 }

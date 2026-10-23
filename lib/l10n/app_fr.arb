@@ -27,5 +27,21 @@
   "libraryLoadFailed": "Les dossiers du téléphone n'ont pas pu être lus.",
   "libraryRetry": "Réessayer",
   "notificationChannelName": "Lecture",
-  "notificationChannelDescription": "Commandes de lecture : précédent, pause, suivant."
+  "notificationChannelDescription": "Commandes de lecture : précédent, pause, suivant.",
+  "libraryDisks": "Disques amovibles",
+  "removableTitle": "Disques amovibles",
+  "removableNone": "Aucun disque amovible pour l'instant. Branchez votre disque, puis ajoutez l'un de ses dossiers.",
+  "removableAddFolder": "Ajouter un dossier",
+  "removableRootFolder": "Disque entier",
+  "removableAbsent": "Non connecté",
+  "removableAccessLost": "Accès à renouveler",
+  "removableAvailable": "Connecté",
+  "removableRenew": "Renouveler l'accès",
+  "removableRemoveFolder": "Retirer ce dossier",
+  "removableCancel": "Arrêter",
+  "removableNoAudio": "Aucun fichier audio n'a été trouvé dans ce dossier.",
+  "removableAddFailed": "Le dossier n'a pas pu être lu. Vérifiez que le disque est branché, puis réessayez.",
+  "removableNotRemovable": "Ce dossier est dans le stockage du téléphone. Choisissez un dossier du disque amovible.",
+  "removableRefreshFailed": "Le disque n'a pas pu être lu. La bibliothèque est restée telle quelle.",
+  "tagsProgress": "Lecture des étiquettes : {done} / {total}"
 }

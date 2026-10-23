@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/library_providers.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
+import 'package:tuneshell/app/providers/tag_providers.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/library/services/library_indexer.dart';
 import 'package:tuneshell/domain/playback/model/playback_notice.dart';
 import 'package:tuneshell/features/library/library_controller.dart';
 import 'package:tuneshell/features/library/player_bar.dart';
+import 'package:tuneshell/features/library/removable_page.dart';
+import 'package:tuneshell/features/library/track_artwork.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 
 /// Temporary library screen until the MPL-016 mock-ups exist.
@@ -65,6 +69,13 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
               onPressed: state.indexing
                   ? null
                   : () => unawaited(_controller.openFolderChoice()),
+            ),
+            IconButton(
+              tooltip: l10n.libraryDisks,
+              icon: const Icon(Icons.usb),
+              onPressed: () => Navigator.of(context).push<void>(
+                MaterialPageRoute(builder: (_) => const RemovablePage()),
+              ),
             ),
             IconButton(
               tooltip: l10n.libraryRefresh,
@@ -228,9 +239,23 @@ class _TrackList extends ConsumerWidget {
     final tracks =
         ref.watch(libraryTracksProvider).value ?? const <LibraryTrack>[];
     final controller = ref.read(libraryControllerProvider.notifier);
+    final available =
+        ref.watch(playerStateProvider).value?.availableDisks ??
+        const <DiskId>{};
+    final tagProgress = ref.watch(tagProgressProvider).value;
     return Column(
       children: [
         if (state.indexing) const LinearProgressIndicator(),
+        if (tagProgress != null && tagProgress.running) ...[
+          LinearProgressIndicator(value: tagProgress.done / tagProgress.total),
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text(
+              l10n.tagsProgress(tagProgress.done, tagProgress.total),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        ],
         if (state.indexFailed)
           MaterialBanner(
             content: Text(l10n.libraryIndexFailed),
@@ -255,6 +280,10 @@ class _TrackList extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final track = tracks[index];
                     return ListTile(
+                      // Tracks of an absent disk are greyed and skipped
+                      // during playback (BR-004, BR-001).
+                      enabled: available.contains(track.disk),
+                      leading: TrackArtwork(artwork: track.artwork),
                       title: Text(track.displayTitle),
                       subtitle: track.info.artist == null
                           ? null

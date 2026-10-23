@@ -117,4 +117,59 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get notificationChannelDescription =>
       'Commandes de lecture : précédent, pause, suivant.';
+
+  @override
+  String get libraryDisks => 'Disques amovibles';
+
+  @override
+  String get removableTitle => 'Disques amovibles';
+
+  @override
+  String get removableNone =>
+      'Aucun disque amovible pour l\'instant. Branchez votre disque, puis ajoutez l\'un de ses dossiers.';
+
+  @override
+  String get removableAddFolder => 'Ajouter un dossier';
+
+  @override
+  String get removableRootFolder => 'Disque entier';
+
+  @override
+  String get removableAbsent => 'Non connecté';
+
+  @override
+  String get removableAccessLost => 'Accès à renouveler';
+
+  @override
+  String get removableAvailable => 'Connecté';
+
+  @override
+  String get removableRenew => 'Renouveler l\'accès';
+
+  @override
+  String get removableRemoveFolder => 'Retirer ce dossier';
+
+  @override
+  String get removableCancel => 'Arrêter';
+
+  @override
+  String get removableNoAudio =>
+      'Aucun fichier audio n\'a été trouvé dans ce dossier.';
+
+  @override
+  String get removableAddFailed =>
+      'Le dossier n\'a pas pu être lu. Vérifiez que le disque est branché, puis réessayez.';
+
+  @override
+  String get removableNotRemovable =>
+      'Ce dossier est dans le stockage du téléphone. Choisissez un dossier du disque amovible.';
+
+  @override
+  String get removableRefreshFailed =>
+      'Le disque n\'a pas pu être lu. La bibliothèque est restée telle quelle.';
+
+  @override
+  String tagsProgress(int done, int total) {
+    return 'Lecture des étiquettes : $done / $total';
+  }
 }
