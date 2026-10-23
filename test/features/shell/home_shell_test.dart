@@ -175,4 +175,59 @@ void main() {
       );
     });
   });
+
+  /// @verifies FR-009.3 the rail takes the inset of a camera cut-out, once.
+  group('landscape with a cut-out on the left', () {
+    Future<void> pumpCutout(WidgetTester tester) async {
+      tester.view
+        ..physicalSize = const Size(915, 412)
+        ..devicePixelRatio = 1
+        ..padding = const FakeViewPadding(left: 60, top: 24, bottom: 20)
+        ..viewPadding = const FakeViewPadding(left: 60, top: 24, bottom: 20);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: TsTheme.light(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: const Locale('en'),
+            home: HomeShell(
+              tracks: Builder(
+                builder: (context) =>
+                    Text('left ${MediaQuery.paddingOf(context).left}'),
+              ),
+              playerBar: const SizedBox.shrink(),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('the rail background reaches the screen edges', (tester) async {
+      await pumpCutout(tester);
+
+      final rect = tester.getRect(find.byKey(HomeShell.railBackgroundKey));
+      expect(rect.left, 0);
+      expect(rect.top, 0);
+      expect(rect.bottom, 412);
+    });
+
+    testWidgets('the views do not take the inset a second time', (
+      tester,
+    ) async {
+      await pumpCutout(tester);
+
+      expect(find.text('left 0.0'), findsOneWidget);
+    });
+
+    testWidgets('the rail items stay clear of the cut-out', (tester) async {
+      await pumpCutout(tester);
+
+      expect(
+        tester.getRect(find.text('Tracks')).left,
+        greaterThanOrEqualTo(60),
+      );
+    });
+  });
 }

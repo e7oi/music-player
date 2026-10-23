@@ -18,6 +18,9 @@ class HomeShell extends StatefulWidget {
   /// Shown above the navigation in every view; empty when nothing plays.
   final Widget playerBar;
 
+  /// The background of the navigation rail (tests).
+  static const railBackgroundKey = Key('rail-background');
+
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
@@ -73,22 +76,37 @@ class _HomeShellState extends State<HomeShell> {
             return Scaffold(
               body: Row(
                 children: [
-                  SafeArea(
-                    right: false,
-                    child: NavigationRail(
-                      selectedIndex: _index,
-                      onDestinationSelected: _select,
-                      labelType: NavigationRailLabelType.all,
-                      destinations: [
-                        for (final (icon, label) in destinations)
-                          NavigationRailDestination(
-                            icon: Icon(icon),
-                            label: Text(label),
-                          ),
-                      ],
+                  // The background spans the whole edge, cut-out included; the
+                  // items sit clear of the inset inside it.
+                  ColoredBox(
+                    key: HomeShell.railBackgroundKey,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    child: SafeArea(
+                      right: false,
+                      child: NavigationRail(
+                        backgroundColor: Colors.transparent,
+                        selectedIndex: _index,
+                        onDestinationSelected: _select,
+                        labelType: NavigationRailLabelType.all,
+                        destinations: [
+                          for (final (icon, label) in destinations)
+                            NavigationRailDestination(
+                              icon: Icon(icon),
+                              label: Text(label),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
-                  Expanded(child: content),
+                  // The rail took the left inset: the views must not apply it
+                  // again.
+                  Expanded(
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeLeft: true,
+                      child: content,
+                    ),
+                  ),
                 ],
               ),
             );
