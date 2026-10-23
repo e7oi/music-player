@@ -141,6 +141,27 @@ void main() {
     expect(model()!.entries.last.state, TrackTileState.unreadable);
   });
 
+  /// @verifies BR-008.7
+  test('the unreadable marks are cleared when the disks change', () async {
+    await container.read(removableIndexerProvider).addFolder();
+    listen();
+    await container.read(removableControllerProvider.notifier).load();
+    await settle();
+    final player = container.read(playerControllerProvider);
+    final beta = model()!.entries.last.track.track;
+    opener.failing.add(beta);
+    await player.setQueue([beta]);
+    await player.play();
+    await settle();
+    expect(container.read(unreadableTracksProvider), {beta});
+
+    removable.mounted = [];
+    await container.read(removableControllerProvider.notifier).load();
+    await settle();
+
+    expect(container.read(unreadableTracksProvider), isEmpty);
+  });
+
   /// @verifies BR-008.3
   test('a closed banner returns when the sources change', () async {
     await container.read(removableIndexerProvider).addFolder();

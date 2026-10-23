@@ -57,13 +57,18 @@ final lastPlayedProvider = NotifierProvider<LastPlayedTrack, Track?>(
 );
 
 /// Tracks the engine failed on in this session: their row says "Fichier
-/// illisible" (FR-011.6, BR-008 rule 7).
+/// illisible" (FR-011.6, BR-008 rule 7). A change in the state of the disks
+/// clears them: a failure while a disk was leaving or coming back says nothing
+/// about the file.
 class UnreadableTracks extends Notifier<Set<Track>> {
   @override
   Set<Track> build() {
     ref.listen(playbackNoticesProvider, (_, next) {
       final notice = next.value;
       if (notice is TrackFailed) state = {...state, notice.track};
+    });
+    ref.listen(unavailableDisksProvider, (previous, next) {
+      if (!mapEquals(previous, next)) state = const {};
     });
     return const {};
   }

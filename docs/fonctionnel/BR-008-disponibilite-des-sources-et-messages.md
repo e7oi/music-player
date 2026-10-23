@@ -18,6 +18,8 @@
 - Règle 2 : les formulations pour plusieurs disques et pour l'accès à renouveler sont de moi ; la maquette ne montre qu'un SSD absent.
 - Règle 6 : le message court de BR-001 est gardé en plus du bandeau.
 - Règle 7 : le bouton « Détails » de la maquette n'est pas construit : la conception ne dit pas ce qu'il ouvre.
+- Règle 7 (écart, 2026-10-23) : le marquage « Fichier illisible » est effacé dès que l'état des disques change (disque qui part, revient ou perd son accès), car un échec pendant un retrait ne dit rien du fichier. Constaté sur le Pixel : des pistes du SSD restaient rouges après le rebranchement. Le marquage vaut donc « pour la session, tant que les disques ne changent pas ».
+- Règle 1 (limite connue) : l'état des disques n'est relu qu'au retour au premier plan et sur une action (Actualiser, Disques, toucher une piste) ; le suivi en direct d'un branchement ou d'un retrait vient avec MPL-035.
 
 ## As-built
 
