@@ -65,23 +65,23 @@ class LibraryActionChips extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    // A wrap, not a scroll: at large text sizes the chips go to a second line
+    // instead of leaving one of them off screen.
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: TsSpace.screenMargin),
-      child: Row(
+      child: Wrap(
+        spacing: TsSpace.xs,
         children: [
           _Chip(
             icon: Icons.refresh_rounded,
             label: l10n.libraryRefresh,
             onPressed: busy ? null : onRefresh,
           ),
-          const SizedBox(width: TsSpace.xs),
           _Chip(
             icon: Icons.folder_outlined,
             label: l10n.libraryFolders,
             onPressed: busy ? null : onFolders,
           ),
-          const SizedBox(width: TsSpace.xs),
           _Chip(
             icon: Icons.usb_rounded,
             label: l10n.chipDisks,
