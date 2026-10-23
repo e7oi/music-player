@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Disques amovibles</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 412px; height: 915px; box-sizing: border-box; background: {{t.surface}}; color: {{t.onSurface}}; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="height: 40px; flex-shrink: 0"></div>
+
+  <header style="height: 64px; flex-shrink: 0; display: flex; align-items: center; gap: 4px; padding: 0 16px 0 4px">
+    <button aria-label="Retour" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <h1 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">Disques amovibles</h1>
+  </header>
+
+  <sc-if value="{{isAucun}}" hint-placeholder-val="{{ false }}">
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 0 32px 80px; text-align: center">
+      <div style="width: 120px; height: 120px; border-radius: 36px; background: {{t.surfContHigh}}; color: {{t.onSurfVar}}; display: flex; align-items: center; justify-content: center">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M5 13l2-8h10l2 8"/><circle cx="17" cy="16.5" r="1"/></svg>
+      </div>
+      <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">Aucun disque amovible</h2>
+      <p style="margin: 0; font-size: 15px; line-height: 22px; color: {{t.onSurfVar}}">Branche un disque USB ou insère une carte SD, puis choisis les dossiers à ajouter.</p>
+      <button style="margin-top: 8px; width: 100%; height: 48px; border-radius: 24px; background: {{t.primary}}; color: {{t.onPrimary}}; font-size: 15px; font-weight: 600">Ajouter un dossier</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{hasDisk}}" hint-placeholder-val="{{ true }}">
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 4px 16px 24px; min-height: 0">
+
+      <section aria-label="Disque SSD" style="border-radius: 16px; background: {{t.surfContLow}}; border: 1px solid {{t.outlineVar}}; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <div style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 12px; background: {{iconBg}}; color: {{iconFg}}; display: flex; align-items: center; justify-content: center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M5 13l2-8h10l2 8"/><circle cx="17" cy="16.5" r="1"/></svg>
+          </div>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: Manrope, sans-serif; font-size: 20px; line-height: 28px; font-weight: 700">SSD</span>
+            <span style="font-size: 13px; line-height: 18px; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">{{diskInfo}}</span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="height: 32px; padding: 0 12px 0 8px; border-radius: 8px; background: {{chipBg}}; color: {{chipFg}}; border: {{chipBorder}}; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600">
+            <sc-if value="{{isConnected}}" hint-placeholder-val="{{ true }}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4.5 4.5L19 7"/></svg>
+            </sc-if>
+            <sc-if value="{{isAbsent}}" hint-placeholder-val="{{ false }}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/><path d="M3 3l18 18"/></svg>
+            </sc-if>
+            <sc-if value="{{isRenew}}" hint-placeholder-val="{{ false }}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            </sc-if>
+            {{chipText}}
+          </span>
+        </div>
+
+        <sc-if value="{{isRenew}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <p style="margin: 0; font-size: 14px; line-height: 20px; color: {{t.onSurfVar}}">Android a retiré l'accès à ce disque (reformatage ou changement de port). Ses 812 pistes restent dans la bibliothèque, grisées.</p>
+            <button style="height: 48px; border-radius: 24px; background: {{t.tertiary}}; color: {{t.onTertiary}}; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>
+              Renouveler l'accès
+            </button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isScan}}" hint-placeholder-val="{{ false }}">
+          <div role="status" style="display: flex; flex-direction: column; gap: 8px; padding-top: 2px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <span style="flex: 1; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.onSurfVar}}; font-variant-numeric: tabular-nums">Parcours du disque : 1 240 / 3 100 fichiers</span>
+              <button style="height: 48px; padding: 0 12px; margin: -8px -8px -8px 0; border-radius: 24px; color: {{t.primary}}; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                Arrêter
+              </button>
+            </div>
+            <div style="height: 6px; border-radius: 3px; background: {{t.outlineVar}}; overflow: hidden"><div style="width: 40%; height: 6px; border-radius: 3px; background: {{t.primary}}"></div></div>
+          </div>
+        </sc-if>
+      </section>
+
+      <div style="display: flex; flex-direction: column">
+        <p style="margin: 0; padding: 4px 0 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{t.onSurfVar}}">Dossiers de ce disque</p>
+        <sc-for list="{{folders}}" as="f" hint-placeholder-count="2">
+          <div style="height: 64px; display: flex; align-items: center; gap: 12px">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="{{f.iconColor}}" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 16px; line-height: 24px; font-weight: 500; color: {{f.nameColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.path}}</span>
+              <span style="font-size: 14px; line-height: 20px; color: {{f.subColor}}; font-variant-numeric: tabular-nums">{{f.count}}</span>
+            </div>
+            <button aria-label="{{f.removeLabel}}" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: {{t.onSurfVar}}">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>
+            </button>
+          </div>
+        </sc-for>
+        <div style="padding-top: 8px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start">
+          <button aria-disabled="{{addDisabled}}" style="height: 48px; padding: 0 20px 0 16px; border-radius: 24px; border: 1px solid {{addBorder}}; color: {{addColor}}; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Ajouter un dossier
+          </button>
+          <sc-if value="{{addHint}}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 12px; line-height: 16px; color: {{t.onSurfVar}}">{{addHintText}}</span>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"state":{"editor":"enum","options":["connecte","parcours","absent","renouveler","aucun"],"default":"connecte"},"$preview":{"width":412,"height":915}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = (this.props.theme ?? 'dark') === 'dark';
+    const state = this.props.state ?? 'connecte';
+    const t = dark ? {
+      surface: '#0F1522', surfContLow: '#161D2A', surfCont: '#1B2230', surfContHigh: '#252D3A',
+      onSurface: '#DEE3EA', onSurfVar: '#BCC6D2', outline: '#8A94A2', outlineVar: '#3B4555',
+      primary: '#6FE3D0', onPrimary: '#00382F', primaryCont: '#005046', onPrimaryCont: '#8FF7E2',
+      tertiary: '#F2BF6B', onTertiary: '#3F2D00', tertCont: '#5C4300', onTertCont: '#FFDEA6',
+      unavail: '#8A94A2', disabledFg: 'rgba(222, 227, 234, 0.38)', disabledBorder: 'rgba(222, 227, 234, 0.12)'
+    } : {
+      surface: '#F5FAFA', surfContLow: '#EFF5F5', surfCont: '#E9EFEF', surfContHigh: '#E3E9E9',
+      onSurface: '#171D1E', onSurfVar: '#3F4949', outline: '#6F797A', outlineVar: '#BEC8C9',
+      primary: '#00695C', onPrimary: '#FFFFFF', primaryCont: '#9EF2E0', onPrimaryCont: '#00201B',
+      tertiary: '#7A5A1F', onTertiary: '#FFFFFF', tertCont: '#FFDEA6', onTertCont: '#271900',
+      unavail: '#6A7475', disabledFg: 'rgba(23, 29, 30, 0.38)', disabledBorder: 'rgba(23, 29, 30, 0.12)'
+    };
+    const connected = state === 'connecte' || state === 'parcours';
+    const absent = state === 'absent';
+    const renew = state === 'renouveler';
+    const off = absent || renew;
+    const folders = [
+      { path: 'Musique / Albums', count: '640 pistes' },
+      { path: 'Musique / Concerts', count: '172 pistes' }
+    ].map((f) => ({
+      ...f,
+      count: off ? f.count + ' · indisponibles' : (state === 'parcours' && f.path.indexOf('Concerts') > -1 ? 'Parcours en attente…' : f.count),
+      nameColor: off ? t.unavail : t.onSurface,
+      subColor: off ? t.unavail : t.onSurfVar,
+      iconColor: off ? t.unavail : t.onSurfVar,
+      removeLabel: 'Retirer le dossier ' + f.path
+    }));
+    let diskInfo = '1 To · 2 dossiers · 812 pistes';
+    if (absent) diskInfo = 'Vu pour la dernière fois le 21 octobre';
+    if (state === 'parcours') diskInfo = '1 To · 2 dossiers · parcours en cours';
+    let chipText = 'Connecté', chipBg = t.primaryCont, chipFg = t.onPrimaryCont, chipBorder = '0';
+    if (absent) { chipText = 'Non connecté'; chipBg = 'transparent'; chipFg = t.onSurfVar; chipBorder = '1px solid ' + t.outline; }
+    if (renew) { chipText = 'Accès à renouveler'; chipBg = t.tertCont; chipFg = t.onTertCont; }
+    return {
+      t, folders, diskInfo, chipText, chipBg, chipFg, chipBorder,
+      isAucun: state === 'aucun', hasDisk: state !== 'aucun',
+      isConnected: connected, isAbsent: absent, isRenew: renew, isScan: state === 'parcours',
+      iconBg: connected ? t.primaryCont : (renew ? t.tertCont : t.surfContHigh),
+      iconFg: connected ? t.onPrimaryCont : (renew ? t.onTertCont : t.onSurfVar),
+      addDisabled: off ? 'true' : 'false',
+      addBorder: off ? t.disabledBorder : t.outline,
+      addColor: off ? t.disabledFg : t.primary,
+      addHint: off,
+      addHintText: absent ? 'Branche le SSD pour ajouter un dossier.' : 'Renouvelle l’accès pour ajouter un dossier.'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Jetons de design</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1800px; min-height: 2100px; box-sizing: border-box; padding: 48px; background: #0F1522; color: #DEE3EA; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 32px">
+
+  <header style="display: flex; flex-direction: column; gap: 6px">
+    <h1 style="margin: 0; font-family: Manrope, sans-serif; font-size: 36px; line-height: 44px; font-weight: 800">Jetons de design → Flutter</h1>
+    <p style="margin: 0; font-size: 15px; line-height: 22px; color: #BCC6D2">Source unique : <code style="font-family: 'JetBrains Mono', monospace; color: #6FE3D0">lib/theme/tuneshell_tokens.dart</code> (fichier fourni). Les noms ci-dessous sont ceux du code.</p>
+  </header>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+    <section style="background: #161D2A; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; font-weight: 700">Couleurs · ColorScheme</h2>
+      <div style="display: grid; grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1fr); gap: 8px 12px; font-size: 13px; align-items: center">
+        <span style="font-weight: 600; color: #BCC6D2">Rôle</span><span style="font-weight: 600; color: #BCC6D2">Clair</span><span style="font-weight: 600; color: #BCC6D2">Sombre</span>
+        <sc-for list="{{scheme}}" as="c" hint-placeholder-count="24">
+          <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px">{{c.role}}</code>
+          <span style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 20px; border-radius: 6px; border: 1px solid #3B4555; background: {{c.l}}"></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #BCC6D2">{{c.l}}</span></span>
+          <span style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 20px; border-radius: 6px; border: 1px solid #3B4555; background: {{c.d}}"></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #BCC6D2">{{c.d}}</span></span>
+        </sc-for>
+      </div>
+    </section>
+
+    <div style="display: flex; flex-direction: column; gap: 32px">
+      <section style="background: #161D2A; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; font-weight: 700">Couleurs · extension <code style="font-family: 'JetBrains Mono', monospace; font-size: 16px; color: #6FE3D0">TsColors</code></h2>
+        <div style="display: grid; grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr); gap: 8px 12px; font-size: 13px; align-items: center">
+          <span style="font-weight: 600; color: #BCC6D2">Jeton</span><span style="font-weight: 600; color: #BCC6D2">Clair</span><span style="font-weight: 600; color: #BCC6D2">Sombre</span><span style="font-weight: 600; color: #BCC6D2">Usage</span>
+          <sc-for list="{{ext}}" as="c" hint-placeholder-count="6">
+            <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px">{{c.role}}</code>
+            <span style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 20px; border-radius: 6px; border: 1px solid #3B4555; background: {{c.l}}"></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #BCC6D2">{{c.l}}</span></span>
+            <span style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 20px; border-radius: 6px; border: 1px solid #3B4555; background: {{c.d}}"></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #BCC6D2">{{c.d}}</span></span>
+            <span style="font-size: 12px; color: #BCC6D2">{{c.use}}</span>
+          </sc-for>
+        </div>
+      </section>
+
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+        <section style="background: #161D2A; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+          <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 20px; font-weight: 700">Espacements <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6FE3D0">TsSpace</code></h2>
+          <sc-for list="{{space}}" as="s" hint-placeholder-count="7">
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13px"><code style="width: 56px; font-family: 'JetBrains Mono', monospace; font-size: 12px">{{s.n}}</code><span style="width: {{s.px}}; height: 12px; background: #6FE3D0; border-radius: 2px"></span><span style="color: #BCC6D2">{{s.v}}</span></div>
+          </sc-for>
+        </section>
+        <section style="background: #161D2A; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+          <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 20px; font-weight: 700">Rayons <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6FE3D0">TsRadius</code></h2>
+          <sc-for list="{{radius}}" as="r" hint-placeholder-count="6">
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13px"><span style="width: 32px; height: 24px; border: 2px solid #6FE3D0; border-radius: {{r.px}}; box-sizing: border-box"></span><code style="width: 52px; font-family: 'JetBrains Mono', monospace; font-size: 12px">{{r.n}}</code><span style="color: #BCC6D2">{{r.v}}</span></div>
+          </sc-for>
+        </section>
+        <section style="background: #161D2A; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+          <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 20px; font-weight: 700">Tailles <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6FE3D0">TsSize</code></h2>
+          <sc-for list="{{sizes}}" as="z" hint-placeholder-count="8">
+            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 13px"><code style="font-family: 'JetBrains Mono', monospace; font-size: 12px">{{z.n}}</code><span style="color: #BCC6D2; font-variant-numeric: tabular-nums">{{z.v}}</span></div>
+          </sc-for>
+        </section>
+      </div>
+
+      <section style="background: #161D2A; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; font-weight: 700">Typographie · TextTheme</h2>
+        <div style="display: grid; grid-template-columns: 150px 90px 60px 90px minmax(0, 1fr); gap: 8px 12px; font-size: 13px; align-items: baseline">
+          <span style="font-weight: 600; color: #BCC6D2">Rôle</span><span style="font-weight: 600; color: #BCC6D2">Famille</span><span style="font-weight: 600; color: #BCC6D2">Poids</span><span style="font-weight: 600; color: #BCC6D2">Taille / ligne</span><span style="font-weight: 600; color: #BCC6D2">Usage</span>
+          <sc-for list="{{type}}" as="y" hint-placeholder-count="10">
+            <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px">{{y.role}}</code><span>{{y.f}}</span><span style="font-variant-numeric: tabular-nums">{{y.w}}</span><span style="font-variant-numeric: tabular-nums">{{y.s}}</span><span style="color: #BCC6D2">{{y.use}}</span>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+    <section style="background: #161D2A; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; font-weight: 700">Composants → widgets</h2>
+      <div style="display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 10px 16px; font-size: 13px; line-height: 19px">
+        <sc-for list="{{widgets}}" as="w" hint-placeholder-count="8">
+          <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6FE3D0">{{w.n}}</code><span style="color: #BCC6D2">{{w.v}}</span>
+        </sc-for>
+      </div>
+    </section>
+    <section style="background: #161D2A; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: Manrope, sans-serif; font-size: 22px; font-weight: 700">Règles d'implémentation</h2>
+      <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 21px; color: #BCC6D2">
+        <li><strong style="color: #DEE3EA">Polices embarquées</strong> (assets/fonts, OFL). Ne pas laisser google_fonts les télécharger à l'exécution : ce serait un appel réseau, contraire à « sans télémétrie ».</li>
+        <li><strong style="color: #DEE3EA">Couleurs dynamiques en option</strong> : réglage « Couleurs du fond d'écran » (dynamic_color). Par défaut, le ColorScheme TuneShell. TsColors reste fixe dans les deux cas.</li>
+        <li><strong style="color: #DEE3EA">Bandeaux dans le flux</strong> : CustomScrollView → SliverToBoxAdapter(StatusBanner) puis SliverFixedExtentList(itemExtent: 64). Jamais d'Overlay.</li>
+        <li><strong style="color: #DEE3EA">Mise en page adaptative</strong> : largeur &lt; 600 → NavigationBar ; 600–839 → NavigationRail ; ≥ 840 → rail + panneau lecteur. Le paysage du téléphone (≈ 915 dp) tombe dans « étendu ».</li>
+        <li><strong style="color: #DEE3EA">Zones tactiles</strong> : MaterialTapTargetSize.padded partout, IconButton 48 minimum.</li>
+        <li><strong style="color: #DEE3EA">Texte agrandi</strong> : tester à 200 % ; les lignes de 64 passent alors à une hauteur variable (désactiver itemExtent au-delà de 1,3×).</li>
+      </ol>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1800,"height":2100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const scheme = [
+      ['primary', '#00695C', '#6FE3D0'], ['onPrimary', '#FFFFFF', '#00382F'],
+      ['primaryContainer', '#9EF2E0', '#005046'], ['onPrimaryContainer', '#00201B', '#8FF7E2'],
+      ['secondary', '#4A635F', '#B1CCC6'], ['onSecondary', '#FFFFFF', '#1C3531'],
+      ['secondaryContainer', '#CCE8E2', '#24464A'], ['onSecondaryContainer', '#051F1C', '#CCE8E2'],
+      ['tertiary', '#7A5A1F', '#F2BF6B'], ['onTertiary', '#FFFFFF', '#3F2D00'],
+      ['tertiaryContainer', '#FFDEA6', '#5C4300'], ['onTertiaryContainer', '#271900', '#FFDEA6'],
+      ['error', '#BA1A1A', '#FFB4AB'], ['onError', '#FFFFFF', '#690005'],
+      ['errorContainer', '#FFDAD6', '#93000A'], ['onErrorContainer', '#410002', '#FFDAD6'],
+      ['surface', '#F5FAFA', '#0F1522'], ['onSurface', '#171D1E', '#DEE3EA'],
+      ['onSurfaceVariant', '#3F4949', '#BCC6D2'],
+      ['surfaceContainerLowest', '#FFFFFF', '#0A0F19'], ['surfaceContainerLow', '#EFF5F5', '#161D2A'],
+      ['surfaceContainer', '#E9EFEF', '#1B2230'], ['surfaceContainerHigh', '#E3E9E9', '#252D3A'],
+      ['surfaceContainerHighest', '#DDE4E4', '#2F3745'],
+      ['outline', '#6F797A', '#8A94A2'], ['outlineVariant', '#BEC8C9', '#3B4555'],
+      ['inverseSurface', '#2B3132', '#DEE3EA'], ['onInverseSurface', '#ECF2F2', '#2B313D'],
+      ['inversePrimary', '#6FE3D0', '#00695C'], ['scrim', '#000000', '#000000']
+    ].map(([role, l, d]) => ({ role, l, d }));
+    const ext = [
+      ['unavailable', '#6A7475', '#8A94A2', 'Texte et icône des pistes d’un disque absent (≥ 4,6:1)'],
+      ['nowPlayingRow', '#DDF3EE', '#123036', 'Fond de la ligne en cours de lecture'],
+      ['coverPlaceholder', '#E3E9E9', '#252D3A', 'Tuile de pochette absente'],
+      ['brandMint', '#74FDD3', '#74FDD3', 'Logo, démarrage (jamais derrière du texte)'],
+      ['brandCyan', '#3DD6D9', '#3DD6D9', 'Logo, démarrage'],
+      ['brandNight', '#0D1528', '#0D1528', 'Fond de l’icône et du démarrage']
+    ].map(([role, l, d, use]) => ({ role, l, d, use }));
+    const space = [['xs', 4], ['s', 8], ['m', 12], ['l', 16], ['xl', 24], ['xxl', 32], ['xxxl', 48]].map(([n, v]) => ({ n, v: v + ' dp', px: v * 2 + 'px' }));
+    const radius = [['xs', '4', 'petits éléments'], ['s', '8', 'pochette 48'], ['m', '12', 'bandeaux, tuiles'], ['l', '16', 'cartes, mini-lecteur, grande pochette'], ['xl', '28', 'feuilles, bouton lecture'], ['full', '999', 'boutons, pastilles']].map(([n, v, u]) => ({ n, px: Math.min(Number(v), 12) + 'px', v: v + ' · ' + u }));
+    const sizes = [['touchTarget', '48'], ['trackRow', '64'], ['coverSmall', '48'], ['coverPanel', '96'], ['coverPlayer', '348'], ['miniPlayer', '64'], ['navBar', '80'], ['navRail', '80'], ['playButton', '80'], ['playerPanelWidth', '280'], ['screenMargin', '16']].map(([n, v]) => ({ n, v: v + ' dp' }));
+    const type = [
+      ['displaySmall', 'Manrope', '800', '36 / 44', 'Grands titres, accueil'],
+      ['headlineSmall', 'Manrope', '800', '28 / 36', 'Titre d’écran (« Pistes »)'],
+      ['titleLarge', 'Manrope', '700', '22 / 28', 'Barres d’app, sections, états vides'],
+      ['titleMedium', 'Inter', '500', '16 / 24', 'Titre de piste, nom de dossier'],
+      ['bodyLarge', 'Inter', '400', '16 / 24', 'Paragraphes (onboarding)'],
+      ['bodyMedium', 'Inter', '400', '14 / 20', 'Artiste, sous-titres, bandeaux'],
+      ['labelLarge', 'Inter', '600', '14 / 20', 'Boutons, pastilles'],
+      ['labelMedium', 'Inter', '500', '12 / 16', 'Durées, compteurs (chiffres tabulaires)'],
+      ['labelSmall', 'Inter', '600', '11 / 16', 'Surtitres en capitales'],
+      ['player.title', 'Manrope', '800', '24 / 32', 'Titre du lecteur plein écran (style dédié)']
+    ].map(([role, f, w, s, use]) => ({ role, f, w, s, use }));
+    const widgets = [
+      ['TrackTile', 'InkWell + Row (pas ListTile : hauteur fixe 64, contrôle des états). Paramètres : track, state, onTap, onLongPress.'],
+      ['DiskCard', 'Card.filled + Column ; enum DiskStatus { connected, scanning, absent, needsAccess } ; callbacks onRenew, onStop, onRemoveFolder.'],
+      ['ProgressBanner', 'Container (surfaceContainerLow, r12) + Text + LinearProgressIndicator(value: null pour indéterminé, minHeight: 4).'],
+      ['StatusBanner', 'enum BannerKind { error, warning, info } ; Semantics(liveRegion: true) ; action + fermeture.'],
+      ['MiniPlayer', 'Material (surfaceContainerHigh, r16) ; zone gauche → ouvre le lecteur (Hero sur la pochette).'],
+      ['PlayerScreen', 'Écran plein ; file d’attente en DraggableScrollableSheet ; Slider M3 pour la position.'],
+      ['ActionChip', 'ActionChip M3 + Badge(label) pour « 1 absent ».'],
+      ['Navigation', 'NavigationBar / NavigationRail selon la largeur (voir règle 4).']
+    ].map(([n, v]) => ({ n, v }));
+    return { scheme, ext, space, radius, sizes, type, widgets };
+  }
+}
+</script>
+</body>
+</html>

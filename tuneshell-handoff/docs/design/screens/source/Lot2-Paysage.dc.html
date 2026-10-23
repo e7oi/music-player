@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Sources indisponibles en paysage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1878px; height: 460px; display: flex; gap: 48px; font-family: Inter, system-ui, sans-serif; color: #1B2230">
+  <div style="width: 915px; display: flex; flex-direction: column; gap: 12px">
+    <span style="height: 33px; font-size: 18px; line-height: 33px; font-weight: 600">6e · Paysage, sombre : bandeau dans la colonne, liste visible</span>
+    <dc-import name="BibliothequePaysage" theme="dark" hint-size="915px,412px"></dc-import>
+  </div>
+  <div style="width: 915px; display: flex; flex-direction: column; gap: 12px">
+    <span style="height: 33px; font-size: 18px; line-height: 33px; font-weight: 600">6e · Paysage, clair</span>
+    <dc-import name="BibliothequePaysage" theme="light" hint-size="915px,412px"></dc-import>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1878,"height":460}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

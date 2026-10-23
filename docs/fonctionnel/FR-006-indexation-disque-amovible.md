@@ -52,5 +52,6 @@ MPL-037, 2026-10-22. `RemovableIndexer` (domaine), port `RemovableAudioSource`, 
 - Choisir de nouveau un dossier déjà coché et devenu vide ne libère pas son droit.
 - Le nom du disque est mis à jour à chaque ajout de dossier (exigence 4).
 - « Actualiser » relit aussi les pistes dont la lecture avait échoué (FR-007.3) ; le démarrage non.
-- Le parcours est un seul appel qui rend la liste entière.
-- **Non testé sur appareil** : sélecteur, UUID, droit persistant, curseur à l'éjection (HOWTO §13).
+- Les fichiers de playlist (`.m3u`, `.m3u8`, `.pls`, `.xspf`, `.wpl`, `.asx`) sont exclus du parcours : Android les annonce comme `audio/*` et le SSD réel en contenait 14 qui étaient indexés comme pistes (constaté sur le Pixel le 2026-10-23, corrigé).
+- Le parcours est un seul appel qui rend la liste entière. Mesuré sur le SSD réel : environ 5 000 fichiers en 10 s.
+- Testé sur le Pixel 10 Pro le 2026-10-23 (voir le bloc Livraison de MPL-037) : sélecteur, UUID déduit du dossier choisi, droit conservé après un arrêt forcé, disque absent puis retour, retrait d'un dossier, 4 952 pistes d'un SSD exFAT. **Non testé** : droit conservé après redémarrage du téléphone, curseur en erreur à l'éjection, actualisation avec ajout, suppression et modification de fichiers, accès à renouveler, fichiers ignorés (`._`, `.nomedia`).

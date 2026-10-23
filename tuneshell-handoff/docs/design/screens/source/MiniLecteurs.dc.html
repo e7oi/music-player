@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mini-lecteur — états</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1772px; height: 720px; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif">
+  <sc-for list="{{bands}}" as="b" hint-placeholder-count="2">
+    <div style="height: 360px; box-sizing: border-box; padding: 40px 46px; background: {{b.t.surface}}; color: {{b.t.onSurface}}; display: flex; flex-direction: column; gap: 24px">
+      <span style="font-size: 18px; font-weight: 600">{{b.title}}</span>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px">
+        <sc-for list="{{b.items}}" as="m" hint-placeholder-count="4">
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <span style="font-size: 14px; font-weight: 600; color: {{b.t.onSurfVar}}">{{m.label}}</span>
+            <div style="height: 64px; border-radius: 16px; background: {{b.t.surfContHigh}}; display: flex; align-items: center; gap: 4px; padding: 0 4px 0 8px; position: relative; overflow: hidden">
+              <button aria-label="Ouvrir le lecteur" style="flex: 1; min-width: 0; height: 64px; display: flex; align-items: center; gap: 12px; text-align: left">
+                <div style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 8px; background: {{m.coverBg}}; opacity: {{m.coverOp}}; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                  <sc-if value="{{m.hasCover}}" hint-placeholder-val="{{ true }}"><div style="width: 30px; height: 30px; border-radius: 50%; background: #E8C77E; transform: translate(6px, 8px)"></div></sc-if>
+                  <sc-if value="{{m.noCover}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{b.t.onSurfVar}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></sc-if>
+                </div>
+                <div style="min-width: 0; display: flex; flex-direction: column">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.title}}</span>
+                  <span style="font-size: 12px; line-height: 16px; color: {{m.subColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.sub}}</span>
+                </div>
+              </button>
+              <button aria-label="Piste précédente" style="width: 48px; height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="2.4" height="14" rx="1"/><path d="M19 5.8v12.4a.8.8 0 0 1-1.2.7L9 12.7a.8.8 0 0 1 0-1.4l8.8-6.2a.8.8 0 0 1 1.2.7z"/></svg></button>
+              <button aria-label="{{m.playLabel}}" style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 24px; background: {{b.t.primary}}; color: {{b.t.onPrimary}}; display: flex; align-items: center; justify-content: center">
+                <sc-if value="{{m.playing}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg></sc-if>
+                <sc-if value="{{m.paused}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8a1 1 0 0 0 1.5.9l10-6.4a1 1 0 0 0 0-1.7l-10-6.4A1 1 0 0 0 8 5.6z"/></svg></sc-if>
+              </button>
+              <button aria-label="Piste suivante" style="width: 48px; height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="16.6" y="5" width="2.4" height="14" rx="1"/><path d="M5 5.8v12.4a.8.8 0 0 0 1.2.7L15 12.7a.8.8 0 0 0 0-1.4L6.2 5.1A.8.8 0 0 0 5 5.8z"/></svg></button>
+              <div aria-hidden="true" style="position: absolute; left: 12px; right: 12px; bottom: 0; height: 2px; background: {{b.t.outlineVar}}"><div style="width: {{m.pos}}; height: 2px; background: {{b.t.primary}}"></div></div>
+            </div>
+            <span style="font-size: 12px; line-height: 16px; color: {{b.t.onSurfVar}}">{{m.note}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1772,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const themes = {
+      dark: { surface: '#0F1522', surfContHigh: '#252D3A', onSurface: '#DEE3EA', onSurfVar: '#BCC6D2', outlineVar: '#3B4555', primary: '#6FE3D0', onPrimary: '#00382F', tertiary: '#F2BF6B' },
+      light: { surface: '#F5FAFA', surfContHigh: '#E3E9E9', onSurface: '#171D1E', onSurfVar: '#3F4949', outlineVar: '#BEC8C9', primary: '#00695C', onPrimary: '#FFFFFF', tertiary: '#7A5A1F' }
+    };
+    const make = (t) => [
+      { label: 'En lecture', title: 'Aube sur le fleuve', sub: 'Les Brumes', cover: true, playing: true, pos: '38%', note: 'Toucher la zone gauche ouvre le lecteur. 3 boutons de 48 dp.' },
+      { label: 'En pause', title: 'Aube sur le fleuve', sub: 'Les Brumes', cover: true, playing: false, pos: '38%', note: 'Le bouton bascule lecture / pause, même place.' },
+      { label: 'Sans pochette, sans étiquettes', title: '01 - piste sans titre.flac', sub: 'Artiste inconnu', cover: false, playing: true, pos: '12%', note: 'Nom de fichier tronqué avec points de suspension.' },
+      { label: 'Source perdue', title: 'Auroral', sub: 'Arrêt : SSD débranché', cover: true, off: true, playing: false, pos: '64%', note: 'Lecture arrêtée, sous-titre en écaille (texte + couleur).' }
+    ].map((m) => ({
+      ...m, hasCover: m.cover, noCover: !m.cover, paused: !m.playing,
+      playLabel: m.playing ? 'Pause' : 'Lecture',
+      coverBg: m.cover ? (m.off ? '#5B4B73' : '#3E6B73') : t.surfContHigh,
+      coverOp: m.off ? 0.5 : 1,
+      subColor: m.off ? t.tertiary : t.onSurfVar
+    }));
+    return { bands: [
+      { title: 'Mini-lecteur — sombre', t: themes.dark, items: make(themes.dark) },
+      { title: 'Mini-lecteur — clair', t: themes.light, items: make(themes.light) }
+    ] };
+  }
+}
+</script>
+</body>
+</html>

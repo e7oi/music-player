@@ -28,6 +28,7 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
         const val NAME = "net.trtl3.tuneshell/removable_storage"
         const val AUTHORITY = "com.android.externalstorage.documents"
         private const val PICK_REQUEST = 4202
+        private val PLAYLIST_EXTENSIONS = setOf("m3u", "m3u8", "pls", "xspf", "wpl", "asx")
         private val AUDIO_EXTENSIONS = setOf(
             "mp3", "flac", "m4a", "aac", "ogg", "opus", "wav", "wma",
         )
@@ -310,8 +311,12 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
     }
 
     private fun isAudio(entry: Entry): Boolean {
+        val extension = entry.name.substringAfterLast('.', "").lowercase()
+        // Playlists are announced as audio/*: found on the real SSD, they
+        // are not tracks.
+        if (extension in PLAYLIST_EXTENSIONS) return false
         if (entry.mime?.startsWith("audio/") == true) return true
-        return entry.name.substringAfterLast('.', "").lowercase() in AUDIO_EXTENSIONS
+        return extension in AUDIO_EXTENSIONS
     }
 
     private fun children(tree: Uri, parentId: String): List<Entry> {

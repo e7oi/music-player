@@ -47,7 +47,7 @@ MPL-037, 2026-10-22. Canal `net.trtl3.tuneshell/removable_storage` (`RemovableSt
 - Pas de colonne `disk_folders.tree_uri` : les droits restent chez Android et se retrouvent par `persistedUriPermissions` (aucune URI dans la base, D27).
 - Les pistes du stockage interne existantes passent « en attente » (et non « lues »), pour lire leurs pochettes (ADR-009).
 - Le parcours rend la liste en un seul appel, pas des lots.
-- L'UUID vient de l'identifiant de document du dossier choisi ; `StorageManager` sert au nom du volume et à la liste des volumes montés, avec un repli par requête sur les dossiers accordés. **L'UUID n'a pas été établi sur le SSD réel** (HOWTO §13, étape 0).
+- L'UUID vient de l'identifiant de document du dossier choisi ; `StorageManager` sert au nom du volume et à la liste des volumes montés, avec un repli par requête sur les dossiers accordés. L'UUID a été établi sur le SSD réel le 2026-10-23 (Samsung T7, exFAT) : `sm list-volumes` le montre et il se déduit de l'identifiant du dossier choisi, comme prévu.
 - `VolumeEvents` gagne `refresh()`, appelé au démarrage et au retour au premier plan ; il annonce `VolumeMounted` et `VolumeRemoved`.
 - Le parcours et les clients de l'identifiant (`grantedFolders`, `mountedVolumes`) ont des threads différents : l'état des disques se met à jour pendant un long parcours.
 - Une erreur du fournisseur de documents dans le curseur est un échec du parcours.
