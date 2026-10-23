@@ -49,8 +49,19 @@ class $DisksTable extends Disks with TableInfo<$DisksTable, DiskRow> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _markIndexMeta = const VerificationMeta(
+    'markIndex',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, key, label, kind];
+  late final GeneratedColumn<int> markIndex = GeneratedColumn<int>(
+    'mark_index',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, key, label, kind, markIndex];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -90,6 +101,12 @@ class $DisksTable extends Disks with TableInfo<$DisksTable, DiskRow> {
     } else if (isInserting) {
       context.missing(_kindMeta);
     }
+    if (data.containsKey('mark_index')) {
+      context.handle(
+        _markIndexMeta,
+        markIndex.isAcceptableOrUnknown(data['mark_index']!, _markIndexMeta),
+      );
+    }
     return context;
   }
 
@@ -115,6 +132,10 @@ class $DisksTable extends Disks with TableInfo<$DisksTable, DiskRow> {
         DriftSqlType.int,
         data['${effectivePrefix}kind'],
       )!,
+      markIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}mark_index'],
+      ),
     );
   }
 
@@ -134,11 +155,16 @@ class DiskRow extends DataClass implements Insertable<DiskRow> {
 
   /// `DiskKind.index`.
   final int kind;
+
+  /// Source mark of a removable disk (ADR-012); null for the internal
+  /// storage. Unique through an index: SQLite accepts several nulls.
+  final int? markIndex;
   const DiskRow({
     required this.id,
     required this.key,
     required this.label,
     required this.kind,
+    this.markIndex,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -147,6 +173,9 @@ class DiskRow extends DataClass implements Insertable<DiskRow> {
     map['key'] = Variable<String>(key);
     map['label'] = Variable<String>(label);
     map['kind'] = Variable<int>(kind);
+    if (!nullToAbsent || markIndex != null) {
+      map['mark_index'] = Variable<int>(markIndex);
+    }
     return map;
   }
 
@@ -156,6 +185,9 @@ class DiskRow extends DataClass implements Insertable<DiskRow> {
       key: Value(key),
       label: Value(label),
       kind: Value(kind),
+      markIndex: markIndex == null && nullToAbsent
+          ? const Value.absent()
+          : Value(markIndex),
     );
   }
 
@@ -169,6 +201,7 @@ class DiskRow extends DataClass implements Insertable<DiskRow> {
       key: serializer.fromJson<String>(json['key']),
       label: serializer.fromJson<String>(json['label']),
       kind: serializer.fromJson<int>(json['kind']),
+      markIndex: serializer.fromJson<int?>(json['markIndex']),
     );
   }
   @override
@@ -179,14 +212,22 @@ class DiskRow extends DataClass implements Insertable<DiskRow> {
       'key': serializer.toJson<String>(key),
       'label': serializer.toJson<String>(label),
       'kind': serializer.toJson<int>(kind),
+      'markIndex': serializer.toJson<int?>(markIndex),
     };
   }
 
-  DiskRow copyWith({int? id, String? key, String? label, int? kind}) => DiskRow(
+  DiskRow copyWith({
+    int? id,
+    String? key,
+    String? label,
+    int? kind,
+    Value<int?> markIndex = const Value.absent(),
+  }) => DiskRow(
     id: id ?? this.id,
     key: key ?? this.key,
     label: label ?? this.label,
     kind: kind ?? this.kind,
+    markIndex: markIndex.present ? markIndex.value : this.markIndex,
   );
   DiskRow copyWithCompanion(DisksCompanion data) {
     return DiskRow(
@@ -194,6 +235,7 @@ class DiskRow extends DataClass implements Insertable<DiskRow> {
       key: data.key.present ? data.key.value : this.key,
       label: data.label.present ? data.label.value : this.label,
       kind: data.kind.present ? data.kind.value : this.kind,
+      markIndex: data.markIndex.present ? data.markIndex.value : this.markIndex,
     );
   }
 
@@ -203,13 +245,14 @@ class DiskRow extends DataClass implements Insertable<DiskRow> {
           ..write('id: $id, ')
           ..write('key: $key, ')
           ..write('label: $label, ')
-          ..write('kind: $kind')
+          ..write('kind: $kind, ')
+          ..write('markIndex: $markIndex')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, key, label, kind);
+  int get hashCode => Object.hash(id, key, label, kind, markIndex);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -217,7 +260,8 @@ class DiskRow extends DataClass implements Insertable<DiskRow> {
           other.id == this.id &&
           other.key == this.key &&
           other.label == this.label &&
-          other.kind == this.kind);
+          other.kind == this.kind &&
+          other.markIndex == this.markIndex);
 }
 
 class DisksCompanion extends UpdateCompanion<DiskRow> {
@@ -225,17 +269,20 @@ class DisksCompanion extends UpdateCompanion<DiskRow> {
   final Value<String> key;
   final Value<String> label;
   final Value<int> kind;
+  final Value<int?> markIndex;
   const DisksCompanion({
     this.id = const Value.absent(),
     this.key = const Value.absent(),
     this.label = const Value.absent(),
     this.kind = const Value.absent(),
+    this.markIndex = const Value.absent(),
   });
   DisksCompanion.insert({
     this.id = const Value.absent(),
     required String key,
     required String label,
     required int kind,
+    this.markIndex = const Value.absent(),
   }) : key = Value(key),
        label = Value(label),
        kind = Value(kind);
@@ -244,12 +291,14 @@ class DisksCompanion extends UpdateCompanion<DiskRow> {
     Expression<String>? key,
     Expression<String>? label,
     Expression<int>? kind,
+    Expression<int>? markIndex,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (key != null) 'key': key,
       if (label != null) 'label': label,
       if (kind != null) 'kind': kind,
+      if (markIndex != null) 'mark_index': markIndex,
     });
   }
 
@@ -258,12 +307,14 @@ class DisksCompanion extends UpdateCompanion<DiskRow> {
     Value<String>? key,
     Value<String>? label,
     Value<int>? kind,
+    Value<int?>? markIndex,
   }) {
     return DisksCompanion(
       id: id ?? this.id,
       key: key ?? this.key,
       label: label ?? this.label,
       kind: kind ?? this.kind,
+      markIndex: markIndex ?? this.markIndex,
     );
   }
 
@@ -282,6 +333,9 @@ class DisksCompanion extends UpdateCompanion<DiskRow> {
     if (kind.present) {
       map['kind'] = Variable<int>(kind.value);
     }
+    if (markIndex.present) {
+      map['mark_index'] = Variable<int>(markIndex.value);
+    }
     return map;
   }
 
@@ -291,7 +345,8 @@ class DisksCompanion extends UpdateCompanion<DiskRow> {
           ..write('id: $id, ')
           ..write('key: $key, ')
           ..write('label: $label, ')
-          ..write('kind: $kind')
+          ..write('kind: $kind, ')
+          ..write('markIndex: $markIndex')
           ..write(')'))
         .toString();
   }
@@ -1483,6 +1538,10 @@ abstract class _$LibraryDatabase extends GeneratedDatabase {
   late final $DisksTable disks = $DisksTable(this);
   late final $DiskFoldersTable diskFolders = $DiskFoldersTable(this);
   late final $TracksTable tracks = $TracksTable(this);
+  late final Index disksMarkIndex = Index(
+    'disks_mark_index',
+    'CREATE UNIQUE INDEX disks_mark_index ON disks (mark_index)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1491,6 +1550,7 @@ abstract class _$LibraryDatabase extends GeneratedDatabase {
     disks,
     diskFolders,
     tracks,
+    disksMarkIndex,
   ];
 }
 
@@ -1499,12 +1559,14 @@ typedef $$DisksTableCreateCompanionBuilder = DisksCompanion Function({
   required String key,
   required String label,
   required int kind,
+  Value<int?> markIndex,
 });
 typedef $$DisksTableUpdateCompanionBuilder = DisksCompanion Function({
   Value<int> id,
   Value<String> key,
   Value<String> label,
   Value<int> kind,
+  Value<int?> markIndex,
 });
 
 final class $$DisksTableReferences
@@ -1575,6 +1637,11 @@ class $$DisksTableFilterComposer
 
   ColumnFilters<int> get kind => $composableBuilder(
     column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get markIndex => $composableBuilder(
+    column: $table.markIndex,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1657,6 +1724,11 @@ class $$DisksTableOrderingComposer
     column: $table.kind,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get markIndex => $composableBuilder(
+    column: $table.markIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$DisksTableAnnotationComposer
@@ -1679,6 +1751,9 @@ class $$DisksTableAnnotationComposer
 
   GeneratedColumn<int> get kind =>
       $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<int> get markIndex =>
+      $composableBuilder(column: $table.markIndex, builder: (column) => column);
 
   Expression<T> diskFoldersRefs<T extends Object>(
     Expression<T> Function($$DiskFoldersTableAnnotationComposer a) f,
@@ -1757,23 +1832,33 @@ class $$DisksTableTableManager
               $$DisksTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$DisksTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> key = const Value.absent(),
-            Value<String> label = const Value.absent(),
-            Value<int> kind = const Value.absent(),
-          }) => DisksCompanion(id: id, key: key, label: label, kind: kind),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> key = const Value.absent(),
+                Value<String> label = const Value.absent(),
+                Value<int> kind = const Value.absent(),
+                Value<int?> markIndex = const Value.absent(),
+              }) => DisksCompanion(
+                id: id,
+                key: key,
+                label: label,
+                kind: kind,
+                markIndex: markIndex,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String key,
                 required String label,
                 required int kind,
+                Value<int?> markIndex = const Value.absent(),
               }) => DisksCompanion.insert(
                 id: id,
                 key: key,
                 label: label,
                 kind: kind,
+                markIndex: markIndex,
               ),
           withReferenceMapper: (p0) => p0
               .map(

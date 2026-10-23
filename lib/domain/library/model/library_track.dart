@@ -11,7 +11,12 @@ enum DiskKind { internal, removable }
 
 @immutable
 final class Disk {
-  const new({required this.id, required this.label, required this.kind});
+  const new({
+    required this.id,
+    required this.label,
+    required this.kind,
+    this.markIndex,
+  });
 
   /// The disk of the internal storage, named "Local" in the interface (FR-003).
   static const internal = Disk(
@@ -23,6 +28,11 @@ final class Disk {
   final DiskId id;
   final String label;
   final DiskKind kind;
+
+  /// Index of the source mark of a removable disk (FR-012, ADR-012); null for
+  /// the internal storage, whose mark is fixed. Given when the disk is
+  /// registered, never changed after.
+  final int? markIndex;
 }
 
 /// What an index reads about one audio file, before it is stored.

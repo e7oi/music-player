@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:tuneshell/data/db/library_database.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
+import 'package:tuneshell/domain/library/model/mark_index.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/library/ports/library_repository.dart';
 
@@ -16,17 +17,35 @@ class DriftLibraryRepository implements LibraryRepository {
     return row == null ? null : _toDisk(row);
   }
 
+  /// @implements FR-012.2: a new removable disk gets the first free mark
+  /// index, in the same transaction that registers it.
   @override
-  Future<void> ensureDisk(Disk disk) => _db
-      .into(_db.disks)
-      .insert(
-        DisksCompanion.insert(
-          key: disk.id.value,
-          label: disk.label,
-          kind: disk.kind.index,
-        ),
-        mode: InsertMode.insertOrIgnore,
-      );
+  Future<void> ensureDisk(Disk disk) => _db.transaction(() async {
+    if (await _diskRow(disk.id) != null) return;
+    final mark = disk.kind == DiskKind.removable
+        ? nextFreeMarkIndex(await _usedMarkIndexes())
+        : null;
+    await _db
+        .into(_db.disks)
+        .insert(
+          DisksCompanion.insert(
+            key: disk.id.value,
+            label: disk.label,
+            kind: disk.kind.index,
+            markIndex: Value(mark),
+          ),
+        );
+  });
+
+  Future<List<int>> _usedMarkIndexes() async => [
+    for (final row in await _db.select(_db.disks).get()) ?row.markIndex,
+  ];
+
+  @override
+  Stream<List<Disk>> watchDisks() => _db
+      .select(_db.disks)
+      .watch()
+      .map((rows) => [for (final row in rows) _toDisk(row)]);
 
   @override
   Future<Set<String>> chosenFolders(DiskId disk) async {
@@ -140,6 +159,7 @@ class DriftLibraryRepository implements LibraryRepository {
     id: DiskId(row.key),
     label: row.label,
     kind: DiskKind.values[row.kind],
+    markIndex: row.markIndex,
   );
 
   static TracksCompanion _companion(int diskId, TrackInfo info, DateTime now) =>
