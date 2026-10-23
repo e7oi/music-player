@@ -32,6 +32,12 @@ void main() {
   LibraryController controller() =>
       container.read(libraryControllerProvider.notifier);
 
+  bool cancelable() => switch (state()) {
+    LibraryFolderChoice(:final cancelable) => cancelable,
+    LibraryLoadFailed(:final cancelable) => cancelable,
+    _ => false,
+  };
+
   setUp(() {
     repository = FakeLibraryRepository();
     source = FakeInternalAudioSource()
@@ -282,13 +288,13 @@ void main() {
       await controller().start();
       await controller().confirmFolders({'Music'});
       await controller().openFolderChoice();
-      expect(controller().canCancelFolderChoice, isTrue);
+      expect(cancelable(), isTrue);
 
       controller().cancelFolderChoice();
 
       expect(state(), isA<LibraryReady>());
       expect((state() as LibraryReady).hasFolders, isTrue);
-      expect(controller().canCancelFolderChoice, isFalse);
+      expect(cancelable(), isFalse);
       expect(repository.tracks, hasLength(2));
     });
 
@@ -297,7 +303,7 @@ void main() {
       await controller().start();
 
       expect(state(), isA<LibraryFolderChoice>());
-      expect(controller().canCancelFolderChoice, isFalse);
+      expect(cancelable(), isFalse);
       controller().cancelFolderChoice();
       expect(state(), isA<LibraryFolderChoice>());
     });
@@ -310,7 +316,7 @@ void main() {
       await controller().confirmFolders({'Music', 'Ringtones'});
 
       expect(state(), isA<LibraryReady>());
-      expect(controller().canCancelFolderChoice, isFalse);
+      expect(cancelable(), isFalse);
     });
 
     /// @verifies UC-001

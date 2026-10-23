@@ -26,19 +26,30 @@ final class LibraryPermissionNeeded extends LibraryViewState {
 /// The folders of the phone could not be read; [LibraryController.start]
 /// retries.
 final class LibraryLoadFailed extends LibraryViewState {
-  const new({this.whileChoosingFolders = false});
+  const new({this.whileChoosingFolders = false, this.cancelable = false});
 
   /// Retry reopens the folder choice rather than restarting.
   final bool whileChoosingFolders;
+
+  /// The choice was opened from the library: Back returns to it.
+  final bool cancelable;
 }
 
 /// FR-003: the user picks the folders to index.
 @immutable
 final class LibraryFolderChoice extends LibraryViewState {
-  const new({required this.folders, required this.selected});
+  const new({
+    required this.folders,
+    required this.selected,
+    this.cancelable = false,
+  });
 
   final List<FolderSummary> folders;
   final Set<String> selected;
+
+  /// Opened from the library, so that Back returns to it; false on first
+  /// launch, when a choice is required (FR-003.3).
+  final bool cancelable;
 }
 
 final class LibraryReady extends LibraryViewState {
@@ -131,13 +142,18 @@ class LibraryController extends Notifier<LibraryViewState> {
     if (current is LibraryReady && current.indexing) return;
     // Remembered so that the user can leave the choice unchanged.
     if (current is LibraryReady) _beforeChoice = current;
+    final cancelable = _beforeChoice != null;
     try {
       state = LibraryFolderChoice(
         folders: await _indexer.availableFolders(),
         selected: await _indexer.chosenFolders(),
+        cancelable: cancelable,
       );
     } on Exception {
-      state = const LibraryLoadFailed(whileChoosingFolders: true);
+      state = LibraryLoadFailed(
+        whileChoosingFolders: true,
+        cancelable: cancelable,
+      );
     }
   }
 
@@ -145,20 +161,16 @@ class LibraryController extends Notifier<LibraryViewState> {
   /// a choice is required (FR-003.3).
   LibraryReady? _beforeChoice;
 
-  /// True while the folder choice was opened from the library: a Back
-  /// button and the system Back gesture then return to the list.
-  bool get canCancelFolderChoice {
-    final current = state;
-    final choosing =
-        current is LibraryFolderChoice ||
-        (current is LibraryLoadFailed && current.whileChoosingFolders);
-    return choosing && _beforeChoice != null;
-  }
-
   /// Leaves the folder choice without changing it (FR-003.4).
   void cancelFolderChoice() {
     final before = _beforeChoice;
-    if (before == null || !canCancelFolderChoice) return;
+    final current = state;
+    final cancelable = switch (current) {
+      LibraryFolderChoice(:final cancelable) => cancelable,
+      LibraryLoadFailed(:final cancelable) => cancelable,
+      _ => false,
+    };
+    if (before == null || !cancelable) return;
     _beforeChoice = null;
     state = before;
   }

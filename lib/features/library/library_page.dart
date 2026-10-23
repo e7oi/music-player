@@ -60,7 +60,11 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
       if (notice != null) _showNotice(context, notice);
     });
     final ready = state is LibraryReady;
-    final cancelable = _controller.canCancelFolderChoice;
+    final cancelable = switch (state) {
+      LibraryFolderChoice(:final cancelable) => cancelable,
+      LibraryLoadFailed(:final cancelable) => cancelable,
+      _ => false,
+    };
     // FR-003.4: Back leaves the folder choice before it leaves the app.
     return PopScope(
       canPop: !cancelable,
