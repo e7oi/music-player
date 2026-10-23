@@ -273,8 +273,8 @@ Pour le test à 10 000 pistes, copier chacun des 200 fichiers 50 fois, sous des 
 
 **Mesures à consigner pendant le test (ADR-008, ADR-009).** Elles n'ont pas été faites avant la livraison de MPL-037 : le code suppose que l'UUID se déduit du dossier choisi et que 2 lectures en parallèle conviennent.
 
-0. **UUID du volume :** avec le SSD branché, `adb shell sm list-volumes all` donne le volume public et son UUID (ne pas le consigner dans le dépôt, D27). Après l'étape 1, vérifier que le disque s'affiche avec le nom du volume, qu'il passe « Non connecté » quand on le débranche, et qu'une piste se lit ; si le SSD ne se laisse pas identifier, arrêter et revenir à `/cadrer` (ADR-008).
-0b. **Débit des tags :** noter le temps de lecture des tags de 1 000 pistes avec 1, 2 et 4 lectures en parallèle (`parallelism` de `TagIndexer`, changé le temps de la mesure sur un build de mesure), puis l'effet sur une lecture en cours. La plus petite valeur qui tient le débit visé devient la limite de BR-006.4 ; si ce n'est pas 2, changer la valeur par défaut. Consigner chiffres et choix dans ADR-009.
+- **Étape 0, UUID du volume :** avec le SSD branché, `adb shell sm list-volumes all` donne le volume public et son UUID (ne pas le consigner dans le dépôt, D27). Après l'étape 1, vérifier que le disque s'affiche avec le nom du volume, qu'il passe « Non connecté » quand on le débranche, et qu'une piste se lit ; si le SSD ne se laisse pas identifier, arrêter et revenir à `/cadrer` (ADR-008).
+- **Étape 0b, débit des tags :** noter le temps de lecture des tags de 1 000 pistes avec 1, 2 et 4 lectures en parallèle (`parallelism` de `TagIndexer`, changé le temps de la mesure sur un build de mesure), puis l'effet sur une lecture en cours. La plus petite valeur qui tient le débit visé devient la limite de BR-006.4 ; si ce n'est pas 2, changer la valeur par défaut. Consigner chiffres et choix dans ADR-009.
 
 **Étapes.**
 
