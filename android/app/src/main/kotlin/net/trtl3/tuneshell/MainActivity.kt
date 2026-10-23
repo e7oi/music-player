@@ -1,5 +1,6 @@
 package net.trtl3.tuneshell
 
+import android.content.Intent
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 
@@ -15,16 +16,21 @@ class MainActivity : AudioServiceActivity() {
     private val mediaStore: MediaStoreChannel
         get() = (application as TuneShellApplication).mediaStore
 
+    private val removableStorage: RemovableStorageChannel
+        get() = (application as TuneShellApplication).removableStorage
+
     // Never, even when an intent asks for it: the process keeps one engine.
     override fun shouldDestroyEngineWithHost(): Boolean = false
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         mediaStore.attach(this)
+        removableStorage.attach(this)
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
         mediaStore.detach(this, isChangingConfigurations)
+        removableStorage.detach(this, isChangingConfigurations)
         super.cleanUpFlutterEngine(flutterEngine)
     }
 
@@ -35,5 +41,11 @@ class MainActivity : AudioServiceActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         mediaStore.onRequestPermissionsResult(this, requestCode)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        removableStorage.onActivityResult(requestCode, resultCode, data)
     }
 }
