@@ -1,6 +1,6 @@
 # FR-014 — Accueil et accès à la musique
 
-**Statut :** Brouillon · **Créée le :** 2026-10-23 · **Ticket :** MPL-044 · **Lié :** UC-006, FR-004, FR-003, FR-011, BR-007 · **Source :** `docs/design/HANDOFF.md` §5 (écran 1, états 1a à 1e), `Onboarding.dc.html` · **Révise (si validée) :** FR-004, exigences 1, 3 et 4 (voir « À valider »)
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-044 · **Lié :** UC-006, FR-004, FR-003, FR-011, BR-007 · **Source :** `docs/design/HANDOFF.md` §5 (écran 1, états 1a à 1e), `Onboarding.dc.html` · **Révise (si validée) :** FR-004, exigences 1, 3 et 4 (voir « À valider »)
 
 ## Besoin
 

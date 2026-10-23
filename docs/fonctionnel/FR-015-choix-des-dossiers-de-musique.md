@@ -1,6 +1,6 @@
 # FR-015 — Choix des dossiers de musique
 
-**Statut :** Brouillon · **Créée le :** 2026-10-23 · **Ticket :** MPL-044 · **Lié :** UC-006, FR-003, FR-006, FR-011, FR-014, BR-007, BR-008 · **Source :** `docs/design/HANDOFF.md` §5 (écran 2, états 2a à 2e), `Dossiers.dc.html` · **Reprend :** FR-003, exigences 2 à 4 (présentation seulement)
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-044 · **Lié :** UC-006, FR-003, FR-006, FR-011, FR-014, BR-007, BR-008 · **Source :** `docs/design/HANDOFF.md` §5 (écran 2, états 2a à 2e), `Dossiers.dc.html` · **Reprend :** FR-003, exigences 2 à 4 (présentation seulement)
 
 ## Besoin
 

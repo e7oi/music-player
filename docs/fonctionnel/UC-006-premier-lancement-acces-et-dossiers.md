@@ -1,6 +1,6 @@
 # UC-006 — Premier lancement : accueil, accès à la musique et choix des dossiers
 
-**Statut :** Brouillon · **Créé le :** 2026-10-23 · **Ticket :** MPL-044 · **Décisions :** D23, D25 · **Lié :** UC-001, FR-003, FR-004, FR-014, FR-015, FR-011, BR-007 · **Source :** `docs/design/HANDOFF.md` §5 (écrans 1 et 2), `Onboarding.dc.html`, `Dossiers.dc.html`
+**Statut :** Active (validée le 2026-10-23) · **Créé le :** 2026-10-23 · **Ticket :** MPL-044 · **Décisions :** D23, D25 · **Lié :** UC-001, FR-003, FR-004, FR-014, FR-015, FR-011, BR-007 · **Source :** `docs/design/HANDOFF.md` §5 (écrans 1 et 2), `Onboarding.dc.html`, `Dossiers.dc.html`
 
 ## Acteur et but
 

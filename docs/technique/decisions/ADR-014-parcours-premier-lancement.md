@@ -1,6 +1,6 @@
 # ADR-014 — Parcours du premier lancement : états, demande d'accès et écran des dossiers
 
-**Statut :** Brouillon · **Date :** 2026-10-23 · **Ticket :** MPL-044 · **Décisions :** D23, D25 · **Fiches :** UC-006, FR-014, FR-015, FR-004, FR-003 · **Complète :** ADR-005, ADR-010
+**Statut :** Active (validée le 2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-044 · **Décisions :** D23, D25 · **Fiches :** UC-006, FR-014, FR-015, FR-004, FR-003 · **Complète :** ADR-005, ADR-010
 
 ## Contexte
 

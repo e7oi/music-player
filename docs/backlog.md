@@ -13,7 +13,7 @@ Préfixe : MPL · Prochaine clé : MPL-051 · Dernière MAJ : 2026-10-23
 | MPL-010 | Bug | P2 | Avertissements de décodage `media_kit` sans effet audible constaté : FLAC avec étiquettes ID3 ; MP3 avec données non-MPEG après la dernière trame (MP3 A, MP3 B ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.5) — (origine des octets et fréquence dans la bibliothèque non établies ; pas de changement de code) | À faire | — | — |
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
-| MPL-044 | Récit | P1 | Design lot 1 — Accès et dossiers : accueil en deux étapes, demande d'accès au toucher d'un bouton (plus au démarrage), refus simple et définitif, « Choisir un dossier à la place », écran des dossiers de musique refait (résumé, « Continuer », états vides, chargement et erreur) selon les maquettes 1a–1e et 2a–2e de `docs/design/HANDOFF.md` ; révise FR-004 (demande d'accès) et la présentation de FR-003. Cadré le 2026-10-23, fiches en `Brouillon` | À faire | MPL-001 | — |
+| MPL-044 | Récit | P1 | Design lot 1 — Accès et dossiers : accueil en deux étapes, demande d'accès au toucher d'un bouton (plus au démarrage), refus simple et définitif, « Choisir un dossier à la place », écran des dossiers de musique refait (résumé, « Continuer », états vides, chargement et erreur) selon les maquettes 1a–1e et 2a–2e de `docs/design/HANDOFF.md` ; révise FR-004 (demande d'accès) et la présentation de FR-003. Cadré le 2026-10-23, fiches `Active` le 2026-10-23 | En cours | MPL-001 | — |
 | MPL-046 | Récit | P1 | Design lot 3 — Disques amovibles : écran 4 refait (4a–4e), repère de source modifiable, détection du branchement en direct, parcours dans un service au premier plan avec notification et « Arrêter » ; recoupe MPL-035 et MPL-038. À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
 | MPL-047 | Récit | P1 | Design lot 4 — Lecture : mini-lecteur, lecteur plein écran, file d'attente (feuille), pistes illisibles (5d, 6d) ; prolonge MPL-036. À cadrer après MPL-016 | À faire | MPL-001 | — |
 | MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : albums, artistes (regroupés par artiste de l'album), réglages persistés (thème, Material You par `dynamic_color`, index à gauche), paysage avec panneau lecteur (6e). À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
@@ -403,9 +403,9 @@ Fonctionnalité: Premier lancement selon le design
 
 **Test appareil (Pixel, release).** À écrire dans `HOWTO.md` §16 à la livraison : première installation (effacer les données de l'application ou désinstaller), refus simple, refus définitif, retour des réglages, « Choisir un dossier à la place » avec le SSD, « Pas maintenant », dossiers (cases, résumé, aucun dossier coché), clair et sombre, paysage, TalkBack, texte à 200 %.
 
-**Fiches liées.** UC-006, FR-014, FR-015 ; ADR-014 (toutes `Brouillon`). Révisent FR-003 (exigence 3) et FR-004 (exigences 1, 3 et 4), qui restent `Active`. Utilisent UC-001, UC-003, FR-006, FR-011, BR-004, BR-007 et ADR-005, ADR-010 (`Active`).
+**Fiches liées.** UC-006, FR-014, FR-015 ; ADR-014 (toutes `Active`, validées par le propriétaire le 2026-10-23). Révisent FR-003 (exigence 3) et FR-004 (exigences 1, 3 et 4), qui restent `Active`. Utilisent UC-001, UC-003, FR-006, FR-011, BR-004, BR-007 et ADR-005, ADR-010 (`Active`).
 
-**À valider (PO).**
+**À valider (PO).** Tous les points ci-dessous ont été validés par le propriétaire le 2026-10-23, sans modification.
 - FR-004.1 révisée : l'accès est demandé au toucher de « Autoriser l'accès », plus au démarrage.
 - Accueil déduit de « accès jamais demandé » : il revient à chaque lancement tant que l'accès n'a pas été demandé (après « Pas maintenant » par exemple).
 - « Choisir un dossier à la place » et « Ajouter un dossier » : disques amovibles seulement (D25) ; texte de la note ajusté.
