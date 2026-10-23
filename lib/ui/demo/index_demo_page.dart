@@ -9,9 +9,12 @@ import 'package:tuneshell/ui/widgets/track_tile.dart';
 /// A fake list of 5,000 tracks with the alphabet index and the "current track"
 /// button, to judge fluidity and gestures on the device (FR-010.7).
 class IndexDemoPage extends StatefulWidget {
-  const new({required this.dark, super.key});
+  const new({required this.dark, this.onHandleRect, super.key});
 
   final bool dark;
+
+  /// The handle rectangle, for the native gesture exclusion.
+  final ValueChanged<Rect?>? onHandleRect;
 
   @override
   State<IndexDemoPage> createState() => _IndexDemoPageState();
@@ -81,6 +84,7 @@ class _IndexDemoPageState extends State<IndexDemoPage> {
               letterSemantics: (letter, count) =>
                   'Letter $letter, $count tracks',
               onLetterSelected: _jump,
+              onHandleRect: widget.onHandleRect,
               child: ListView.builder(
                 controller: _controller,
                 itemExtent: TsSize.trackRow,

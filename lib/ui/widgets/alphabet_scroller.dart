@@ -53,8 +53,8 @@ class AlphabetScroller extends StatefulWidget {
   final int minItems;
 
   /// The handle's rectangle in logical window pixels, for the native
-  /// system-gesture exclusion (ADR-010).
-  final ValueChanged<Rect>? onHandleRect;
+  /// system-gesture exclusion (ADR-010); null when the handle goes away.
+  final ValueChanged<Rect?>? onHandleRect;
 
   @override
   State<AlphabetScroller> createState() => _AlphabetScrollerState();
@@ -86,6 +86,7 @@ class _AlphabetScrollerState extends State<AlphabetScroller> {
   void dispose() {
     _idleTimer?.cancel();
     _hideTimer?.cancel();
+    if (_reportedRect != null) widget.onHandleRect?.call(null);
     super.dispose();
   }
 
@@ -190,7 +191,15 @@ class _AlphabetScrollerState extends State<AlphabetScroller> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_enabled) return widget.child;
+    if (!_enabled) {
+      if (_reportedRect != null) {
+        _reportedRect = null;
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => widget.onHandleRect?.call(null),
+        );
+      }
+      return widget.child;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) => _reportHandle());
     final scheme = Theme.of(context).colorScheme;
     final handleLit = _recentlyScrolled || _dragging;

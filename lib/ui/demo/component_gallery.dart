@@ -15,7 +15,10 @@ import 'package:tuneshell/ui/widgets/track_tile.dart';
 ///
 /// @implements FR-010
 class ComponentGallery extends StatefulWidget {
-  const new({super.key});
+  const new({this.onHandleRect, super.key});
+
+  /// Forwarded to the index demo (gesture exclusion).
+  final ValueChanged<Rect?>? onHandleRect;
 
   @override
   State<ComponentGallery> createState() => _ComponentGalleryState();
@@ -233,7 +236,10 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                     child: FilledButton(
                       onPressed: () => Navigator.of(context).push<void>(
                         MaterialPageRoute(
-                          builder: (_) => IndexDemoPage(dark: _dark),
+                          builder: (_) => IndexDemoPage(
+                            dark: _dark,
+                            onHandleRect: widget.onHandleRect,
+                          ),
                         ),
                       ),
                       child: const Text('Open the 5,000-row list'),

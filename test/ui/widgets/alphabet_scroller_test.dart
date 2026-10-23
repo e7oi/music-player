@@ -29,7 +29,7 @@ void main() {
   final first = firstIndexes(titles);
   late ScrollController controller;
   late List<String> selected;
-  late List<Rect> handleRects;
+  late List<Rect?> handleRects;
   var haptics = 0;
 
   setUp(() {
@@ -170,6 +170,17 @@ void main() {
       expect(opacity(), lessThan(1));
     });
 
+    testWidgets('tells when it goes away', (tester) async {
+      await pumpUi(tester, host());
+      await tester.pump();
+      expect(handleRects.last, isNotNull);
+
+      await pumpUi(tester, host(itemCount: 10));
+      await tester.pump();
+
+      expect(handleRects.last, isNull);
+    });
+
     testWidgets('reports its rectangle for the gesture exclusion', (
       tester,
     ) async {
@@ -177,8 +188,8 @@ void main() {
       await tester.pump();
 
       expect(handleRects, isNotEmpty);
-      expect(handleRects.last.size, TsSize.indexHandleTouch);
-      expect(handleRects.last.right, tester.view.physicalSize.width);
+      expect(handleRects.last!.size, TsSize.indexHandleTouch);
+      expect(handleRects.last!.right, tester.view.physicalSize.width);
     });
   });
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tuneshell/features/shell/home_shell.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
@@ -29,14 +30,16 @@ void main() {
       ..devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
-      MaterialApp(
-        theme: TsTheme.light(),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('en'),
-        home: const HomeShell(
-          tracks: _Probe(),
-          playerBar: SizedBox(key: Key('player'), height: 10),
+      ProviderScope(
+        child: MaterialApp(
+          theme: TsTheme.light(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
+          home: const HomeShell(
+            tracks: _Probe(),
+            playerBar: SizedBox(key: Key('player'), height: 10),
+          ),
         ),
       ),
     );
