@@ -335,3 +335,22 @@ Build release (D14) installée par-dessus la précédente (`adb install -r`) : l
 15. **TalkBack et texte à 200 % :** une ligne se lit « titre, artiste, durée, état, source `nom` » ; la poignée annonce « Aller à la lettre ». À 200 %, aucune ligne n'est coupée (les lignes grandissent).
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
+
+## 16. Tester le premier lancement et le choix des dossiers (MPL-044)
+
+Build release (D14) installée par-dessus la précédente. Un « premier lancement » demande d'effacer les données de l'application : cela supprime la base (la bibliothèque est reconstruite par l'indexation) et retire l'accès accordé. Effacer les données : Réglages d'Android › Applications › TuneShell › Stockage › Effacer les données (ou `adb shell pm clear net.trtl3.tuneshell`). SSD branché pour l'étape 8. Chaque étape se fait en clair puis en sombre si le temps le permet.
+
+1. **Accueil :** lancer l'application après l'effacement. Attendu : logo, « Bienvenue dans TuneShell », « Ta musique, chez toi. », trois promesses, deux points d'étape, bouton « Commencer » ; aucun dialogue d'Android.
+2. **Explication :** toucher « Commencer ». Attendu : « Étape 2 sur 2 », « Autoriser l'accès à ta musique », deux garanties, « Autoriser l'accès », « Pas maintenant » ; toujours aucun dialogue.
+3. **Refus simple :** « Autoriser l'accès », puis « Ne pas autoriser » dans le dialogue d'Android. Attendu : retour à l'explication avec le bandeau « Accès refusé… » ; le bouton dit « Réessayer ».
+4. **Refus définitif :** « Réessayer », puis refuser de nouveau (Android peut afficher « Ne plus demander »). Attendu : « L'accès est bloqué », les quatre étapes, « Ouvrir les réglages », « Choisir un dossier à la place » et la note sur les disques amovibles.
+5. **Retour des réglages :** « Ouvrir les réglages », accorder « Musique et audio », revenir dans l'application. Attendu : l'écran des dossiers s'affiche sans autre geste.
+6. **Dossiers :** « Music » est coché, chaque ligne dit « N fichiers audio », le résumé du bas dit « 1 dossier · N fichiers » et suit les cases ; toute la ligne se coche. Tout décocher : « Continuer » est grisé et le message « Coche au moins un dossier pour continuer. » remplace le résumé.
+7. **Continuer :** cocher « Music », « Continuer ». Attendu : la bibliothèque s'affiche et l'indexation démarre.
+8. **Choisir un dossier à la place :** reprendre à l'étape 4 (effacer les données, refuser deux fois), SSD branché, toucher « Choisir un dossier à la place », choisir un dossier du SSD. Attendu : la bibliothèque affiche la musique du SSD. Choisir un dossier du téléphone : le message « Ce dossier est dans le stockage du téléphone… » et l'écran bloqué reste.
+9. **Pas maintenant :** effacer les données, « Commencer », « Pas maintenant ». Attendu : la bibliothèque montre « Accès à ta musique non accordé » et « Autoriser l'accès », sans indexation ; ce bouton ramène à l'explication. Quitter puis relancer : l'accueil revient (accès jamais demandé).
+10. **Modifier plus tard :** depuis la bibliothèque, pastille « Dossiers ». Attendu : même écran, flèche de retour et geste Retour qui ramènent à la liste sans changement, bouton « Valider » (et non « Continuer »).
+11. **Aucun fichier audio / erreur :** difficile à provoquer sur l'appareil ; couverts par les tests de widgets (HOWTO : non testé sur appareil).
+12. **Paysage, texte à 200 %, TalkBack :** sur l'accueil, l'explication, l'écran bloqué et les dossiers : rien n'est coupé, les boutons restent atteignables en faisant défiler, tous les boutons sont lus avec leur libellé, « Étape N sur 2 » est lu.
+
+Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).

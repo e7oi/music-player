@@ -36,4 +36,4 @@
 
 ## As-built
 
-À écrire à la livraison de MPL-044.
+Livré par MPL-044 (2026-10-23). Conforme à la décision, avec ces précisions : `LibraryPermissionNeeded(permanent: false)` reste l'état de l'explication après un refus ; l'accueil seul est `LibraryWelcome` ; `LibraryFolderChoice` reçoit `loading` ; `_withoutAccess` (champ du contrôleur, session) retient « bibliothèque faite de dossiers de disques sans accès » ; le logo est un `CustomPainter` simplifié de 100 lignes dans `lib/ui/widgets/tuneshell_logo.dart`. Sept jetons de taille ajoutés (`buttonLarge`, `heroTile`, `heroIcon`, `logo`, `stepDot`, `stepDotActive`).

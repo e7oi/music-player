@@ -103,6 +103,20 @@ void main() {
     expect(find.text('Music folders'), findsOneWidget);
   });
 
+  /// @verifies FR-014.2
+  testWidgets('Back from the explanation returns to the welcome', (
+    tester,
+  ) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Get started'));
+    await tester.pumpAndSettle();
+
+    expect(await tester.binding.handlePopRoute(), isTrue);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Welcome to'), findsOneWidget);
+  });
+
   /// @verifies FR-014.3
   testWidgets('a simple refusal shows the banner and Try again', (
     tester,
@@ -175,6 +189,30 @@ void main() {
       await tester.pump();
 
       expect(find.text('2 folders · 4 files'), findsOneWidget);
+    });
+
+    /// @verifies FR-015.2
+    testWidgets('a whole row is the touch area, labelled with its count', (
+      tester,
+    ) async {
+      final semantics = tester.ensureSemantics();
+      await pumpPage(tester);
+
+      final row = find.widgetWithText(CheckboxListTile, 'Music');
+      expect(
+        tester.getSize(row).height,
+        greaterThanOrEqualTo(TsSize.touchTarget),
+      );
+      expect(tester.getSemantics(row).label, 'Music\n3 audio files');
+      expect(
+        tester
+            .widget<Checkbox>(
+              find.descendant(of: row, matching: find.byType(Checkbox)),
+            )
+            .value,
+        isTrue,
+      );
+      semantics.dispose();
     });
 
     /// @verifies FR-015.5

@@ -29,4 +29,6 @@ Dialogue système d'Android (non modifiable), écran de démarrage et icône de 
 
 ## As-built
 
-À écrire à la livraison de MPL-044.
+Livré par MPL-044 (2026-10-23), test appareil en attente (D14), hors l'écran des dossiers vu sur le Pixel.
+- Le parcours est `LibraryPage` (`lib/features/library/library_page.dart`) sur la machine d'états de `LibraryController` ; écrans dans `first_launch_pages.dart` et `folder_choice_view.dart`. Tests : `library_controller_test.dart`, `library_access_test.dart`, `first_launch_test.dart`, `library_page_test.dart`.
+- Variante ajoutée à la revue : Retour depuis l'explication ramène à l'accueil.

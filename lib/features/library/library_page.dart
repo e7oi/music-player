@@ -85,10 +85,16 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
     // The first-launch screens have their own full-screen design (FR-014).
     final withBar = state is LibraryFolderChoice || state is LibraryLoadFailed;
     // FR-003.4: Back leaves the folder choice before it leaves the app.
+    final explaining = state is LibraryWelcome && state.explaining;
     return PopScope(
-      canPop: !cancelable,
+      canPop: !cancelable && !explaining,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _controller.cancelFolderChoice();
+        if (didPop) return;
+        if (explaining) {
+          _controller.backToWelcome();
+        } else {
+          _controller.cancelFolderChoice();
+        }
       },
       child: Scaffold(
         appBar: withBar
@@ -137,7 +143,7 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
             choice: state,
             onConfirm: (folders) =>
                 unawaited(_controller.confirmFolders(folders)),
-            onAddFolder: () => unawaited(_controller.chooseFolderInstead()),
+            onAddFolder: () => unawaited(_controller.addRemovableFolder()),
             onReload: () => unawaited(_controller.reloadFolders()),
           ),
           LibraryReady() => _ReadyView(

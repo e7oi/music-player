@@ -30,4 +30,10 @@ Dialogue système (1c, référence seulement), logo animé et écran de démarra
 
 ## As-built
 
-À écrire à la livraison de MPL-044.
+Livré par MPL-044 (2026-10-23), test appareil en attente (D14).
+- États : `LibraryWelcome(explaining)`, `LibraryPermissionNeeded(permanent)` (explication avec bandeau, ou écran bloqué), `LibraryAccessDeclined`. `start()` ne demande plus l'accès (révision de FR-004.1) ; `requestPermission()` part des boutons.
+- Écrans : `WelcomePage`, `AccessExplanationPage`, `AccessBlockedPage`, `AccessDeclinedView` ; logo dessiné par `TuneShellLogo` (`lib/ui/widgets/`), simplifié par rapport aux SVG de marque.
+- « Choisir un dossier à la place » : `chooseFolderInstead()` (écran bloqué seulement) ajoute un dossier de disque ; si un dossier est ajouté, la bibliothèque s'affiche sans accès (`_withoutAccess`). Les pastilles « Dossiers » ramènent alors à l'explication, « Actualiser » ne relit que les disques, et le retour des réglages avec accès accordé propose les dossiers.
+- Limite : sans accès, au lancement suivant l'écran bloqué revient, même si un disque est connu.
+- Retour (geste) depuis l'explication : accueil. Une erreur de la demande (par exemple sans activité) est ignorée en silence, comme avant.
+- Mise en page : corps défilant, boutons toujours visibles ; à 200 % en paysage le corps peut devenir étroit (vérifié par tests de widgets, pas sur appareil).

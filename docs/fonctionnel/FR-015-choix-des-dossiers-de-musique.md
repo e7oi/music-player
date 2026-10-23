@@ -32,4 +32,8 @@ Disques amovibles et leur écran (MPL-046), recherche de dossier, sous-dossiers 
 
 ## As-built
 
-À écrire à la livraison de MPL-044.
+Livré par MPL-044 (2026-10-23), test appareil en attente (D14) hors l'écran de modification vu sur le Pixel (résumé, comptages, « Valider »).
+- `FolderChoiceView` et `FolderLoadFailedView` (`folder_choice_view.dart`), résumé dans `FolderChoiceSummary` (`folder_choice_model.dart`, testé d'abord). Le chargement est un état `LibraryFolderChoice(loading: true)` avec bandeau et squelettes.
+- « Continuer » est grisé sans dossier coché au premier choix ; depuis la bibliothèque (modification) « Valider » reste actif et le résumé dit « 0 dossier · 0 fichier » (vider reste permis).
+- « Ajouter un dossier » : `addRemovableFolder()` enregistre le disque et laisse le choix tel quel ; le dossier du téléphone est refusé avec le message de FR-006, affiché en bandeau temporaire.
+- Quitter le choix pendant son chargement ne le rouvre pas (`openFolderChoice` vérifie l'état après ses attentes).

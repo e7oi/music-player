@@ -93,6 +93,7 @@ class _FolderChoiceViewState extends State<FolderChoiceView> {
           label: choice.cancelable ? l10n.foldersConfirm : l10n.foldersContinue,
           // The first choice needs a folder; editing it later may empty it.
           enabled: !choice.loading && (choice.cancelable || !summary.none),
+          editing: choice.cancelable,
           onPressed: () => widget.onConfirm({..._selected}),
         ),
       ],
@@ -159,10 +160,12 @@ class _Bar extends StatelessWidget {
     required this.empty,
     required this.label,
     required this.enabled,
+    required this.editing,
     required this.onPressed,
   });
 
   final FolderChoiceSummary summary;
+  final bool editing;
   final bool loading;
   final bool empty;
   final String label;
@@ -173,11 +176,13 @@ class _Bar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
+    // Editing may empty the choice; only the first one needs a folder.
+    final blocked = summary.none && !editing;
     final text = empty
         ? l10n.foldersNothingToAdd
         : loading
         ? l10n.foldersCounting(summary.folders)
-        : summary.none
+        : blocked
         ? l10n.foldersNoneChecked
         : l10n.foldersSummary(summary.folders, summary.files);
     return Material(
@@ -195,7 +200,7 @@ class _Bar extends StatelessWidget {
                   child: Text(
                     text,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: summary.none && !loading && !empty
+                      color: blocked && !loading && !empty
                           ? scheme.onSurface
                           : scheme.onSurfaceVariant,
                     ),

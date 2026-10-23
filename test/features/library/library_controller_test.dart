@@ -429,6 +429,21 @@ void main() {
     });
 
     /// @verifies FR-003
+    /// @verifies FR-003.4
+    test(
+      'leaving the folder choice while it loads keeps the library',
+      () async {
+        await controller().start();
+        await controller().confirmFolders({'Music'});
+
+        final opening = controller().openFolderChoice();
+        controller().cancelFolderChoice();
+        await opening;
+
+        expect(state(), isA<LibraryReady>());
+      },
+    );
+
     test('the folder choice does not open while indexing', () async {
       await controller().start();
       final confirming = controller().confirmFolders({'Music'});

@@ -2,6 +2,8 @@ import 'package:meta/meta.dart';
 import 'package:tuneshell/domain/library/services/library_indexer.dart';
 
 /// What the bar under the list of folders says (FR-015.1, FR-015.4).
+///
+/// @implements FR-015
 @immutable
 final class FolderChoiceSummary {
   const new _computed({required this.folders, required this.files});

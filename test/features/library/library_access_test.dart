@@ -102,5 +102,51 @@ void main() {
 
       expect(state(), isA<LibraryReady>());
     });
+
+    test('access granted later in the settings offers the folders', () async {
+      await controller().chooseFolderInstead();
+      permission.current = AudioPermissionStatus.granted;
+
+      await controller().onResumed();
+
+      expect(state(), isA<LibraryFolderChoice>());
+    });
+
+    test('Folders without access leads back to the explanation', () async {
+      await controller().chooseFolderInstead();
+
+      await controller().openFolderChoice();
+
+      expect(
+        state(),
+        isA<LibraryWelcome>().having((s) => s.explaining, 'explaining', true),
+      );
+    });
+  });
+
+  /// @verifies FR-015.7
+  group('adding a folder from the folder choice', () {
+    setUp(() async {
+      permission.current = AudioPermissionStatus.granted;
+      await controller().start();
+    });
+
+    test('keeps the choice on screen, with its checked folders', () async {
+      final before = state();
+      expect(before, isA<LibraryFolderChoice>());
+
+      await controller().addRemovableFolder();
+
+      expect(state(), same(before));
+    });
+
+    test('the disk is registered for the disks screen', () async {
+      await controller().addRemovableFolder();
+
+      expect(
+        container.read(removableControllerProvider).disks.single.disk.id,
+        _ssd,
+      );
+    });
   });
 }

@@ -97,6 +97,8 @@ class _StepIndicator extends StatelessWidget {
 }
 
 /// The welcome, step 1 of 2 (FR-014.1).
+///
+/// @implements FR-014
 class WelcomePage extends StatelessWidget {
   const new({required this.onStart, super.key});
 
@@ -217,6 +219,8 @@ class _HeroTile extends StatelessWidget {
 
 /// Why access is needed and the button that asks for it, step 2 of 2; with
 /// [refused], the banner of a simple refusal (FR-014.2, FR-014.3).
+///
+/// @implements FR-014
 class AccessExplanationPage extends StatelessWidget {
   const new({
     required this.refused,
@@ -309,6 +313,8 @@ class AccessExplanationPage extends StatelessWidget {
 }
 
 /// Android no longer shows its dialog (FR-014.5).
+///
+/// @implements FR-014
 class AccessBlockedPage extends StatelessWidget {
   const new({
     required this.onOpenSettings,
@@ -391,6 +397,8 @@ class AccessBlockedPage extends StatelessWidget {
 }
 
 /// The library when the user chose "not now" (FR-014.6).
+///
+/// @implements FR-014
 class AccessDeclinedView extends StatelessWidget {
   const new({required this.onAllow, super.key});
 
