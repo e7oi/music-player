@@ -56,7 +56,11 @@ class RemovableIndexer {
     if (picked == null) return AddFolderResult.cancelled;
     final scanned = await _source.scan(picked.disk, picked.path);
     if (scanned.isEmpty) {
-      await _release(picked.disk, picked.path);
+      // Choosing an already used folder again (to renew it) keeps its access.
+      final chosen = await _repository.chosenFolders(picked.disk);
+      if (!chosen.contains(picked.path)) {
+        await _release(picked.disk, picked.path);
+      }
       return AddFolderResult.noAudio;
     }
     final disk = Disk(
@@ -79,6 +83,9 @@ class RemovableIndexer {
       if (view.status != RemovableStatus.available) continue;
       try {
         await _apply(view.disk.id, view.folders);
+      } on ScanCancelledException {
+        // A stop ends the whole refresh, not just one folder (BR-006.5).
+        rethrow;
       } on Exception catch (e) {
         failure ??= e;
       }
@@ -95,12 +102,14 @@ class RemovableIndexer {
     final folders = {...await _repository.chosenFolders(disk)}..remove(folder);
     final stored = await _repository.disk(disk);
     if (stored == null) return;
-    await _repository.setChosenFolders(stored, folders);
+    // The tracks go first: a failed scan changes nothing, the folder stays
+    // chosen and its access kept (FR-006.2).
     if (folders.isEmpty) {
       await _repository.applyScan(disk, const []);
     } else {
       await _apply(disk, folders);
     }
+    await _repository.setChosenFolders(stored, folders);
     await _release(disk, folder);
   });
 
@@ -149,9 +158,8 @@ class RemovableIndexer {
         found[file.relativePath] = file;
       }
     }
-    if (found.isEmpty) {
-      final stored = await _repository.watchTracks().first;
-      if (stored.any((t) => t.disk == disk)) throw const EmptySourceException();
+    if (found.isEmpty && await _repository.trackCount(disk) > 0) {
+      throw const EmptySourceException();
     }
     await _repository.applyScan(disk, found.values.toList());
   }

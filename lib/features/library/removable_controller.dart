@@ -71,7 +71,7 @@ class RemovableController extends Notifier<RemovableViewState> {
   }
 
   /// Scans the disks, then reads the tags and artwork of what is pending.
-  Future<void> refresh() async {
+  Future<void> refresh({bool retryFailed = false}) async {
     _update(busy: true);
     try {
       await ref.read(volumeEventsProvider).refresh();
@@ -83,7 +83,7 @@ class RemovableController extends Notifier<RemovableViewState> {
     }
     _update(busy: false);
     await load();
-    unawaited(_readTags());
+    unawaited(_readTags(retryFailed: retryFailed));
   }
 
   /// UC-003: the Android picker, then the scan of the chosen folder. Also
@@ -145,10 +145,10 @@ class RemovableController extends Notifier<RemovableViewState> {
     );
   }
 
-  Future<void> _readTags() async {
+  Future<void> _readTags({bool retryFailed = false}) async {
     if (!ref.mounted) return;
     try {
-      await ref.read(tagIndexerProvider).run();
+      await ref.read(tagIndexerProvider).run(retryFailed: retryFailed);
     } on Exception {
       // The tracks stay pending; the next refresh reads them.
     }

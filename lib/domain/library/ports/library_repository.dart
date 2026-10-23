@@ -80,6 +80,13 @@ abstract interface class LibraryRepository {
 
   Future<int> countPending(Set<DiskId> disks);
 
+  /// Puts the tracks of [disks] whose reading failed back to pending, so the
+  /// next pass tries them again (FR-007.3).
+  Future<void> resetFailedTags(Set<DiskId> disks);
+
+  /// Number of tracks stored for [disk].
+  Future<int> trackCount(DiskId disk);
+
   /// Stores [updates] in one transaction.
   Future<void> applyFileTags(List<TagUpdate> updates);
 

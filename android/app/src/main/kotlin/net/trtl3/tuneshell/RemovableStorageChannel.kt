@@ -43,13 +43,13 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
     @Volatile
     private var cancelled = false
 
-    private class Failure(val code: String, message: String) : Exception(message)
+    class Failure(val code: String, message: String) : Exception(message)
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "pickFolder" -> pickFolder(result)
-            "grantedFolders" -> run(scanExecutor, result) { grantedFolders() }
-            "mountedVolumes" -> run(scanExecutor, result) { mountedVolumes() }
+            "grantedFolders" -> run(ioExecutor, result) { grantedFolders() }
+            "mountedVolumes" -> run(ioExecutor, result) { mountedVolumes() }
             "releaseFolder" -> run(ioExecutor, result) {
                 releaseFolder(call.argument<String>("uuid")!!, call.argument<String>("path")!!)
                 null
@@ -119,7 +119,7 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
             uri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION,
         )
-        return mapOf("uuid" to uuid, "path" to path, "label" to label(uuid))
+        return mapOf("uuid" to spelling(uuid), "path" to path, "label" to label(uuid))
     }
 
     private fun pickFolder(result: MethodChannel.Result) {
@@ -180,14 +180,23 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
             }
 
     private fun grantedFolders(): List<Map<String, Any?>> = grantedTrees().map { (_, uuid, path) ->
-        mapOf("uuid" to uuid, "path" to path, "label" to label(uuid))
+        mapOf("uuid" to spelling(uuid), "path" to path, "label" to label(uuid))
     }
 
-    /** The grant that covers [path] on [uuid], with the folder it was given for. */
-    private fun coveringTree(uuid: String, path: String): Uri {
+    /** The volume's own spelling of its UUID, so that Dart sees one identifier. */
+    private fun spelling(uuid: String): String = volume(uuid)?.uuid ?: uuid
+
+    /**
+     * The grant that covers [path] on [uuid] and the UUID spelling of that
+     * grant: document ids are built with it, as the provider compares them
+     * case-sensitively.
+     */
+    private fun coveringTree(uuid: String, path: String): Pair<Uri, String> {
         for ((tree, treeUuid, base) in grantedTrees()) {
             if (!treeUuid.equals(uuid, ignoreCase = true)) continue
-            if (base.isEmpty() || path == base || path.startsWith("$base/")) return tree
+            if (base.isEmpty() || path == base || path.startsWith("$base/")) {
+                return Pair(tree, treeUuid)
+            }
         }
         throw Failure("access_lost", "No access granted to this folder")
     }
@@ -209,11 +218,11 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
         for (volume in manager.storageVolumes) {
             val uuid = volume.uuid ?: continue
             if (volume.isRemovable && volume.state == android.os.Environment.MEDIA_MOUNTED) {
-                found[uuid.uppercase()] = volume.getDescription(context)
+                found[uuid] = volume.getDescription(context)
             }
         }
         for ((tree, uuid, base) in grantedTrees()) {
-            if (found.containsKey(uuid.uppercase())) continue
+            if (found.keys.any { it.equals(uuid, ignoreCase = true) }) continue
             val children = DocumentsContract.buildChildDocumentsUriUsingTree(
                 tree,
                 "$uuid:$base",
@@ -225,7 +234,7 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
                     null,
                     null,
                     null,
-                )?.use { found[uuid.uppercase()] = label(uuid) }
+                )?.use { found[uuid] = label(uuid) }
             } catch (e: Exception) {
                 // Not mounted, or not readable: absent.
             }
@@ -245,11 +254,10 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
     }
 
     /** URI of a file, for the tag reader as well (BR-006.3). */
-    fun documentUri(uuid: String, relativePath: String): Uri =
-        DocumentsContract.buildDocumentUriUsingTree(
-            coveringTree(uuid, relativePath),
-            "$uuid:$relativePath",
-        )
+    fun documentUri(uuid: String, relativePath: String): Uri {
+        val (tree, treeUuid) = coveringTree(uuid, relativePath)
+        return DocumentsContract.buildDocumentUriUsingTree(tree, "$treeUuid:$relativePath")
+    }
 
     /**
      * Opens the file for the engine and gives the descriptor away: from then
@@ -273,10 +281,10 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
      * tracks (FR-006.9).
      */
     private fun scan(uuid: String, path: String): List<Map<String, Any?>> {
-        val tree = coveringTree(uuid, path)
+        val (tree, treeUuid) = coveringTree(uuid, path)
         val files = mutableListOf<Map<String, Any?>>()
         val folders = ArrayDeque<String>()
-        folders.add("$uuid:$path")
+        folders.add("$treeUuid:$path")
         while (folders.isNotEmpty()) {
             if (cancelled) throw Failure("cancelled", "Scan cancelled")
             val entries = children(tree, folders.removeLast())
@@ -321,6 +329,11 @@ class RemovableStorageChannel(private val context: Context) : MethodChannel.Meth
             null,
         ) ?: throw Failure("scan_failed", "The folder cannot be listed")
         cursor.use {
+            // A provider reports a failure in the extras, with an empty
+            // cursor: taking it for an empty folder would drop its tracks.
+            if (it.extras?.getString(DocumentsContract.EXTRA_ERROR) != null) {
+                throw Failure("scan_failed", "The folder cannot be listed")
+            }
             val entries = mutableListOf<Entry>()
             while (it.moveToNext()) {
                 entries.add(

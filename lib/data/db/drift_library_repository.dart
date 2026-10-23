@@ -42,6 +42,9 @@ class DriftLibraryRepository implements LibraryRepository {
   Future<void> setChosenFolders(Disk disk, Set<String> folders) =>
       _db.transaction(() async {
         await ensureDisk(disk);
+        // The name Android gives a volume can change (FR-006.4).
+        await (_db.update(_db.disks)..where((d) => d.key.equals(disk.id.value)))
+            .write(DisksCompanion(label: Value(disk.label)));
         final row = await _requireDisk(disk.id);
         await (_db.delete(
           _db.diskFolders,
@@ -272,6 +275,33 @@ class DriftLibraryRepository implements LibraryRepository {
     final row = await query.getSingle();
     final pending = row.read(count);
     return pending ?? 0;
+  }
+
+  @override
+  Future<void> resetFailedTags(Set<DiskId> disks) async {
+    final ids = _db.selectOnly(_db.disks)
+      ..addColumns([_db.disks.id])
+      ..where(_db.disks.key.isIn([for (final d in disks) d.value]));
+    await (_db.update(_db.tracks)..where(
+          (t) =>
+              t.tagsState.equals(TagsState.failed.index) &
+              t.diskId.isInQuery(ids),
+        ))
+        .write(TracksCompanion(tagsState: Value(TagsState.pending.index)));
+  }
+
+  @override
+  Future<int> trackCount(DiskId disk) async {
+    final count = _db.tracks.id.count();
+    final query =
+        _db.selectOnly(_db.tracks).join([
+            innerJoin(_db.disks, _db.disks.id.equalsExp(_db.tracks.diskId)),
+          ])
+          ..addColumns([count])
+          ..where(_db.disks.key.equals(disk.value));
+    final row = await query.getSingle();
+    final total = row.read(count);
+    return total ?? 0;
   }
 
   @override

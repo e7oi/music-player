@@ -148,9 +148,16 @@ class LibraryController extends Notifier<LibraryViewState> {
     }
   }
 
-  Future<void> refresh() async {
+  /// The user's "Refresh": unreadable files get another chance (FR-007.3).
+  Future<void> refresh() => _refresh(retryFailed: true);
+
+  Future<void> _refresh({required bool retryFailed}) async {
     final folders = await _indexer.chosenFolders();
-    await _runIndex(_indexer.index, hasFolders: folders.isNotEmpty);
+    await _runIndex(
+      _indexer.index,
+      hasFolders: folders.isNotEmpty,
+      retryFailed: retryFailed,
+    );
   }
 
   Future<void> _continueWith(AudioPermissionStatus status) {
@@ -180,12 +187,13 @@ class LibraryController extends Notifier<LibraryViewState> {
       }
       return;
     }
-    await refresh();
+    await _refresh(retryFailed: false);
   }
 
   Future<void> _runIndex(
     Future<Object?> Function() index, {
     required bool hasFolders,
+    bool retryFailed = false,
   }) async {
     state = LibraryReady(hasFolders: hasFolders, indexing: true);
     try {
@@ -196,6 +204,10 @@ class LibraryController extends Notifier<LibraryViewState> {
     }
     // The removable disks and the files' tags follow the internal index
     // (FR-006.8, FR-007).
-    unawaited(ref.read(removableControllerProvider.notifier).refresh());
+    unawaited(
+      ref
+          .read(removableControllerProvider.notifier)
+          .refresh(retryFailed: retryFailed),
+    );
   }
 }

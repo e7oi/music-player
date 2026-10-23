@@ -35,7 +35,7 @@ void main() {
 
   group('FR-006 source', () {
     test('a picked folder carries the disk, its label and the path', () async {
-      reply = (_) => {'uuid': '1234-abcd', 'path': 'Music', 'label': 'SSD'};
+      reply = (_) => {'uuid': '1234-ABCD', 'path': 'Music', 'label': 'SSD'};
 
       final folder = await RemovableStorageChannel().pickFolder();
 
@@ -85,9 +85,9 @@ void main() {
       );
     });
 
-    test('mounted volumes use upper case identifiers', () async {
+    test('identifiers are kept as Android spells them', () async {
       reply = (_) => [
-        {'uuid': '1234-abcd', 'label': 'SSD'},
+        {'uuid': '1234-ABCD', 'label': 'SSD'},
       ];
 
       final volumes = await RemovableStorageChannel().mountedVolumes();

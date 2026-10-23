@@ -40,10 +40,16 @@ class FileTagsChannel(
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "readTags" -> executor.execute {
+                // Throwable: an error thrown by the decoder must still answer
+                // Dart, which would otherwise wait for ever.
                 try {
                     val tags = readTags(call.argument<String?>("uuid"), call.argument<String>("path")!!)
                     mainThread.post { result.success(tags) }
-                } catch (e: Exception) {
+                } catch (e: RemovableStorageChannel.Failure) {
+                    mainThread.post { result.error(e.code, e.message, null) }
+                } catch (e: SecurityException) {
+                    mainThread.post { result.error("access_lost", e.message, null) }
+                } catch (e: Throwable) {
                     mainThread.post { result.error("read_failed", e.message, null) }
                 }
             }
@@ -52,11 +58,15 @@ class FileTagsChannel(
                 result.success(artworkDir.absolutePath)
             }
             "pruneArtwork" -> executor.execute {
-                val keep = call.argument<List<String>>("keep")!!.toSet()
-                artworkDir.listFiles()?.forEach {
-                    if (it.nameWithoutExtension !in keep || it.extension != "jpg") it.delete()
+                try {
+                    val keep = call.argument<List<String>>("keep")!!.toSet()
+                    artworkDir.listFiles()?.forEach {
+                        if (it.nameWithoutExtension !in keep || it.extension != "jpg") it.delete()
+                    }
+                    mainThread.post { result.success(null) }
+                } catch (e: Throwable) {
+                    mainThread.post { result.error("prune_failed", e.message, null) }
                 }
-                mainThread.post { result.success(null) }
             }
             else -> result.notImplemented()
         }
@@ -125,6 +135,7 @@ class FileTagsChannel(
         val temporary = File(artworkDir, "$hash.tmp")
         FileOutputStream(temporary).use { image.compress(Bitmap.CompressFormat.JPEG, QUALITY, it) }
         if (!temporary.renameTo(target)) temporary.delete()
-        return hash
+        // No file, no artwork: the track must not point at a missing image.
+        return if (target.exists()) hash else null
     }
 }

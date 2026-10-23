@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:tuneshell/domain/library/model/file_tags.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/ports/removable_audio_source.dart';
 import 'package:tuneshell/domain/library/ports/tag_reader.dart';
 
 /// Dart side of `FileTagsChannel.kt` (ADR-009).
@@ -17,11 +18,16 @@ class FileTagsChannel implements TagReader {
 
   @override
   Future<FileTags?> read(Track track) async {
-    final row = await _channel.invokeMapMethod<String, Object?>('readTags', {
-      'uuid': track.disk == _internal ? null : track.disk.value,
-      'path': track.relativePath,
-    });
-    return row == null ? null : fromRow(row);
+    try {
+      final row = await _channel.invokeMapMethod<String, Object?>('readTags', {
+        'uuid': track.disk == _internal ? null : track.disk.value,
+        'path': track.relativePath,
+      });
+      return row == null ? null : fromRow(row);
+    } on PlatformException catch (e) {
+      if (e.code == 'access_lost') throw const RemovableAccessException();
+      rethrow;
+    }
   }
 
   @override

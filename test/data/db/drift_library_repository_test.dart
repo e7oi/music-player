@@ -399,5 +399,45 @@ void main() {
         expect(await repository.artworkInUse(), isEmpty);
       },
     );
+
+    /// @verifies FR-007.3
+    test(
+      'resetFailedTags puts the failed tracks of the disks back to pending',
+      () async {
+        await repository.applyScan(ssd, [info('a.mp3'), info('b.mp3')]);
+        await repository.applyIndex(internalDisk, [info('Music/i.mp3')]);
+        await repository.applyFileTags([
+          for (final t in await tracks()) TagUpdate.failed(t.id),
+        ]);
+
+        await repository.resetFailedTags({ssd});
+
+        final byDisk = {
+          for (final t in await tracks()) t.info.relativePath: t.tagsState,
+        };
+        expect(byDisk['a.mp3'], TagsState.pending);
+        expect(byDisk['b.mp3'], TagsState.pending);
+        expect(byDisk['Music/i.mp3'], TagsState.failed);
+      },
+    );
+
+    test('trackCount counts the tracks of one disk', () async {
+      await repository.applyScan(ssd, [info('a.mp3'), info('b.mp3')]);
+      await repository.applyIndex(internalDisk, [info('Music/i.mp3')]);
+
+      expect(await repository.trackCount(ssd), 2);
+      expect(await repository.trackCount(internalDisk), 1);
+      expect(await repository.trackCount(const DiskId('nope')), 0);
+    });
+
+    /// @verifies FR-006.4
+    test('setChosenFolders renames the disk', () async {
+      await repository.setChosenFolders(
+        const Disk(id: ssd, label: 'Renamed', kind: DiskKind.removable),
+        {'Music'},
+      );
+
+      expect((await repository.disk(ssd))?.label, 'Renamed');
+    });
   });
 }

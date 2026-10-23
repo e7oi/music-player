@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tuneshell/app/providers/tag_providers.dart';
 import 'package:tuneshell/domain/library/services/removable_indexer.dart';
 import 'package:tuneshell/features/library/removable_controller.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
@@ -33,6 +34,7 @@ class _RemovablePageState extends ConsumerState<RemovablePage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(removableControllerProvider);
+    final reading = ref.watch(tagProgressProvider).value?.running ?? false;
     ref.listen(removableControllerProvider.select((s) => s.message), (
       _,
       message,
@@ -51,7 +53,7 @@ class _RemovablePageState extends ConsumerState<RemovablePage> {
       appBar: AppBar(title: Text(l10n.removableTitle)),
       body: Column(
         children: [
-          if (state.busy) const LinearProgressIndicator(),
+          if (state.busy || reading) const LinearProgressIndicator(),
           Expanded(
             child: state.disks.isEmpty
                 ? Center(
@@ -82,7 +84,7 @@ class _RemovablePageState extends ConsumerState<RemovablePage> {
                     child: Text(l10n.removableAddFolder),
                   ),
                 ),
-                if (state.busy) ...[
+                if (state.busy || reading) ...[
                   const SizedBox(width: 8),
                   OutlinedButton(
                     onPressed: () => unawaited(_controller.cancel()),
@@ -137,7 +139,8 @@ class _DiskTile extends ConsumerWidget {
             trailing: IconButton(
               tooltip: l10n.removableRemoveFolder,
               icon: const Icon(Icons.delete_outline),
-              onPressed: busy
+              // Removing needs the disk: its tracks are found by a scan.
+              onPressed: busy || disk.status != RemovableStatus.available
                   ? null
                   : () => unawaited(
                       controller.removeFolder(disk.disk.id, folder),

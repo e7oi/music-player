@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tuneshell/domain/library/model/file_tags.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/ports/library_repository.dart';
 import 'package:tuneshell/domain/library/services/tag_indexer.dart';
 
 import '../../fakes/fake_library.dart';
@@ -220,4 +221,95 @@ void main() {
 
     expect(reader.reads, hasLength(2));
   });
+
+  /// @verifies FR-007.3 a disk that went away says nothing about the files.
+  test('a lost access leaves the tracks pending and ends the pass', () async {
+    await repository.applyScan(ssd, [info('a.mp3'), info('b.mp3')]);
+    reader.accessLost.add(ssdTrack('a.mp3'));
+    final serial = TagIndexer(
+      repository: repository,
+      reader: reader,
+      volumes: volumes,
+      parallelism: 1,
+    );
+
+    await serial.run();
+
+    expect(
+      repository.tracks.every((t) => t.tagsState == TagsState.pending),
+      isTrue,
+    );
+    expect(reader.retained, isNull);
+  });
+
+  /// @verifies BR-006.6
+  test(
+    'a read that fails because the disk was unplugged stays pending',
+    () async {
+      await repository.applyScan(ssd, [info('a.mp3'), info('b.mp3')]);
+      reader.throwing.add(ssdTrack('a.mp3'));
+      volumes.available = {internalDisk};
+      final start = FakeVolumeEvents({internalDisk, ssd});
+      final unplugging = TagIndexer(
+        repository: repository,
+        reader: reader,
+        volumes: start,
+        parallelism: 1,
+      );
+      reader.onRead = (_) => start.available = {internalDisk};
+
+      await unplugging.run();
+
+      expect(
+        repository.tracks.every((t) => t.tagsState == TagsState.pending),
+        isTrue,
+      );
+    },
+  );
+
+  /// @verifies FR-007.3 only an explicit refresh retries the failed files.
+  test('retryFailed gives the unreadable files another pass', () async {
+    await repository.applyScan(ssd, [info('a.mp3')]);
+    await indexer.run();
+    reader
+      ..reads.clear()
+      ..tags[ssdTrack('a.mp3')] = const FileTags(title: 'A');
+
+    await indexer.run();
+    expect(reader.reads, isEmpty);
+
+    await indexer.run(retryFailed: true);
+    expect(reader.reads, [ssdTrack('a.mp3')]);
+    expect(repository.tracks.single.tagsState, TagsState.done);
+  });
+
+  test('a failing store ends idle', () async {
+    final broken = TagIndexer(
+      repository: _BrokenStore(repository),
+      reader: reader,
+      volumes: volumes,
+    );
+    await repository.applyScan(ssd, [info('a.mp3')]);
+
+    await expectLater(broken.run(), throwsException);
+
+    expect(broken.progress.running, isFalse);
+  });
+}
+
+class _BrokenStore extends FakeLibraryRepository {
+  new(this._inner);
+
+  final FakeLibraryRepository _inner;
+
+  @override
+  Future<int> countPending(Set<DiskId> disks) => _inner.countPending(disks);
+
+  @override
+  Future<List<PendingTrack>> pendingTracks(Set<DiskId> disks, int limit) =>
+      _inner.pendingTracks(disks, limit);
+
+  @override
+  Future<void> applyFileTags(List<TagUpdate> updates) =>
+      throw Exception('disk full');
 }

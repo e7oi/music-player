@@ -19,9 +19,10 @@ class RemovableStorageChannel implements RemovableAudioSource {
 
   final MethodChannel _channel;
 
-  /// Volume identifiers are compared without regard to case: Android hands
-  /// them out in both.
-  static DiskId diskId(String uuid) => DiskId(uuid.toUpperCase());
+  /// The identifier is kept as Android gives it, case included: the native
+  /// side compares without regard to case but builds document ids from the
+  /// grant's own spelling.
+  static DiskId diskId(String uuid) => DiskId(uuid);
 
   @override
   Future<RemovableFolder?> pickFolder() async {

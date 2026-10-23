@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tuneshell/domain/library/model/file_tags.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/library/ports/removable_audio_source.dart';
 import 'package:tuneshell/domain/library/services/library_indexer.dart';
 import 'package:tuneshell/domain/library/services/removable_indexer.dart';
 
@@ -24,7 +25,8 @@ void main() {
     indexer = RemovableIndexer(repository: repository, source: source);
   });
 
-  /// @verifies FR-006
+  /// @verifies FR-006.1
+  /// @verifies FR-006.7
   group('adding a folder', () {
     test('registers the disk and its tracks without tags', () async {
       expect(await indexer.addFolder(), AddFolderResult.added);
@@ -102,7 +104,7 @@ void main() {
       expect(after['Music/a.mp3'], before['Music/a.mp3']);
     });
 
-    /// FR-006.9
+    /// @verifies FR-006.9
     test('a failed scan deletes nothing', () async {
       source.failing[(ssd, 'Music')] = Exception('io error');
 
@@ -110,7 +112,7 @@ void main() {
       expect(repository.tracks, hasLength(2));
     });
 
-    /// FR-006.9
+    /// @verifies FR-006.9
     test('an empty scan of a disk that has tracks is an error', () async {
       source.files[(ssd, 'Music')] = [];
 
@@ -121,7 +123,7 @@ void main() {
       expect(repository.tracks, hasLength(2));
     });
 
-    /// FR-006.10
+    /// @verifies FR-006.10
     test('an absent disk is not scanned and keeps its tracks', () async {
       source
         ..mounted = []
@@ -133,7 +135,7 @@ void main() {
       expect(repository.tracks, hasLength(2));
     });
 
-    /// FR-006.11
+    /// @verifies FR-006.11
     test('a lost access is not scanned and keeps its tracks', () async {
       source
         ..granted = {}
@@ -186,6 +188,7 @@ void main() {
       expect((await indexer.disks()).single.status, RemovableStatus.absent);
     });
 
+    /// @verifies FR-006.11
     test('access lost when mounted without a grant', () async {
       source.granted = {};
 
@@ -263,5 +266,82 @@ void main() {
       repository.tracks.every((t) => t.tagsState == TagsState.pending),
       isTrue,
     );
+  });
+
+  /// @verifies FR-006.2 renewing a used folder now empty keeps its access.
+  test('an empty folder already chosen keeps its access', () async {
+    await indexer.addFolder();
+    source.files[(ssd, 'Music')] = [];
+
+    expect(await indexer.addFolder(), AddFolderResult.noAudio);
+
+    expect(source.released, isEmpty);
+    expect(await repository.chosenFolders(ssd), {'Music'});
+  });
+
+  /// @verifies FR-006.2 nothing changes if the scan fails.
+  test('removing a folder is all or nothing', () async {
+    await indexer.addFolder();
+    source
+      ..picked = const RemovableFolder(
+        disk: ssd,
+        diskLabel: 'SSD',
+        path: 'Jazz',
+      )
+      ..files[(ssd, 'Jazz')] = [info('Jazz/c.mp3')];
+    await indexer.addFolder();
+    source.failing[(ssd, 'Music')] = Exception('io error');
+
+    await expectLater(indexer.removeFolder(ssd, 'Jazz'), throwsException);
+
+    expect(await repository.chosenFolders(ssd), {'Music', 'Jazz'});
+    expect(repository.tracks, hasLength(3));
+    expect(source.released, isEmpty);
+  });
+
+  /// @verifies BR-006.5 a stop ends the whole refresh.
+  test('a cancelled scan does not go on with the next disk', () async {
+    const other = DiskId('9999-FFFF');
+    await indexer.addFolder();
+    source
+      ..mounted = [
+        const MountedVolume(id: ssd, label: 'SSD'),
+        const MountedVolume(id: other, label: 'Other'),
+      ]
+      ..picked = const RemovableFolder(
+        disk: other,
+        diskLabel: 'Other',
+        path: '',
+      )
+      ..granted = {
+        music,
+        const RemovableFolder(disk: other, diskLabel: 'Other', path: ''),
+      }
+      ..files[(other, '')] = [info('x.mp3')];
+    await indexer.addFolder();
+    source
+      ..scanned.clear()
+      ..failing[(ssd, 'Music')] = const ScanCancelledException();
+
+    await expectLater(
+      indexer.refreshAll(),
+      throwsA(isA<ScanCancelledException>()),
+    );
+
+    expect(source.scanned, [(ssd, 'Music')]);
+  });
+
+  /// @verifies FR-006.4 the name Android gives the volume is kept up to date.
+  test('a renamed volume updates the label', () async {
+    await indexer.addFolder();
+    source.picked = const RemovableFolder(
+      disk: ssd,
+      diskLabel: 'Renamed',
+      path: 'Music',
+    );
+
+    await indexer.addFolder();
+
+    expect((await repository.disk(ssd))?.label, 'Renamed');
   });
 }

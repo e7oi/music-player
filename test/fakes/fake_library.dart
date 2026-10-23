@@ -42,7 +42,7 @@ class FakeLibraryRepository implements LibraryRepository {
 
   @override
   Future<void> setChosenFolders(Disk disk, Set<String> folders) async {
-    _disks.putIfAbsent(disk.id, () => disk);
+    _disks[disk.id] = disk;
     _folders[disk.id] = {...folders};
   }
 
@@ -132,6 +132,25 @@ class FakeLibraryRepository implements LibraryRepository {
   Future<int> countPending(Set<DiskId> disks) async => _tracks
       .where((t) => disks.contains(t.disk) && t.tagsState == TagsState.pending)
       .length;
+
+  @override
+  Future<void> resetFailedTags(Set<DiskId> disks) async {
+    for (var i = 0; i < _tracks.length; i++) {
+      final t = _tracks[i];
+      if (disks.contains(t.disk) && t.tagsState == TagsState.failed) {
+        _tracks[i] = LibraryTrack(
+          id: t.id,
+          disk: t.disk,
+          info: t.info,
+          artwork: t.artwork,
+        );
+      }
+    }
+  }
+
+  @override
+  Future<int> trackCount(DiskId disk) async =>
+      _tracks.where((t) => t.disk == disk).length;
 
   @override
   Future<void> applyFileTags(List<TagUpdate> updates) async {
@@ -264,6 +283,9 @@ class FakeTagReader implements TagReader {
   /// Tags per track; a missing entry reads as nothing.
   final Map<Track, FileTags> tags = {};
   final Set<Track> throwing = {};
+
+  /// Reads of these tracks throw [RemovableAccessException].
+  final Set<Track> accessLost = {};
   final List<Track> reads = [];
   Set<String>? retained;
 
@@ -281,6 +303,7 @@ class FakeTagReader implements TagReader {
     onRead?.call(track);
     await Future<void>.delayed(Duration.zero);
     active--;
+    if (accessLost.contains(track)) throw const RemovableAccessException();
     if (throwing.contains(track)) throw Exception('unreadable');
     return tags[track];
   }
