@@ -227,7 +227,7 @@ abstract class AppLocalizations {
   /// BR-003: a track could not be played.
   ///
   /// In en, this message translates to:
-  /// **'Cannot play {title}'**
+  /// **'Cannot play “{title}”: damaged file. Next track started.'**
   String noticeTrackFailed(String title);
 
   /// BR-003: too many consecutive failures.
@@ -403,6 +403,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get foldersBack;
+
+  /// Tooltip of the disabled search button of the Tracks header (FR-011.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Search (soon)'**
+  String get searchSoon;
+
+  /// Label of the Disks action chip of the Tracks view (FR-011.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Disks'**
+  String get chipDisks;
+
+  /// Badge on the Disks chip when disks are absent or need access (FR-011.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{count} missing'**
+  String disksAbsentBadge(int count);
+
+  /// Progress banner of the first scan (FR-011.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for audio files…'**
+  String get libraryScanning;
+
+  /// Count line while the first scan runs (FR-011.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Searching…'**
+  String get libraryCountSearching;
+
+  /// Count line of the track list (FR-011.5).
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, one{{total} track} other{{total} tracks}}{unavailable, plural, =0{} other{ · {unavailable} unavailable}}'**
+  String libraryCount(int total, int unavailable);
+
+  /// Label of the only sort of the track list (FR-011.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Title A→Z'**
+  String get librarySortTitle;
+
+  /// Banner when one disk is absent (BR-008.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{tracks, plural, one{{tracks} track skipped} other{{tracks} tracks skipped}}: {disk} missing'**
+  String bannerAbsentOne(int tracks, String disk);
+
+  /// Banner when several disks are absent (BR-008.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{tracks, plural, one{{tracks} track skipped} other{{tracks} tracks skipped}}: {count} disks missing'**
+  String bannerAbsentMany(int tracks, int count);
+
+  /// Banner when the access to one disk is lost (BR-008.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{tracks, plural, one{{tracks} track skipped} other{{tracks} tracks skipped}}: access to {disk} must be renewed'**
+  String bannerAccessOne(int tracks, String disk);
+
+  /// Banner for several disks, absent or needing access (BR-008.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{tracks, plural, one{{tracks} track skipped} other{{tracks} tracks skipped}}: {count} disks unavailable'**
+  String bannerOther(int tracks, int count);
+
+  /// Action of the sources banner: opens the disks screen (BR-008.2).
+  ///
+  /// In en, this message translates to:
+  /// **'See'**
+  String get bannerSee;
+
+  /// Tooltip of the close button of the sources banner (BR-008.3).
+  ///
+  /// In en, this message translates to:
+  /// **'Hide this message'**
+  String get bannerDismiss;
+
+  /// Shown for a track without an artist tag (FR-011.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown artist'**
+  String get trackUnknownArtist;
+
+  /// Second line of a track whose disk is absent (FR-011.6).
+  ///
+  /// In en, this message translates to:
+  /// **'{artist} · not connected'**
+  String trackNotConnected(String artist);
+
+  /// Second line of a track the engine failed on (FR-011.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Unreadable file'**
+  String get trackUnreadable;
+
+  /// Said by TalkBack for the track being played (FR-011.12).
+  ///
+  /// In en, this message translates to:
+  /// **'playing'**
+  String get trackPlaying;
+
+  /// Said by TalkBack after a track: its source (FR-011.12).
+  ///
+  /// In en, this message translates to:
+  /// **'source {name}'**
+  String trackSource(String name);
+
+  /// Name of the internal storage as a source (FR-012.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get sourceLocal;
+
+  /// Message when an unavailable track is touched (BR-008.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Plug in {disk} to play this track'**
+  String trackNeedsDisk(String disk);
+
+  /// Message when a track whose disk access is lost is touched (BR-008.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Renew the access to {disk} to play this track'**
+  String trackNeedsAccess(String disk);
+
+  /// Title of the empty library state (FR-011.9).
+  ///
+  /// In en, this message translates to:
+  /// **'Your library is empty'**
+  String get emptyLibraryTitle;
+
+  /// Body of the empty library state (FR-011.9).
+  ///
+  /// In en, this message translates to:
+  /// **'No audio file in the chosen folders. Add other folders or refresh.'**
+  String get emptyLibraryBody;
+
+  /// Title of the no-folder state (FR-011.9).
+  ///
+  /// In en, this message translates to:
+  /// **'No folder chosen'**
+  String get emptyNoFoldersTitle;
+
+  /// Body of the no-folder state (FR-011.9).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least one folder so TuneShell can find your music.'**
+  String get emptyNoFoldersBody;
+
+  /// Button of the empty states (FR-011.9).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folders'**
+  String get chooseFoldersAction;
+
+  /// Label of the button that leads to the track being played (FR-013.3).
+  ///
+  /// In en, this message translates to:
+  /// **'Now playing'**
+  String get jumpCurrent;
+
+  /// Label of the button when nothing plays (FR-013.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Last played'**
+  String get jumpLastPlayed;
+
+  /// Title of the letter grid and label of the index handle (FR-013.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Go to letter'**
+  String get indexGoToLetter;
+
+  /// Count in the bubble of the alphabet index (FR-013.1).
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tracks'**
+  String indexCount(int count);
+
+  /// Said by TalkBack for a letter of the index (FR-013.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Letter {letter}, {count} tracks'**
+  String indexLetter(String letter, int count);
 }
 
 class _AppLocalizationsDelegate

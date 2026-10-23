@@ -94,7 +94,7 @@
       }
     }
   },
-  "noticeTrackFailed": "Cannot play {title}",
+  "noticeTrackFailed": "Cannot play “{title}”: damaged file. Next track started.",
   "@noticeTrackFailed": {
     "description": "BR-003: a track could not be played.",
     "placeholders": {
@@ -231,5 +231,215 @@
   "foldersBack": "Back",
   "@foldersBack": {
     "description": "Tooltip of the back arrow of the folder choice when it was opened from the library (FR-003)."
+  },
+  "searchSoon": "Search (soon)",
+  "@searchSoon": {
+    "description": "Tooltip of the disabled search button of the Tracks header (FR-011.1)."
+  },
+  "chipDisks": "Disks",
+  "@chipDisks": {
+    "description": "Label of the Disks action chip of the Tracks view (FR-011.2)."
+  },
+  "disksAbsentBadge": "{count} missing",
+  "@disksAbsentBadge": {
+    "description": "Badge on the Disks chip when disks are absent or need access (FR-011.2).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "libraryScanning": "Looking for audio files…",
+  "@libraryScanning": {
+    "description": "Progress banner of the first scan (FR-011.4)."
+  },
+  "libraryCountSearching": "Searching…",
+  "@libraryCountSearching": {
+    "description": "Count line while the first scan runs (FR-011.4)."
+  },
+  "libraryCount": "{total, plural, one{{total} track} other{{total} tracks}}{unavailable, plural, =0{} other{ · {unavailable} unavailable}}",
+  "@libraryCount": {
+    "description": "Count line of the track list (FR-011.5).",
+    "placeholders": {
+      "total": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "unavailable": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "librarySortTitle": "Title A→Z",
+  "@librarySortTitle": {
+    "description": "Label of the only sort of the track list (FR-011.5)."
+  },
+  "bannerAbsentOne": "{tracks, plural, one{{tracks} track skipped} other{{tracks} tracks skipped}}: {disk} missing",
+  "@bannerAbsentOne": {
+    "description": "Banner when one disk is absent (BR-008.2).",
+    "placeholders": {
+      "tracks": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "disk": {
+        "type": "String"
+      }
+    }
+  },
+  "bannerAbsentMany": "{tracks, plural, one{{tracks} track skipped} other{{tracks} tracks skipped}}: {count} disks missing",
+  "@bannerAbsentMany": {
+    "description": "Banner when several disks are absent (BR-008.2).",
+    "placeholders": {
+      "tracks": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bannerAccessOne": "{tracks, plural, one{{tracks} track skipped} other{{tracks} tracks skipped}}: access to {disk} must be renewed",
+  "@bannerAccessOne": {
+    "description": "Banner when the access to one disk is lost (BR-008.2).",
+    "placeholders": {
+      "tracks": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "disk": {
+        "type": "String"
+      }
+    }
+  },
+  "bannerOther": "{tracks, plural, one{{tracks} track skipped} other{{tracks} tracks skipped}}: {count} disks unavailable",
+  "@bannerOther": {
+    "description": "Banner for several disks, absent or needing access (BR-008.2).",
+    "placeholders": {
+      "tracks": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bannerSee": "See",
+  "@bannerSee": {
+    "description": "Action of the sources banner: opens the disks screen (BR-008.2)."
+  },
+  "bannerDismiss": "Hide this message",
+  "@bannerDismiss": {
+    "description": "Tooltip of the close button of the sources banner (BR-008.3)."
+  },
+  "trackUnknownArtist": "Unknown artist",
+  "@trackUnknownArtist": {
+    "description": "Shown for a track without an artist tag (FR-011.6)."
+  },
+  "trackNotConnected": "{artist} · not connected",
+  "@trackNotConnected": {
+    "description": "Second line of a track whose disk is absent (FR-011.6).",
+    "placeholders": {
+      "artist": {
+        "type": "String"
+      }
+    }
+  },
+  "trackUnreadable": "Unreadable file",
+  "@trackUnreadable": {
+    "description": "Second line of a track the engine failed on (FR-011.6)."
+  },
+  "trackPlaying": "playing",
+  "@trackPlaying": {
+    "description": "Said by TalkBack for the track being played (FR-011.12)."
+  },
+  "trackSource": "source {name}",
+  "@trackSource": {
+    "description": "Said by TalkBack after a track: its source (FR-011.12).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceLocal": "Local",
+  "@sourceLocal": {
+    "description": "Name of the internal storage as a source (FR-012.6)."
+  },
+  "trackNeedsDisk": "Plug in {disk} to play this track",
+  "@trackNeedsDisk": {
+    "description": "Message when an unavailable track is touched (BR-008.5).",
+    "placeholders": {
+      "disk": {
+        "type": "String"
+      }
+    }
+  },
+  "trackNeedsAccess": "Renew the access to {disk} to play this track",
+  "@trackNeedsAccess": {
+    "description": "Message when a track whose disk access is lost is touched (BR-008.5).",
+    "placeholders": {
+      "disk": {
+        "type": "String"
+      }
+    }
+  },
+  "emptyLibraryTitle": "Your library is empty",
+  "@emptyLibraryTitle": {
+    "description": "Title of the empty library state (FR-011.9)."
+  },
+  "emptyLibraryBody": "No audio file in the chosen folders. Add other folders or refresh.",
+  "@emptyLibraryBody": {
+    "description": "Body of the empty library state (FR-011.9)."
+  },
+  "emptyNoFoldersTitle": "No folder chosen",
+  "@emptyNoFoldersTitle": {
+    "description": "Title of the no-folder state (FR-011.9)."
+  },
+  "emptyNoFoldersBody": "Choose at least one folder so TuneShell can find your music.",
+  "@emptyNoFoldersBody": {
+    "description": "Body of the no-folder state (FR-011.9)."
+  },
+  "chooseFoldersAction": "Choose folders",
+  "@chooseFoldersAction": {
+    "description": "Button of the empty states (FR-011.9)."
+  },
+  "jumpCurrent": "Now playing",
+  "@jumpCurrent": {
+    "description": "Label of the button that leads to the track being played (FR-013.3)."
+  },
+  "jumpLastPlayed": "Last played",
+  "@jumpLastPlayed": {
+    "description": "Label of the button when nothing plays (FR-013.4)."
+  },
+  "indexGoToLetter": "Go to letter",
+  "@indexGoToLetter": {
+    "description": "Title of the letter grid and label of the index handle (FR-013.1)."
+  },
+  "indexCount": "{count} tracks",
+  "@indexCount": {
+    "description": "Count in the bubble of the alphabet index (FR-013.1).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "indexLetter": "Letter {letter}, {count} tracks",
+  "@indexLetter": {
+    "description": "Said by TalkBack for a letter of the index (FR-013.1).",
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
   }
 }
