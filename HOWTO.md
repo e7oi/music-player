@@ -376,3 +376,23 @@ Build release (D14) installée par-dessus la précédente. Bibliothèque réelle
 15. **Pochette :** regarder la grande pochette (348 dp) d'une piste dont la pochette vient d'un fichier : noter si elle est floue (images de 512 pixels au plus, FR-007).
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
+
+## 18. Tester les albums et les artistes (MPL-048)
+
+Build release (D14) installée par-dessus la précédente. Bibliothèque réelle (plus de 5 000 pistes) déjà indexée, SSD branché pour les étapes 4 et 11. Chaque étape se fait en clair puis en sombre si le temps le permet. Consigner les comptes (albums, artistes) sans noms (D27).
+
+1. **Grille d'albums :** ouvrir « Albums ». Attendu : « N albums » et « Artiste de l'album » ; une grille de pochettes sur deux colonnes (plus en paysage), chaque carte avec titre, repère de source puis « artiste · année » ; les pistes sans étiquette d'artiste sont les premières, sous « Artiste inconnu ».
+2. **Regroupement :** un album du téléphone et du SSD n'a qu'une carte avec ses repères ; un même titre chez deux artistes fait deux cartes ; une compilation sans artiste d'album se découpe par artiste de piste (limite connue, BR-010) : noter combien de cartes d'une piste cela donne.
+3. **Détail d'un album :** toucher une carte. Attendu : le détail s'ouvre dans l'onglet, la navigation et le mini-lecteur restent ; pochette, titre, artiste en couleur, « année · genre », « N disques · N pistes · durée » ; pistes numérotées, sous « Disque 1 », « Disque 2 » seulement s'il y a plusieurs disques. **Vérifier l'ordre disque puis piste** sur un album qui a des numéros dans le désordre dans ses fichiers.
+4. **Disque absent :** débrancher le SSD. Attendu : ses albums et artistes sont grisés avec l'icône de prise ; leur détail s'ouvre ; toucher une piste dit « Branche … pour lire cette piste » et ne lance rien.
+5. **Lire, Aléatoire :** « Lire » lance l'album dans l'ordre ; le lecteur dit « Lecture depuis Album · … » ; l'aléatoire est éteint. « Aléatoire » le rallume et mélange la file. Toucher la 3e piste : la lecture démarre sur elle, avec l'album pour file, dans l'ordre disque puis piste.
+6. **Retour :** depuis un détail, le geste Retour ramène à la grille, au même endroit ; un second Retour ramène à Pistes, un troisième quitte l'application. La flèche du détail fait comme le premier Retour.
+7. **Index :** glisser depuis la poignée sur Albums puis sur Artistes : la grille ou la liste suit la lettre en temps réel, les lettres sans élément sont grisées. Le geste Retour reste exclu sur la poignée de la vue au premier plan seulement : depuis le bord droit de Pistes, la poignée n'est plus protégée quand Albums est affiché.
+8. **Artistes :** ouvrir « Artistes ». Attendu : « N artistes · regroupés par artiste de l'album », avatars à initiale en deux teintes, « N albums · N pistes », intercalaires de lettres, « Artiste inconnu » sous « # ».
+9. **Détail d'un artiste :** avatar, « N albums · N pistes · durée », « Tout lire » et « Aléatoire », carrousel d'albums, puis toutes les pistes album par album. Toucher un album du carrousel ouvre son détail, Retour revient à l'artiste. « Tout lire » lance dans l'ordre des albums ; le lecteur dit « Artiste · … ».
+10. **Ajouter à la file :** appui long sur une carte d'album et sur une ligne d'artiste. Attendu : « Lire ensuite » et « Ajouter à la file » ; l'album arrive après la piste en cours ou à la fin, dans l'ordre disque puis piste ; le message dit « Lecture ensuite : … » ou « Ajouté à la file : … ». Ouvrir la file d'attente pour vérifier l'ordre.
+11. **Piste en cours :** pendant la lecture d'un album, la piste porte ▶ et la ligne est surlignée dans le détail de l'album et dans celui de l'artiste.
+12. **Paysage, TalkBack, texte à 200 % :** en paysage la grille a plus de colonnes et le rail est à gauche ; avec TalkBack une carte se lit « titre, artiste · année » (et « indisponible : … non connecté » si grisée), une ligne d'artiste « nom, N albums · N pistes », une piste « Piste 3, titre, durée, en lecture » ; à 200 %, rien n'est coupé.
+13. **Fluidité (profile) :** `flutter build apk --profile`, faire défiler la grille et la liste d'artistes de la bibliothèque réelle au doigt et à la volée ; noter toute saccade (60 i/s visés) et le temps d'ouverture de l'onglet Albums.
+
+Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).

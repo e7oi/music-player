@@ -30,4 +30,8 @@ Ajout d'une sélection de plusieurs groupes, « Lire depuis cette piste » sans 
 
 ## As-built
 
-À écrire à la livraison.
+MPL-048, 2026-10-23, test appareil partiel (D14). `playGroup`, `playOrExplain`, `explainUnavailable` (`group_actions.dart`), `showTracksMenu` et `applyTracksAction` (`features/player/track_menu.dart`, qui sert aussi aux pistes seules), `QueueOrigin` scellée (`AlbumOrigin`, `ArtistOrigin`). Tests : `browse_views_test.dart`.
+
+- « Lire » éteint l'aléatoire avant de poser la file ; « Aléatoire » l'allume ; toucher une piste laisse le mode.
+- Un groupe sans piste disponible n'ouvre pas la file et dit quoi faire ; toucher une piste indisponible du détail l'explique.
+- La confirmation de l'ajout nomme l'album ou l'artiste (« Ajouté à la file : … »).

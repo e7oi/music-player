@@ -42,4 +42,9 @@ Recherche, autre tri, filtre, modification des étiquettes, pochette d'album cho
 
 ## As-built
 
-À écrire à la livraison.
+MPL-048, 2026-10-23, test appareil partiel (D14). `AlbumsView` (`albums_view.dart`), `AlbumCard` (`lib/ui/widgets/album_card.dart`), `AlbumDetailPage` (`album_detail_page.dart`). Tests : `browse_views_test.dart`, `album_card_test.dart`.
+
+- Grille : `GridView.builder` à `mainAxisExtent` fixe (couverture + 56 dp de texte, grandit avec le texte) ; colonnes = largeur utile / 160 dp, de 2 à 6. L'index saute à `(indice ÷ colonnes) × (hauteur de ligne + espace)`.
+- Le détail est une route du navigateur imbriqué de l'onglet (FR-009, ADR-016).
+- Une carte d'album d'une piste « inconnu » dit « artiste · N piste(s) ».
+- Les pistes sont numérotées par leur numéro d'étiquette, à défaut par leur position.

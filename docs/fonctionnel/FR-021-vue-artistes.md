@@ -38,4 +38,7 @@ Image d'artiste, biographie, « artistes similaires », pistes où l'artiste n'a
 
 ## As-built
 
-À écrire à la livraison.
+MPL-048, 2026-10-23, test appareil partiel (D14). `ArtistsView` (`artists_view.dart`), `ArtistListModel` (`artist_list_model.dart`), `ArtistTile` et `ArtistAvatar` (`lib/ui/widgets/artist_tile.dart`), `ArtistDetailPage`. Tests : `artist_list_model_test.dart`, `browse_views_test.dart`, `album_card_test.dart`.
+
+- Liste : `SliverVariedExtentList` (intercalaire 40 dp, ligne 64 dp, proportionnels au texte au-delà de 1,3) ; le saut de l'index vient de `ArtistListModel.offsetOf`.
+- Avatar de 96 dp du détail : `displaySmall` ; de 48 dp : `titleLarge`.

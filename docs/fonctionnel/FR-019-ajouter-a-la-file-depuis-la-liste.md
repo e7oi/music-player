@@ -36,3 +36,4 @@ MPL-047, 2026-10-23, test appareil en attente (D14). `showTrackMenu` (`lib/featu
 - Menu : feuille modale à deux lignes (`showTrackMenu`). Pour TalkBack, la ligne offre aussi « Lire ensuite » et « Ajouter à la file » comme actions personnalisées (`applyTrackAction`, testé).
 - Sur une file vide, la provenance de la file (FR-017.2) est effacée : la piste ajoutée ne vient d'aucune liste.
 - Aucune confirmation avant l'ajout hors le message bref.
+- MPL-048, 2026-10-23 : le menu sert aussi aux albums et aux artistes entiers (`showTracksMenu`, FR-022) ; `applyTrackAction` n'est plus qu'un cas d'une piste de `applyTracksAction`.

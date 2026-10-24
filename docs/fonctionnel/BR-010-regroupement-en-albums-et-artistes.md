@@ -29,4 +29,9 @@
 
 ## As-built
 
-À écrire à la livraison.
+MPL-048, 2026-10-23, test appareil partiel (D14). `LibraryGroups.build` (`lib/features/browse/library_groups.dart`, `AlbumGroup`, `ArtistGroup`) ; tests : `test/features/browse/library_groups_test.dart` (une section par règle).
+
+- La clé est `artiste replié` + NUL + `album replié`, par `sortKey` (casse, accents, espaces) ; l'artiste inconnu a la clé vide et sort en tête (« # »).
+- Règle 6 : `_compareTracks`, un seul tri partout (détail, file, ajout, artiste).
+- Une compilation sans artiste d'album est découpée par artiste de piste, comme prévu.
+- 7 500 pistes se groupent en moins de deux secondes (test) ; le calcul se refait à chaque émission de la liste (deux par seconde au plus).

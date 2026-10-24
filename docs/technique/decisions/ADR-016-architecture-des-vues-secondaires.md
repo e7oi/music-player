@@ -36,4 +36,7 @@ Les onglets Albums et Artistes affichent « bientôt ». Ils ont besoin de group
 
 ## As-built
 
-À écrire à la livraison.
+MPL-048, 2026-10-23, test appareil partiel (D14). Réalisé comme décidé, avec ces précisions : `HomeShell` monte un `Navigator` par onglet Albums et Artistes (`_TabNavigator`) et envoie le Retour système au navigateur de l'onglet avant de ramener sur Pistes, sans `NavigatorPopHandler` (deux `PopScope` imbriqués auraient tous deux agi) ; `GestureRegions` (`app/providers/gesture_providers.dart`) tient une table de rectangles par vue et envoie l'union au canal ; `HandleExclusion` (`browse_widgets.dart`) la nourrit ; `QueueOrigin` est une classe scellée (`TracksByTitle`, `AlbumOrigin`, `ArtistOrigin`).
+
+- Découverte : `IndexedStack` ne coupe plus les `Ticker` des onglets cachés dans la version de Flutter épinglée ; l'état « vue au premier plan » vient de `Visibility.of` en plus de `TickerMode`. La liste des pistes (MPL-045) gardait donc sa poignée protégée du geste Retour quand un autre onglet était affiché ; corrigé au passage dans `LibraryTrackList` (FR-013.2).
+- `libraryGroupsProvider` recalcule à chaque émission de `listedTracksProvider` (deux par seconde au plus) ou quand l'ensemble des disques indisponibles change.

@@ -34,4 +34,6 @@ Recherche, autres tris et filtres, playlists, favoris, image d'artiste, regroupe
 
 ## As-built
 
-À écrire à la livraison.
+MPL-048, 2026-10-23, test appareil partiel (D14). `lib/features/browse/` (groupes, vues, détails, actions), tests dans `test/features/browse/`. Vu sur le Pixel (release, thème sombre) : grille de 418 albums, détail d'un album avec navigation et mini-lecteur visibles, « Lire », Retour du détail vers la grille. Non vu : artistes, index, ajout à la file, disque absent, paysage, TalkBack, 200 %, fluidité (HOWTO §18).
+
+- Constaté sur la bibliothèque réelle : les fichiers sans étiquette d'artiste sont regroupés sous « Artiste inconnu » avec le nom de leur dossier pour album (MediaStore), d'où de nombreux albums d'une piste en tête de grille.
