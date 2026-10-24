@@ -52,6 +52,16 @@ abstract final class TsSize {
   static const double playButton = 80;
   static const double playerPanelWidth = 280;
   static const double progressBar = 4;
+  static const double miniProgress = 2; // thin bar under the mini player
+  static const double sourceMarkMini = 10; // source mark in the mini player
+  static const double toggleDot = 4; // active dot under shuffle and repeat
+  static const double sheetHandle = 4; // grabber of a bottom sheet
+  static const double sheetHandleWidth = 32;
+  static const double closeFlingVelocity =
+      700; // swipe down to close the player
+  static const double transportIcon = 32; // previous, play and next
+  static const double queueSheetInitial = 0.6; // share of the screen
+  static const double queueSheetMin = 0.3;
   static const double bannerMin = 56; // status banner
   static const double fixedRowMaxTextScale = 1.3; // above: rows grow
   static const double sourceMark = 12; // source mark on a TrackTile

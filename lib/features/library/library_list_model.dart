@@ -76,6 +76,7 @@ final class LibraryListModel {
     required this.letters,
     required this.firstIndex,
     required this.jumpTarget,
+    required this.currentOutsideList,
   });
 
   /// Sorts [tracks] by title without regard to case or accents (FR-011.7).
@@ -123,6 +124,8 @@ final class LibraryListModel {
       letters: buildLetters(titles),
       firstIndex: firstIndexes(titles),
       jumpTarget: _jumpTarget(entries, current, lastPlayed),
+      currentOutsideList:
+          current != null && !entries.any((e) => e.track.track == current),
     );
   }
 
@@ -149,6 +152,10 @@ final class LibraryListModel {
   /// First position of each letter that has titles.
   final Map<String, int> firstIndex;
   final JumpTarget? jumpTarget;
+
+  /// A track plays that the list does not show: the button then opens the
+  /// player instead (FR-013.5).
+  final bool currentOutsideList;
 
   static int _compare(
     ({String key, LibraryTrack track}) a,

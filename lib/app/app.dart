@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/features/library/library_controller.dart';
 import 'package:tuneshell/features/library/library_page.dart';
-import 'package:tuneshell/features/library/player_bar.dart';
+import 'package:tuneshell/features/player/mini_player_bar.dart';
 import 'package:tuneshell/features/shell/home_shell.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
@@ -25,7 +25,7 @@ class TuneShellApp extends StatelessWidget {
           libraryControllerProvider.select(isFirstLaunchScreen),
         ),
         tracks: const LibraryPage(),
-        playerBar: const PlayerBar(),
+        playerBar: const MiniPlayerBar(),
       ),
     ),
   );

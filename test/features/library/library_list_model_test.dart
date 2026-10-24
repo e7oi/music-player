@@ -362,6 +362,20 @@ void main() {
       expect(model.jumpTarget, isNull);
     });
 
+    /// @verifies FR-013.5
+    test('a track outside the list is flagged, for the player to open', () {
+      final outside = build(
+        tracks,
+        current: const Track(disk: internalDisk, relativePath: 'gone.mp3'),
+      );
+      final inside = build(tracks, current: tracks[1].track);
+      final nothing = build(tracks);
+
+      expect(outside.currentOutsideList, isTrue);
+      expect(inside.currentOutsideList, isFalse);
+      expect(nothing.currentOutsideList, isFalse);
+    });
+
     test('none without a current or last played track', () {
       expect(build(tracks).jumpTarget, isNull);
     });

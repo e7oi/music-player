@@ -354,3 +354,25 @@ Build release (D14) installée par-dessus la précédente. Un « premier lanceme
 12. **Paysage, texte à 200 %, TalkBack :** sur l'accueil, l'explication, l'écran bloqué et les dossiers : rien n'est coupé, les boutons restent atteignables en faisant défiler, tous les boutons sont lus avec leur libellé, « Étape N sur 2 » est lu.
 
 Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).
+
+## 17. Tester la lecture : mini-lecteur, lecteur, file d'attente (MPL-047)
+
+Build release (D14) installée par-dessus la précédente. Bibliothèque réelle (plus de 5 000 pistes) déjà indexée, SSD branché pour les étapes 9 et 10. Chaque étape se fait en clair puis en sombre si le temps le permet. La notification et l'écran verrouillé ne changent pas : les rejouer avec `HOWTO.md` §12 (étapes 1, 2, 4 et 5), car le contrôleur de lecture a changé.
+
+1. **Mini-lecteur :** lancer une piste. Attendu : un mini-lecteur de 64 dp au-dessus de la navigation, avec pochette, titre, repère de source puis artiste, trois boutons, une fine barre qui avance ; il reste en changeant d'onglet. « Pause » et « Lecture » alternent au même endroit.
+2. **Sans étiquettes :** lancer un fichier sans titre ni pochette. Attendu : nom du fichier tronqué, « Artiste inconnu », tuile neutre.
+3. **Ouvrir et fermer le lecteur :** toucher la partie gauche du mini-lecteur ; recommencer en glissant vers le haut. Attendu : la pochette grandit en transition. Fermer par « Réduire », puis par un glissé vers le bas, puis par le geste Retour : la vue et sa position sont retrouvées. Pivoter le téléphone lecteur ouvert : il reste ouvert, sur deux colonnes en paysage.
+4. **Informations :** « Lecture depuis Pistes · Titre A→Z », le titre, « artiste · album », le repère suivi du nom de la source et des étiquettes connues ; une piste sans étiquettes donne le format et le dossier ; le cœur est grisé.
+5. **Curseur :** déplacer le curseur et relâcher : la lecture reprend à cet endroit, une seule fois. Avec TalkBack, avancer et reculer par pas de 5 s ; la valeur lue est « 1:38 sur 4:18 ».
+6. **Aléatoire :** l'activer au milieu de la liste. Attendu : la piste en cours ne change pas, un point apparaît sous l'icône, les pistes suivantes sont mélangées (le bouton « À suivre » le montre). Le désactiver : l'ordre de la liste revient, la piste en cours reste la même.
+7. **Répéter :** trois appuis : toutes les pistes, une piste, désactivé (icône « une piste », point). Laisser finir une piste en mode « une piste » : elle recommence. En mode « toutes », laisser finir la dernière piste d'une courte file : la lecture reprend au début.
+8. **File d'attente :** « À suivre · N pistes ». Attendu : la feuille dit « N pistes · durée », montre « En cours » puis « À suivre » ; ouverture sans attente avec la bibliothèque réelle, défilement fluide. Glisser une poignée : la piste est jouée à sa nouvelle place ; glisser une ligne sur le côté : la piste est retirée, un message le dit ; toucher une ligne la lit ; « Vider la suite » ne laisse que la piste en cours, qui s'arrête à sa fin.
+9. **Disque absent :** débrancher le SSD pendant la lecture d'une piste du téléphone, avec des pistes du SSD dans la suite : elles sont grisées « non connecté, sera ignorée » et la lecture les saute.
+10. **Source perdue :** lire une piste du SSD, le débrancher. Attendu : la lecture s'arrête ; le mini-lecteur dit « Arrêt : `nom` débranché » avec l'icône de prise, la pochette est atténuée ; le lecteur ouvert montre le bandeau « Lecture arrêtée : `nom` débranché ». Rebrancher : rien ne reprend, le message reste jusqu'à ce que « Lecture » soit touché.
+11. **Fichier illisible :** lancer un fichier endommagé, lecteur ouvert. Attendu : la lecture passe à la suivante ; un bandeau dit « Impossible de lire « … » : fichier endommagé. Piste suivante lancée. » avec une croix, sans message en bas de l'écran. Fermé, le lecteur laisse le message en bas de l'écran comme avant.
+12. **Menu d'appui long :** dans la liste, appui long sur une piste. Attendu : « Lire ensuite » et « Ajouter à la file », avec un message de confirmation. Sans lecture en cours, la piste démarre. Vérifier l'ordre dans la file.
+13. **Bouton « En cours » :** inchangé dans la liste (HOWTO §15, étape 10) ; le seul nouveau cas est une piste en cours qui n'est plus dans la liste (dossier retiré pendant la lecture) : le bouton ouvre alors le lecteur.
+14. **TalkBack, texte à 200 %, paysage :** les boutons du mini-lecteur et du lecteur sont lus avec leur libellé ; aléatoire et répéter annoncent leur état ; les poignées de la file sont lues « Déplacer `titre` » et la file offre « Retirer de la file », « Monter », « Descendre ». À 200 %, rien n'est coupé et le lecteur défile.
+15. **Pochette :** regarder la grande pochette (348 dp) d'une piste dont la pochette vient d'un fichier : noter si elle est floue (images de 512 pixels au plus, FR-007).
+
+Consigner le résultat (OK / KO + détails) de chaque étape, sans titre de piste ni nom de fichier (D27).

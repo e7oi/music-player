@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/library_providers.dart';
+import 'package:tuneshell/app/providers/throttle.dart';
 import 'package:tuneshell/data/audio/media_kit_audio_engine.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/playback/model/playback_notice.dart';
@@ -64,3 +65,14 @@ final playerStateProvider = StreamProvider<PlayerState>((ref) async* {
 final playbackNoticesProvider = StreamProvider<PlaybackNotice>(
   (ref) => ref.watch(playerControllerProvider).notices,
 );
+
+/// The playback position alone, at most four times a second (ADR-015): the
+/// parts of the player that do not move are not rebuilt at each tick.
+final playerPositionProvider = StreamProvider<Duration>((ref) async* {
+  final controller = ref.watch(playerControllerProvider);
+  yield controller.state.position;
+  yield* throttleLatest(
+    controller.states.map((s) => s.position).distinct(),
+    const Duration(milliseconds: 250),
+  );
+});

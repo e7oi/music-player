@@ -7,9 +7,10 @@ import 'package:tuneshell/app/providers/tag_providers.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/library/ports/internal_audio_source.dart';
+import 'package:tuneshell/domain/playback/model/engine_issue.dart';
 import 'package:tuneshell/domain/storage/model/media_source.dart';
 import 'package:tuneshell/features/library/library_page.dart';
-import 'package:tuneshell/features/library/player_bar.dart';
+import 'package:tuneshell/features/player/mini_player_bar.dart';
 import 'package:tuneshell/features/shell/home_shell.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/platform/internal_storage.dart';
@@ -65,7 +66,10 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: locale,
-          home: const HomeShell(tracks: LibraryPage(), playerBar: PlayerBar()),
+          home: const HomeShell(
+            tracks: LibraryPage(),
+            playerBar: MiniPlayerBar(),
+          ),
         ),
       ),
     );
@@ -119,11 +123,121 @@ void main() {
     expect(find.byTooltip('Pause'), findsOneWidget);
     expect(
       find.descendant(
-        of: find.byType(PlayerBar),
+        of: find.byType(MiniPlayerBar),
         matching: find.text('Charlie'),
       ),
       findsOneWidget,
     );
+  });
+
+  /// @verifies FR-019
+  testWidgets('a long press offers Play next and Add to queue', (tester) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    final player = ProviderScope.containerOf(
+      tester.element(find.byType(LibraryPage)),
+    ).read(playerControllerProvider);
+
+    await tester.longPress(find.text('Bravo'));
+    await tester.pumpAndSettle();
+    expect(find.text('Play next'), findsOneWidget);
+    expect(find.text('Add to queue'), findsOneWidget);
+    await tester.tap(find.text('Add to queue'));
+    await tester.pumpAndSettle();
+    // FR-019.4: an empty queue starts playing the track.
+    expect(player.state.queue.map((t) => t.relativePath), ['Music/b.mp3']);
+    expect(player.state.playing, isTrue);
+    expect(find.text('Added to the queue: Bravo'), findsOneWidget);
+
+    await tester.longPress(find.text('Charlie'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Play next'));
+    await tester.pumpAndSettle();
+    await tester.longPress(find.text('Alpha'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add to queue'));
+    await tester.pumpAndSettle();
+
+    expect(player.state.queue.map((t) => t.relativePath), [
+      'Music/b.mp3',
+      'Music/c.mp3',
+      'Music/a.mp3',
+    ]);
+    expect(player.state.currentIndex, 0);
+  });
+
+  /// @verifies FR-019.1
+  testWidgets('a row offers the two menu actions to TalkBack', (tester) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+
+    final labels = [
+      for (final semantics in tester.widgetList<Semantics>(
+        find.byType(Semantics),
+      ))
+        ...?semantics.properties.customSemanticsActions?.keys.map(
+          (action) => action.label,
+        ),
+    ];
+
+    expect(labels, containsAll(['Play next', 'Add to queue']));
+  });
+
+  /// @verifies FR-017.2
+  testWidgets('the player says the queue came from the track list', (
+    tester,
+  ) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Alpha'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Pause'));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byType(MiniPlayerBar),
+        matching: find.text('Alpha'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tracks · Title A→Z'), findsOneWidget);
+  });
+
+  /// @verifies FR-017.9
+  testWidgets('an unreadable file: a snack bar, or the banner if the player '
+      'is open, never both', (tester) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Alpha'));
+    await tester.pumpAndSettle();
+    const failure = EngineFailure(EngineFailureKind.playbackFailed, 'x');
+
+    engine.emitIssue(failure);
+    await tester.pumpAndSettle();
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.textContaining('damaged file'), findsOneWidget);
+
+    ScaffoldMessenger.of(tester.element(find.byType(LibraryPage)))
+        .clearSnackBars();
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: find.byType(MiniPlayerBar),
+        matching: find.text('Bravo'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    engine.emitIssue(failure);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsNothing);
+    expect(find.textContaining('damaged file'), findsOneWidget);
   });
 
   /// @verifies FR-003.4
@@ -178,7 +292,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Music folders'), findsOneWidget);
-    expect(find.byType(PlayerBar), findsOneWidget);
+    expect(find.byType(MiniPlayerBar), findsOneWidget);
   });
 
   /// @verifies FR-004

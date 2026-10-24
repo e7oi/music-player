@@ -13,9 +13,8 @@ Préfixe : MPL · Prochaine clé : MPL-051 · Dernière MAJ : 2026-10-23
 | MPL-010 | Bug | P2 | Avertissements de décodage `media_kit` sans effet audible constaté : FLAC avec étiquettes ID3 ; MP3 avec données non-MPEG après la dernière trame (MP3 A, MP3 B ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4.5) — (origine des octets et fréquence dans la bibliothèque non établies ; pas de changement de code) | À faire | — | — |
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
-| MPL-044 | Récit | P1 | Design lot 1 — Accès et dossiers : accueil en deux étapes, demande d'accès au toucher d'un bouton (plus au démarrage), refus simple et définitif, « Choisir un dossier à la place », écran des dossiers de musique refait (résumé, « Continuer », états vides, chargement et erreur) selon les maquettes 1a–1e et 2a–2e de `docs/design/HANDOFF.md` ; révise FR-004 (demande d'accès) et la présentation de FR-003. Cadré le 2026-10-23, fiches `Active` le 2026-10-23 | À tester | MPL-001 | — |
 | MPL-046 | Récit | P1 | Design lot 3 — Disques amovibles : écran 4 refait (4a–4e), repère de source modifiable, détection du branchement en direct, parcours dans un service au premier plan avec notification et « Arrêter » ; recoupe MPL-035 et MPL-038. À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
-| MPL-047 | Récit | P1 | Design lot 4 — Lecture : mini-lecteur, lecteur plein écran, file d'attente (feuille), pistes illisibles (5d, 6d) ; prolonge MPL-036. À cadrer après MPL-016 | À faire | MPL-001 | — |
+| MPL-047 | Récit | P1 | Design lot 4 — Lecture : mini-lecteur, lecteur plein écran, file d'attente (feuille), aléatoire et répétition, pistes illisibles (5d, 6d) ; prolonge MPL-036. Cadré et validé le 2026-10-23 (fiches Active) | À tester | MPL-001 | — |
 | MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : albums, artistes (regroupés par artiste de l'album), réglages persistés (thème, Material You par `dynamic_color`, index à gauche), paysage avec panneau lecteur (6e). À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
 | MPL-049 | Tâche technique | P2 | Design lot 6 — Finitions : icône d'application et de notification finales (`docs/design/brand/`), écran de démarrage, liste de contrôle d'accessibilité (TalkBack, texte à 200 %), profilage. À cadrer après MPL-016 | À faire | MPL-001 | MPL-047, MPL-048 |
 | MPL-050 | Bug | P1 | Deux cartes de TuneShell dans les applications récentes : toucher la notification de lecture (action `NOTIFICATION_CLICK` d'`audio_service`, drapeau « nouvelle tâche ») crée une seconde tâche, car `MainActivity` a `taskAffinity=""` (réglage par défaut de Flutter) et Android ne retrouve pas la tâche ouverte ; plus de deux cartes possibles. Pistes : retirer `taskAffinity=""` ou passer en `launchMode="singleTask"` ; à retester avec `HOWTO.md` §12 (étapes 9 et 12). **Ordre voulu par le propriétaire le 2026-10-23 : juste après le design complet (MPL-044 à MPL-049).** Origine : MPL-036. À cadrer le moment venu | À faire | MPL-001 | — |
@@ -145,6 +144,191 @@ Revue QA : ✅ (1 tour, sous-agent à contexte neuf ; aucun bloquant). Majeurs c
 Description de PR : titre `feat(ui): add the design foundations: theme, navigation and components (MPL-016)`. What: the Claude Design handoff enters the repository (specification, mock-up sources, four reduced captures, six OFL fonts); TuneShell tokens and light/dark themes that follow the system; four-tab shell with a bottom bar under 600 dp and a rail beyond, keeping each view's state on rotation, with the player bar in the shell; eight reusable components (ArtworkTile, SourceMark, TrackTile, StatusBanner, ProgressBanner, DiskCard, JumpToCurrentFab, AlphabetScroller) with a debug and profile gallery; a native channel that keeps the index handle out of the Back gesture; the current screens moved to the tokens with persistent states in the flow; `lib/ui/` rules in CLAUDE.md and the architecture tests, plus a no-literal style test; backlog MPL-044 to MPL-049 for the next design lots. Why: the owner chose to build the design lot by lot (lot 0 first), and the existing screens must keep working while the new ones arrive (ADR-010, ADR-011). How tested: format, analyses and 385 unit and widget tests green; release APK built (79.7 MB, no INTERNET); one review round without blocker; device: Pixel 10 Pro through adb in release and profile (see delivery block), owner confirmation pending. Known gaps: dark theme, landscape, TalkBack and fluidity not tested on the device; column fade-in and teardrop bubble of the index not done; the style test misses some literals; the gesture-exclusion rectangle is last-writer-wins; `playerStateProvider` now subscribes before it reads the state (out of scope, found by the page tests).
 Décisions prises en route : `playerStateProvider` corrigé (hors périmètre, trouvé par les tests de page) ; barre de lecture montée dans la coquille ; jetons `coverDetail`, `bannerMin` et `fixedRowMaxTextScale` ajoutés ; captures versionnées en JPEG ; galerie ouverte depuis Réglages en debug et profile ; courbe de l'effet loupe ajustée sur les valeurs de Design.
 À valider (PO) : écarts du dossier de conception consignés dans les As-built de FR-010 (fondu, bulle, échelle de texte) et BR-007 (test des jetons) ; sortir `ClaudeDesign/` de l'arbre de travail (il gêne `flutter analyze`) ; passer le ticket à « Terminé » après le test sur le Pixel (`HOWTO.md` §14, avec une build profile pour les étapes 7 à 11).
+
+### MPL-047
+**Description.** Refaire la lecture selon le lot 4 de la conception Claude Design (`docs/design/HANDOFF.md`, écran 5, états 5a à 5d et 6d) : un mini-lecteur dans la coquille à la place de la barre provisoire, un lecteur plein écran, la file d'attente en feuille, l'aléatoire et la répétition, le retrait et l'ajout de pistes à la file, et les états « fichier illisible » et « source perdue » visibles dans ces écrans. Cadrage du 2026-10-23. Prolonge MPL-036 (la notification n'est pas touchée) et MPL-045 (la liste, le bouton « En cours »). La conception montre des fonctions que le contrôleur n'a pas (aléatoire, répétition, déplacer, vider la suite) : elles entrent ici, en domaine d'abord (BR-009).
+
+**Inclus.**
+- Contrôleur : `setShuffle`, `setRepeat`, `move`, `clearUpcoming`, `skipTo`, `playNext`, `enqueue` et leurs règles, tests d'abord ; `PlayerState` avec `shuffle` et `repeat` (BR-009, ADR-015).
+- Mini-lecteur (`ui/widgets/`) posé par la coquille, états lecture, pause, sans pochette, source perdue ; progression à 4 mises à jour par seconde ; retrait de `player_bar.dart` (FR-016).
+- Lecteur plein écran : pochette 348, informations avec repère et nom de la source, curseur de position, aléatoire, précédent, lecture/pause, suivant, répéter, cœur désactivé, bouton « À suivre », bandeau de fichier illisible, mise en page paysage sur deux colonnes (FR-017).
+- File d'attente en feuille : en-tête, « En cours », « À suivre » réordonnable, pistes indisponibles grisées, toucher pour lire, « Vider la suite », retrait d'une piste de la suite par glissé latéral (FR-018).
+- Menu d'appui long sur une piste de la liste : « Lire ensuite » et « Ajouter à la file », avec confirmation brève (FR-019).
+- Bouton « En cours » : quand la piste en cours n'est pas dans la liste affichée, il ouvre le lecteur (FR-013, hors périmètre de MPL-045).
+- Fournisseurs de session : provenance de la file, cause de l'arrêt ; position séparée de l'état (ADR-015).
+- Textes en français (mot pour mot des maquettes) et en anglais dans les ARB ; clair, sombre, portrait et paysage ; `HOWTO.md` §17.
+
+**Exclusions.** Panneau lecteur permanent et mise en page large de la liste (6e : MPL-048, voir À valider) ; Albums, Artistes, Réglages (MPL-048) ; favoris réels, paroles, égaliseur ; ajout d'albums ou d'artistes entiers à la file (MPL-048), sélection de plusieurs pistes, annulation d'un retrait ; mémorisation de la file et des modes entre deux lancements (MPL-048) ; actions aléatoire et répétition, nom de la source et pochette dans la notification (FR-005) ; bouton « Détails » du message d'illisibilité ; compte à rebours de 3 s et bouton « Passer » de la maquette 5d (voir À valider) ; changer le repère d'un disque (MPL-046).
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Lecture selon le design
+
+  Scénario: Mini-lecteur
+    Soit une piste lancée depuis la liste
+    Quand l'utilisateur change d'onglet
+    Alors le mini-lecteur reste au-dessus de la navigation avec la pochette, le titre, le repère de source et l'artiste
+    Et la barre de progression avance
+
+  Scénario: Commandes du mini-lecteur
+    Soit une piste en lecture
+    Quand l'utilisateur touche pause puis suivant
+    Alors la lecture se met en pause puis la piste suivante est chargée
+    Et le bouton bascule entre "Pause" et "Lecture"
+
+  Scénario: Piste sans étiquettes ni pochette
+    Soit un fichier sans titre, sans artiste et sans pochette
+    Quand il joue
+    Alors le mini-lecteur montre le nom du fichier tronqué, "Artiste inconnu" et une tuile neutre
+
+  Scénario: Ouvrir le lecteur
+    Soit le mini-lecteur affiché
+    Quand l'utilisateur touche sa partie gauche ou glisse vers le haut
+    Alors le lecteur plein écran s'ouvre avec la pochette en transition
+    Et "Réduire", le glissé vers le bas et le geste Retour le ferment sur la même vue, au même endroit
+
+  Scénario: Informations du lecteur
+    Soit une piste avec ses étiquettes sur un disque amovible
+    Quand le lecteur est ouvert
+    Alors il montre le titre, "artiste · album" et le repère suivi du nom du disque, du disque, de la piste, de l'année et du genre
+    Et une piste sans étiquettes montre à la place le format et le dossier
+
+  Scénario: Se déplacer dans la piste
+    Soit une piste de 4 min 18 s en lecture
+    Quand l'utilisateur déplace le curseur à 2 min puis le relâche
+    Alors la lecture reprend à 2 min
+    Et TalkBack lit "2:00 sur 4:18" et peut avancer de 5 s en 5 s
+
+  Scénario: Aléatoire
+    Soit une file de 50 pistes à la 10e piste
+    Quand l'utilisateur active l'aléatoire
+    Alors la piste en cours reste la même et les pistes suivantes sont dans un autre ordre
+    Et le bouton montre son état actif autrement que par la couleur
+
+  Scénario: Désactiver l'aléatoire
+    Soit l'aléatoire actif
+    Quand l'utilisateur le désactive
+    Alors la file retrouve son ordre d'origine et la piste en cours reste la même
+
+  Scénario: Répéter toutes les pistes
+    Soit la répétition "toutes" et la dernière piste de la file en lecture
+    Quand elle se termine
+    Alors la lecture reprend à la première piste disponible
+    Et si aucune piste n'est disponible elle s'arrête une fois avec le message de BR-001
+
+  Scénario: Répéter une piste
+    Soit la répétition "une piste" et une piste en lecture
+    Quand elle se termine
+    Alors elle recommence
+    Et "suivant" passe à la piste suivante sans quitter le mode
+
+  Scénario: File d'attente
+    Soit une file de 12 pistes dont la 3e est sur un disque absent
+    Quand l'utilisateur touche "À suivre"
+    Alors la feuille dit "12 pistes · 46 min" et montre la piste en cours puis la suite
+    Et la 3e ligne est grisée avec "non connecté, sera ignorée"
+
+  Scénario: Réordonner la suite
+    Soit la feuille de la file ouverte
+    Quand l'utilisateur glisse la poignée de la 5e piste de la suite devant la 2e
+    Alors cette piste sera jouée après la première de la suite
+    Et la piste en cours ne change pas
+
+  Scénario: Lire une piste de la file
+    Soit la feuille de la file ouverte
+    Quand l'utilisateur touche une piste de la suite
+    Alors elle est lue et devient la piste en cours
+
+  Scénario: Vider la suite
+    Soit une piste en cours et dix pistes à suivre
+    Quand l'utilisateur touche "Vider la suite"
+    Alors la suite est vide et la piste en cours continue
+    Et à sa fin la lecture s'arrête
+
+  Scénario: Retirer une piste de la suite
+    Soit la feuille de la file ouverte avec dix pistes à suivre
+    Quand l'utilisateur glisse une ligne de la suite sur le côté
+    Alors la piste disparaît de la file et reste dans la bibliothèque
+    Et la piste en cours ne change pas et un message le confirme
+
+  Scénario: Lire ensuite
+    Soit une piste en lecture et la liste de pistes
+    Quand l'utilisateur fait un appui long sur une autre piste et choisit "Lire ensuite"
+    Alors cette piste est la prochaine jouée, même avec l'aléatoire actif
+    Et la piste en cours ne change pas
+
+  Scénario: Ajouter à la file
+    Soit une piste en lecture et la liste de pistes
+    Quand l'utilisateur fait un appui long sur une piste et choisit "Ajouter à la file"
+    Alors la piste est la dernière de la file et un message le confirme
+
+  Scénario: Ajouter sur une file vide
+    Soit aucune lecture en cours
+    Quand l'utilisateur ajoute une piste à la file par l'appui long
+    Alors la lecture démarre sur cette piste
+
+  Scénario: Grande file
+    Soit une file de plus de 7 500 pistes
+    Quand l'utilisateur ouvre la feuille et la fait défiler
+    Alors elle s'ouvre sans attente visible et défile sans à-coups
+
+  Scénario: Fichier illisible
+    Soit une piste dont la lecture échoue pendant que le lecteur est ouvert
+    Quand la lecture passe à la suivante
+    Alors un bandeau dans le flux dit "Impossible de lire « … » : fichier endommagé. Piste suivante lancée."
+    Et le message n'est pas répété en bas de l'écran et rien n'est recouvert
+
+  Scénario: Source perdue
+    Soit une piste d'un disque amovible en lecture
+    Quand le disque est retiré
+    Alors la lecture s'arrête et le mini-lecteur dit "Arrêt : T7 Shield débranché" avec l'icône de prise
+    Et elle ne reprend pas au rebranchement
+
+  Scénario: Bouton En cours sans la piste dans la liste
+    Soit une piste en cours absente de la liste affichée
+    Quand l'utilisateur touche le bouton "En cours"
+    Alors le lecteur plein écran s'ouvre
+
+  Scénario: Paysage et grand texte
+    Soit le téléphone en paysage puis le texte à 200 %
+    Quand l'utilisateur ouvre le lecteur et la feuille
+    Alors le lecteur est sur deux colonnes, rien n'est coupé et le contenu défile
+    Et le mini-lecteur reste en bas de la colonne de contenu
+
+  Scénario: Notification inchangée
+    Soit une piste en lecture, écran verrouillé
+    Quand l'utilisateur commande depuis la notification
+    Alors le mini-lecteur et le lecteur suivent la piste et l'état de lecture
+```
+
+**Test appareil (Pixel, release).** SSD branché puis retiré en lecture ; bibliothèque réelle (7 562 pistes) pour la file et le mélange ; thèmes clair et sombre ; portrait et paysage ; texte à 200 % ; TalkBack (curseur, bascules, poignées) ; un fichier illisible. HOWTO §17 à écrire à la livraison. Le Kotlin n'est pas touché ; `HOWTO.md` §12 (notification, touches média) est à rejouer en partie parce que le contrôleur change.
+
+**Fiches liées.** UC-007, FR-016, FR-017, FR-018, FR-019, BR-009 ; ADR-015 (toutes `Active`, validées par le propriétaire le 2026-10-23). Utilise UC-001, UC-004, UC-005, FR-001, FR-002, FR-005, FR-007, FR-009, FR-010, FR-012, FR-013, BR-001, BR-002, BR-003, BR-007, BR-008 et ADR-002, ADR-006, ADR-010, ADR-013 (`Active`). Complétées à la livraison, sans changer leurs règles : FR-001 et FR-002 (hors périmètre levé), FR-009 (barre provisoire), FR-010 (`MiniPlayer`), FR-013 (bouton sans piste), `HANDOFF.md` §9.
+
+**À valider (PO).**
+- Taille du ticket : tout le lot dans un seul ticket (recommandé : un seul test sur le Pixel, domaine d'abord en commits séparés) ou séparer le domaine et la feuille de la file (aléatoire, répétition, file) dans un ticket MPL-051 après le lecteur.
+- Écart à la maquette 5d : pas de compte à rebours de 3 s ni de « Passer » (BR-003 saute tout de suite) (FR-017).
+- Le panneau lecteur permanent (6e) est dans MPL-048 selon ce backlog, mais FR-009 et UC-004 (`Active`) le rattachent à MPL-047 : à trancher ; ici, le lecteur en paysage est sur deux colonnes et le mini-lecteur reste (FR-017, FR-016).
+- Aléatoire : mélange physique de la suite, ordre d'origine restauré à la désactivation, déplacements manuels perdus (BR-009, ADR-015).
+- Répétition « toutes » : « suivant » sur la dernière piste reprend au début ; ordre du premier tour gardé (BR-009).
+- Toucher une ligne de la file la lit ; « Vider la suite » sans confirmation ni annulation ; retrait et « Vider la suite » sans annulation ; « Lire ensuite » répété dans l'ordre inverse, doublons permis, file vide qui démarre la lecture (FR-019, BR-009) ; pistes passées non listées ; durée totale = somme des durées connues (FR-018).
+- Modes et file non conservés entre deux lancements (BR-009).
+- Ligne de métadonnées du lecteur et textes « Lecture arrêtée : {disque} débranché » (FR-017).
+- Pochettes de 512 pixels agrandies sur 348 dp (FR-017, FR-007.6) ; glissé vers le bas abandonné s'il est fragile.
+- Notification : ni actions aléatoire/répétition ni nom de source (`HANDOFF.md` §9, ADR-015).
+- Pas de mini-lecteur dans les sous-écrans Dossiers et Disques ; état « source perdue » jusqu'à la prochaine lecture (FR-016).
+
+#### Livraison — 2026-10-23
+Statut : ✅ fait (le test sur le Pixel reste à faire par le propriétaire, D14)
+Résumé : le contrôleur gagne l'aléatoire, la répétition, le déplacement, « vider la suite », « aller à », « lire ensuite » et « ajouter à la file » (BR-009). L'interface refait la lecture : mini-lecteur dans la coquille à la place de la barre provisoire, lecteur plein écran (portrait et paysage), file d'attente en feuille avec réordonnancement et retrait par glissé, menu d'appui long de la liste, bouton « En cours » qui ouvre le lecteur quand la piste n'est pas dans la liste. La notification n'est pas touchée.
+Fiches touchées : UC-007, FR-016, FR-017, FR-018, FR-019, BR-009, ADR-015 (as-built écrits) ; FR-001, FR-002, FR-009, FR-010, FR-013 (as-built complétés) ; `HANDOFF.md` §9 (notification : non) ; HOWTO §17 ajouté.
+Vérification : `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && dart analyze --fatal-infos && flutter test` → au vert, 629 tests (contrôleur : modes, file, identifiants d'entrée, croisements ; modèles de vue ; composants ; pages : mini-lecteur, lecteur en portrait, paysage et 200 %, curseur, bascules, bandeaux, feuille de la file, menu) ; `.github/scripts/check-repo.sh` au vert.
+Test appareil (Pixel, release) : passage partiel par adb le 2026-10-23 (build release installée par-dessus la précédente, pas de plantage dans le journal des crashs) : mini-lecteur (étape 1), ouverture du lecteur et informations avec repère, disque, piste, année et genre (étapes 3 et 4), aléatoire, feuille de la file avec 2 625 pistes ouverte sans attente, retrait par glissé, « Vider la suite » (étape 8) OK ; le message « retirée de la file » était caché sous la feuille : corrigé (messager propre à la feuille) et revu sur l'appareil. Non vu : curseur, répéter, fichier illisible, disque débranché, menu d'appui long, paysage, TalkBack, 200 %. Reste à faire par le propriétaire : HOWTO §17 en entier (transition de la pochette, glissé de fermeture, réordonnancement et retrait au doigt, TalkBack, texte à 200 %, paysage, fluidité de la feuille avec 7 500 pistes, éjection pendant la lecture) ; HOWTO §12 à rejouer en partie.
+Revue QA : ⚠️ — un tour (sous-agent à contexte neuf ; lecture : revue obligatoire, une session séparée `>>> REVUE` est possible). Corrigés : états du contrôleur diffusés avec les identifiants d'entrée de l'état précédent (clés de la file fausses) ; drapeau « lecteur ouvert » qui pouvait rester levé si l'appelant était démonté ; actions TalkBack « Lire ensuite » et « Ajouter à la file » manquantes (FR-019.1) ; retrait de la dernière piste avec « répéter toutes » ; allocation par ligne de la file ; jeton `seekStep` inutile ; provenance de la file après un ajout sur file vide ; tests des croisements. Restent : opacités 0,5 et 0,35 écrites en dur (le test de littéraux ne les voit pas) ; cycle d'imports entre `features/library` et `features/player` (permis, à surveiller avec MPL-048) ; `trackIndexProvider` reconstruit sa carte à chaque émission de la liste (au plus deux par seconde) ; défaut préexistant : un `completed` du moteur entre le changement de numéro de chargement et l'ouverture de la piste suivante serait compté pour la nouvelle piste (aggravé par « une piste ») ; le nom « T7 Shield » (repris des maquettes) apparaît dans les tests et les fiches. — Non vérifié : tout le comportement sur appareil ; valeurs des jetons face à la conception ; textes mot pour mot avec les maquettes.
+Description de PR : feat(playback): redesign playback with a mini player, a player and a queue (MPL-047) ; what: shuffle, repeat and queue editing in the player controller (BR-009), mini player replacing the temporary bar, full-screen player with position slider, queue sheet (reorder, swipe to remove, clear, tap to play), long-press menu "Play next" / "Add to queue", "now playing" button opening the player when the track is not listed; why: the player design lot, and the controller lacked what it needs; tested: 629 unit and widget tests, not tested on a device; limits: no permanent player panel in landscape (MPL-048), notification unchanged, no persistence of the queue and modes, pre-existing race on a late `completed` event not fixed.
+Décisions prises en route : la lecture de la piste d'une file vide qui reçoit « Lire ensuite » ou « Ajouter » démarre ; retrait de la dernière piste avec « toutes » : la file reprend au début ; textes « Retirer de la file », « Lecture arrêtée : {disque} débranché » et ceux du menu, écrits par moi ; `RepeatMode` caché des imports de Flutter plutôt que renommé.
+À valider (PO) : celles du ticket (taille, 5d sans compte à rebours, panneau permanent, aléatoire physique, « toutes », file, menus) ; le retrait de la dernière piste avec « toutes » (BR-009) ; l'accord pour que le nom « T7 Shield » reste dans les tests et les fiches.
 
 ### MPL-045
 **Description.** Refaire l'onglet Pistes selon le lot 2 de la conception Claude Design (`docs/design/HANDOFF.md`, écran 3 et états 6a à 6d), avec les composants de MPL-016 : une liste de `TrackTile` qui montre d'où vient chaque piste, des bandeaux dans le flux, un index alphabétique et un bouton « En cours » pour les longues listes. Cadrage du 2026-10-23. Le propriétaire complétera plus tard le périmètre avec d'autres éléments du design : cette section sera alors mise à jour. Absorbe les idées MPL-041 (pastille de source), MPL-042 (bouton « En cours ») et MPL-043 (index alphabétique) pour la liste de pistes.
@@ -927,6 +1111,7 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | MPL-037 | Bibliothèque d'un disque amovible (SSD par SAF) : sélecteur de dossiers, droit persistant, parcours, lecture par `fd://`, tags et pochettes lus dans les fichiers (SSD et stockage interne), schéma Drift v2, écrans temporaires | 23/10/2026 | Validé par le propriétaire, PR #15 fusionnée (23/10/2026). Pixel 10 Pro, SSD exFAT, release : étapes de `HOWTO.md` §13 faites avec 7 562 pistes (tags à ≈ 38 fichiers/s à 2 lectures en parallèle) ; non testés : redémarrage du téléphone, fichiers `._` et `.nomedia`, débranchement pendant l'actualisation ; limites connues dans le bloc Livraison |
 | MPL-016 | Fondations du design (lot 0 de la conception Claude Design v0.4) : dossier de conception intégré, thème clair et sombre et jetons, polices Manrope et Inter embarquées, navigation à 4 onglets adaptative, huit composants réutilisables avec galerie en debug et profile, dossier `lib/ui/` | 23/10/2026 | Validé par le propriétaire, PR #16 fusionnée (23/10/2026). Pixel 10 Pro, release et profile : thème clair et sombre suivant le système, 4 onglets, retour système, rail en paysage ; retour depuis « Dossiers de musique » et rail avec encoche corrigés pendant le test ; non testés : TalkBack, texte à 200 %, fluidité mesurée, vibration ressentie à la main ; limites connues dans le bloc Livraison |
 | MPL-045 | Design lot 2 — Bibliothèque : liste de pistes refaite (en-tête et pastilles, bandeaux dans le flux, repère de source par disque en schéma v3, tri sans accents, index alphabétique, bouton « En cours », états vides) | 23/10/2026 | Validé par le propriétaire, PR #17 fusionnée (23/10/2026). Pixel 10 Pro, release : migration v2→v3, repères, bandeau, masquage, piste grisée, saut de lecture, index, bouton, paysage, 200 % et libellés TalkBack OK ; non vus : voix et gestes TalkBack, fluidité en profile, retour du bandeau masqué. Limite : la liste ne suit pas en direct un branchement ou un retrait de disque avant MPL-035 |
+| MPL-044 | Design lot 1 — Accès et dossiers : accueil et explication avant la demande d'accès (au bouton, plus au démarrage), refus simple et définitif, « Pas maintenant », « Choisir un dossier à la place » (disques amovibles), écran des dossiers refait, écrans de premier lancement en plein écran | 23/10/2026 | Validé par le propriétaire, PR #18 fusionnée (23/10/2026). Pixel 10 Pro, release, après effacement des données : accueil, explication, refus simple et définitif, retour des réglages, dossiers, « Pas maintenant », « Dossiers » et « Valider », choix d'un dossier du SSD sans accès OK ; non vus : dossier du téléphone refusé, paysage, TalkBack, 200 %, dernier correctif sur l'appareil. Un bogue « droits non approuvés » signalé en fin de test n'a pas été reproduit et semblait résolu. Limites : la liste ne suit pas en direct le disque avant MPL-035 ; sans accès, l'écran bloqué revient au lancement suivant |
 | MPL-003 | Sources de bibliothèque : stockage amovible (SSD USB-C), test Pixel (titre proposé) 🔗 ⚠️ | 08/10/2026 | Terminé avec réserves (08/10/2026) : SSD lu par SAF avec les deux moteurs ; tags non lus pendant le parcours (≈ 39 ms par fichier mesurés) ; retrait pendant la lecture traité en spike seulement (MPL-035) ; voir `docs/sprints/sprint-2/RESULTS-PROTOTYPE-ANDROID.md` §4 |
 | MPL-006 | Auto-test sur échantillon, isolé, exporté | 07/10/2026 | Clos (07/10/2026) : 13 pistes par moteur ; élargissement de l'échantillon MP3 : MPL-034 |
 | MPL-007 | Console de test : recherche, tri, filtre par format | 07/10/2026 | Clos (07/10/2026) |

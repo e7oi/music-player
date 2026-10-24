@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/domain/playback/model/repeat_mode.dart';
 
 enum PlayerStatus {
   /// Empty queue.
@@ -27,6 +28,9 @@ final class PlayerState {
     this.duration,
     this.availableDisks = const {},
     this.warningCount = 0,
+    this.shuffle = false,
+    this.repeat = RepeatMode.off,
+    this.entryIds = const [],
   });
 
   final List<Track> queue;
@@ -47,6 +51,15 @@ final class PlayerState {
   /// Engine warnings since the controller started (BR-003).
   final int warningCount;
 
+  /// The tracks after the current one were mixed (BR-009).
+  final bool shuffle;
+
+  final RepeatMode repeat;
+
+  /// One stable identifier per queue entry, in queue order: a row keeps its
+  /// identity when the queue is reordered, and a track queued twice has two.
+  final List<int> entryIds;
+
   Track? get currentTrack {
     final index = currentIndex;
     return index == null ? null : queue[index];
@@ -61,6 +74,9 @@ final class PlayerState {
     Duration? Function()? duration,
     Set<DiskId>? availableDisks,
     int? warningCount,
+    bool? shuffle,
+    RepeatMode? repeat,
+    List<int>? entryIds,
   }) => PlayerState(
     queue: queue ?? this.queue,
     currentIndex: currentIndex == null ? this.currentIndex : currentIndex(),
@@ -70,6 +86,9 @@ final class PlayerState {
     duration: duration == null ? this.duration : duration(),
     availableDisks: availableDisks ?? this.availableDisks,
     warningCount: warningCount ?? this.warningCount,
+    shuffle: shuffle ?? this.shuffle,
+    repeat: repeat ?? this.repeat,
+    entryIds: entryIds ?? this.entryIds,
   );
 
   @override
