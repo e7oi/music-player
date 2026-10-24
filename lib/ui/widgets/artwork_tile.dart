@@ -9,12 +9,16 @@ class ArtworkTile extends StatelessWidget {
     this.image,
     this.size = TsSize.coverSmall,
     this.unavailable = false,
+    this.fade,
     super.key,
   });
 
   final ImageProvider? image;
   final double size;
   final bool unavailable;
+
+  /// Opacity when the tile is faded for another reason than [unavailable].
+  final double? fade;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,7 @@ class ArtworkTile extends StatelessWidget {
     final pixels = (size * MediaQuery.devicePixelRatioOf(context)).round();
     return ExcludeSemantics(
       child: Opacity(
-        opacity: unavailable ? 0.35 : 1,
+        opacity: unavailable ? 0.35 : (fade ?? 1),
         child: ClipRRect(
           borderRadius: radius,
           child: SizedBox.square(

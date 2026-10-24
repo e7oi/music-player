@@ -6,12 +6,31 @@ import 'package:tuneshell/ui/widgets/jump_to_current_fab.dart';
 import 'support.dart';
 
 void main() {
+  /// @verifies FR-013.5
+  testWidgets('without an arrow when it leads to the player', (tester) async {
+    await pumpUi(
+      tester,
+      Center(
+        child: JumpToCurrentFab(
+          label: 'En cours',
+          showArrow: false,
+          onPressed: () {},
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.arrow_downward_rounded), findsNothing);
+    expect(find.byIcon(Icons.arrow_upward_rounded), findsNothing);
+    expect(find.text('En cours'), findsOneWidget);
+  });
+
   Future<void> pumpFab(
     WidgetTester tester, {
     JumpDirection direction = JumpDirection.down,
     bool visible = true,
     bool lastPlayed = false,
     bool folded = false,
+    bool showArrow = true,
     VoidCallback? onPressed,
     bool dark = false,
   }) => pumpUi(
@@ -23,6 +42,7 @@ void main() {
         visible: visible,
         lastPlayed: lastPlayed,
         folded: folded,
+        showArrow: showArrow,
         onPressed: onPressed ?? () {},
       ),
     ),

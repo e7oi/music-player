@@ -16,6 +16,7 @@ class JumpToCurrentFab extends StatelessWidget {
     this.visible = true,
     this.lastPlayed = false,
     this.folded = false,
+    this.showArrow = true,
     super.key,
   });
 
@@ -33,6 +34,10 @@ class JumpToCurrentFab extends StatelessWidget {
 
   /// Icon only, during a fast scroll.
   final bool folded;
+
+  /// Whether the arrow toward the track shows; off when the button leads
+  /// somewhere other than a row of the list (the player).
+  final bool showArrow;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +91,8 @@ class JumpToCurrentFab extends StatelessWidget {
                                 : Icons.equalizer_rounded,
                             color: foreground,
                           ),
-                          if (!lastPlayed) Icon(arrow, color: foreground),
+                          if (!lastPlayed && showArrow)
+                            Icon(arrow, color: foreground),
                           if (!folded) ...[
                             const SizedBox(width: TsSpace.s),
                             Text(

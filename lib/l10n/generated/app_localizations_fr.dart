@@ -514,4 +514,154 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get foldersReadFailed => 'Les dossiers n\'ont pas pu être lus.';
+
+  @override
+  String get playerOpen => 'Ouvrir le lecteur';
+
+  @override
+  String playerStoppedLost(String disk) {
+    return 'Arrêt : $disk débranché';
+  }
+
+  @override
+  String get playerCollapse => 'Réduire';
+
+  @override
+  String get playerPlayingFrom => 'Lecture depuis';
+
+  @override
+  String get playerFavoriteSoon => 'Favoris (bientôt)';
+
+  @override
+  String get playerShuffle => 'Aléatoire';
+
+  @override
+  String get playerRepeat => 'Répéter';
+
+  @override
+  String get playerModeOn => 'activé';
+
+  @override
+  String get playerModeOff => 'désactivé';
+
+  @override
+  String get playerRepeatAll => 'toutes les pistes';
+
+  @override
+  String get playerRepeatOne => 'une piste';
+
+  @override
+  String get playerSeek => 'Position';
+
+  @override
+  String playerPositionValue(String position, String total) {
+    return '$position sur $total';
+  }
+
+  @override
+  String playerUpNext(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'À suivre · $countString pistes',
+      one: 'À suivre · $countString piste',
+      zero: 'À suivre · aucune piste',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String playerDiscNumber(int number) {
+    return 'Disque $number';
+  }
+
+  @override
+  String playerTrackNumber(int number) {
+    return 'Piste $number';
+  }
+
+  @override
+  String playerStoppedBanner(String disk) {
+    return 'Lecture arrêtée : $disk débranché';
+  }
+
+  @override
+  String get queueTitle => 'File d\'attente';
+
+  @override
+  String queueSummary(int count, String duration) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString pistes',
+      one: '$countString piste',
+    );
+    return '$_temp0 · $duration';
+  }
+
+  @override
+  String queueSummaryShuffled(int count, String duration) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString pistes',
+      one: '$countString piste',
+    );
+    return '$_temp0 · $duration · aléatoire';
+  }
+
+  @override
+  String get queueClear => 'Vider la suite';
+
+  @override
+  String get queueNow => 'En cours';
+
+  @override
+  String get queueNext => 'À suivre';
+
+  @override
+  String queueMove(String title) {
+    return 'Déplacer $title';
+  }
+
+  @override
+  String queueWillSkip(String artist) {
+    return '$artist · non connecté, sera ignorée';
+  }
+
+  @override
+  String get queueRemove => 'Retirer de la file';
+
+  @override
+  String queueRemoved(String title) {
+    return '$title retirée de la file';
+  }
+
+  @override
+  String get menuPlayNext => 'Lire ensuite';
+
+  @override
+  String get menuAddToQueue => 'Ajouter à la file';
+
+  @override
+  String menuPlayNextDone(String title) {
+    return 'Lecture ensuite : $title';
+  }
+
+  @override
+  String menuAddedDone(String title) {
+    return 'Ajouté à la file : $title';
+  }
 }

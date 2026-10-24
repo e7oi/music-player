@@ -763,6 +763,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The folders could not be read.'**
   String get foldersReadFailed;
+
+  /// Label of the mini player zone that opens the full-screen player (FR-016.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the player'**
+  String get playerOpen;
+
+  /// Second line of the mini player when the disk of the track left (FR-016.7).
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped: {disk} unplugged'**
+  String playerStoppedLost(String disk);
+
+  /// Button that closes the full-screen player (FR-017.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse'**
+  String get playerCollapse;
+
+  /// Caption above the origin of the queue (FR-017.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Playing from'**
+  String get playerPlayingFrom;
+
+  /// Tooltip of the disabled heart (FR-017.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites (coming soon)'**
+  String get playerFavoriteSoon;
+
+  /// Label of the shuffle button (FR-017.7).
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get playerShuffle;
+
+  /// Label of the repeat button (FR-017.7).
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get playerRepeat;
+
+  /// Said by TalkBack after Shuffle when it is on (FR-017.7).
+  ///
+  /// In en, this message translates to:
+  /// **'on'**
+  String get playerModeOn;
+
+  /// Said by TalkBack after Shuffle or Repeat when it is off (FR-017.7).
+  ///
+  /// In en, this message translates to:
+  /// **'off'**
+  String get playerModeOff;
+
+  /// Said by TalkBack after Repeat (FR-017.7).
+  ///
+  /// In en, this message translates to:
+  /// **'all tracks'**
+  String get playerRepeatAll;
+
+  /// Said by TalkBack after Repeat (FR-017.7).
+  ///
+  /// In en, this message translates to:
+  /// **'one track'**
+  String get playerRepeatOne;
+
+  /// Label of the position slider (FR-017.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Position'**
+  String get playerSeek;
+
+  /// Said by TalkBack for the position slider (FR-017.6).
+  ///
+  /// In en, this message translates to:
+  /// **'{position} of {total}'**
+  String playerPositionValue(String position, String total);
+
+  /// Button that opens the queue (FR-017.8).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Up next · no track} one{Up next · {count} track} other{Up next · {count} tracks}}'**
+  String playerUpNext(int count);
+
+  /// Part of the details line of the player (FR-017.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Disc {number}'**
+  String playerDiscNumber(int number);
+
+  /// Part of the details line of the player (FR-017.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Track {number}'**
+  String playerTrackNumber(int number);
+
+  /// Banner of the player after an ejection (FR-017.10).
+  ///
+  /// In en, this message translates to:
+  /// **'Playback stopped: {disk} unplugged'**
+  String playerStoppedBanner(String disk);
+
+  /// Title of the queue sheet (FR-018.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Queue'**
+  String get queueTitle;
+
+  /// Summary under the queue title (FR-018.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} track} other{{count} tracks}} · {duration}'**
+  String queueSummary(int count, String duration);
+
+  /// Summary under the queue title when the shuffle is on (FR-018.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} track} other{{count} tracks}} · {duration} · shuffled'**
+  String queueSummaryShuffled(int count, String duration);
+
+  /// Button that removes the tracks after the current one (FR-018.9).
+  ///
+  /// In en, this message translates to:
+  /// **'Clear upcoming'**
+  String get queueClear;
+
+  /// Section of the current track in the queue (FR-018.3).
+  ///
+  /// In en, this message translates to:
+  /// **'Now playing'**
+  String get queueNow;
+
+  /// Section of the next tracks in the queue (FR-018.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Up next'**
+  String get queueNext;
+
+  /// Label of the drag handle of a queue row (FR-018.5).
+  ///
+  /// In en, this message translates to:
+  /// **'Move {title}'**
+  String queueMove(String title);
+
+  /// Second line of a queue row whose disk is absent (FR-018.7).
+  ///
+  /// In en, this message translates to:
+  /// **'{artist} · not connected, will be skipped'**
+  String queueWillSkip(String artist);
+
+  /// Action of a queue row for TalkBack (FR-018.8).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from queue'**
+  String get queueRemove;
+
+  /// Message after a track is removed from the queue (FR-018.8).
+  ///
+  /// In en, this message translates to:
+  /// **'{title} removed from the queue'**
+  String queueRemoved(String title);
+
+  /// Action of the menu of a track (FR-019.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Play next'**
+  String get menuPlayNext;
+
+  /// Action of the menu of a track (FR-019.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Add to queue'**
+  String get menuAddToQueue;
+
+  /// Message after Play next (FR-019.3).
+  ///
+  /// In en, this message translates to:
+  /// **'Playing next: {title}'**
+  String menuPlayNextDone(String title);
+
+  /// Message after Add to queue (FR-019.3).
+  ///
+  /// In en, this message translates to:
+  /// **'Added to the queue: {title}'**
+  String menuAddedDone(String title);
 }
 
 class _AppLocalizationsDelegate

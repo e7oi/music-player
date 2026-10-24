@@ -580,5 +580,206 @@
   "foldersReadFailed": "The folders could not be read.",
   "@foldersReadFailed": {
     "description": "Error banner of the folder choice (FR-015.6)."
+  },
+  "playerOpen": "Open the player",
+  "@playerOpen": {
+    "description": "Label of the mini player zone that opens the full-screen player (FR-016.4)."
+  },
+  "playerStoppedLost": "Stopped: {disk} unplugged",
+  "@playerStoppedLost": {
+    "description": "Second line of the mini player when the disk of the track left (FR-016.7).",
+    "placeholders": {
+      "disk": {
+        "type": "String"
+      }
+    }
+  },
+  "playerCollapse": "Collapse",
+  "@playerCollapse": {
+    "description": "Button that closes the full-screen player (FR-017.1)."
+  },
+  "playerPlayingFrom": "Playing from",
+  "@playerPlayingFrom": {
+    "description": "Caption above the origin of the queue (FR-017.2)."
+  },
+  "playerFavoriteSoon": "Favorites (coming soon)",
+  "@playerFavoriteSoon": {
+    "description": "Tooltip of the disabled heart (FR-017.5)."
+  },
+  "playerShuffle": "Shuffle",
+  "@playerShuffle": {
+    "description": "Label of the shuffle button (FR-017.7)."
+  },
+  "playerRepeat": "Repeat",
+  "@playerRepeat": {
+    "description": "Label of the repeat button (FR-017.7)."
+  },
+  "playerModeOn": "on",
+  "@playerModeOn": {
+    "description": "Said by TalkBack after Shuffle when it is on (FR-017.7)."
+  },
+  "playerModeOff": "off",
+  "@playerModeOff": {
+    "description": "Said by TalkBack after Shuffle or Repeat when it is off (FR-017.7)."
+  },
+  "playerRepeatAll": "all tracks",
+  "@playerRepeatAll": {
+    "description": "Said by TalkBack after Repeat (FR-017.7)."
+  },
+  "playerRepeatOne": "one track",
+  "@playerRepeatOne": {
+    "description": "Said by TalkBack after Repeat (FR-017.7)."
+  },
+  "playerSeek": "Position",
+  "@playerSeek": {
+    "description": "Label of the position slider (FR-017.6)."
+  },
+  "playerPositionValue": "{position} of {total}",
+  "@playerPositionValue": {
+    "description": "Said by TalkBack for the position slider (FR-017.6).",
+    "placeholders": {
+      "position": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "playerUpNext": "{count, plural, =0{Up next · no track} one{Up next · {count} track} other{Up next · {count} tracks}}",
+  "@playerUpNext": {
+    "description": "Button that opens the queue (FR-017.8).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "playerDiscNumber": "Disc {number}",
+  "@playerDiscNumber": {
+    "description": "Part of the details line of the player (FR-017.4).",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "playerTrackNumber": "Track {number}",
+  "@playerTrackNumber": {
+    "description": "Part of the details line of the player (FR-017.4).",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "playerStoppedBanner": "Playback stopped: {disk} unplugged",
+  "@playerStoppedBanner": {
+    "description": "Banner of the player after an ejection (FR-017.10).",
+    "placeholders": {
+      "disk": {
+        "type": "String"
+      }
+    }
+  },
+  "queueTitle": "Queue",
+  "@queueTitle": {
+    "description": "Title of the queue sheet (FR-018.2)."
+  },
+  "queueSummary": "{count, plural, one{{count} track} other{{count} tracks}} · {duration}",
+  "@queueSummary": {
+    "description": "Summary under the queue title (FR-018.2).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "queueSummaryShuffled": "{count, plural, one{{count} track} other{{count} tracks}} · {duration} · shuffled",
+  "@queueSummaryShuffled": {
+    "description": "Summary under the queue title when the shuffle is on (FR-018.2).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "queueClear": "Clear upcoming",
+  "@queueClear": {
+    "description": "Button that removes the tracks after the current one (FR-018.9)."
+  },
+  "queueNow": "Now playing",
+  "@queueNow": {
+    "description": "Section of the current track in the queue (FR-018.3)."
+  },
+  "queueNext": "Up next",
+  "@queueNext": {
+    "description": "Section of the next tracks in the queue (FR-018.4)."
+  },
+  "queueMove": "Move {title}",
+  "@queueMove": {
+    "description": "Label of the drag handle of a queue row (FR-018.5).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "queueWillSkip": "{artist} · not connected, will be skipped",
+  "@queueWillSkip": {
+    "description": "Second line of a queue row whose disk is absent (FR-018.7).",
+    "placeholders": {
+      "artist": {
+        "type": "String"
+      }
+    }
+  },
+  "queueRemove": "Remove from queue",
+  "@queueRemove": {
+    "description": "Action of a queue row for TalkBack (FR-018.8)."
+  },
+  "queueRemoved": "{title} removed from the queue",
+  "@queueRemoved": {
+    "description": "Message after a track is removed from the queue (FR-018.8).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "menuPlayNext": "Play next",
+  "@menuPlayNext": {
+    "description": "Action of the menu of a track (FR-019.1)."
+  },
+  "menuAddToQueue": "Add to queue",
+  "@menuAddToQueue": {
+    "description": "Action of the menu of a track (FR-019.1)."
+  },
+  "menuPlayNextDone": "Playing next: {title}",
+  "@menuPlayNextDone": {
+    "description": "Message after Play next (FR-019.3).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "menuAddedDone": "Added to the queue: {title}",
+  "@menuAddedDone": {
+    "description": "Message after Add to queue (FR-019.3).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   }
 }
