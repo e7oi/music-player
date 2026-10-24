@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:tuneshell/domain/library/model/track.dart';
 import 'package:tuneshell/domain/playback/model/engine_issue.dart';
 import 'package:tuneshell/domain/playback/model/playback_notice.dart';
 import 'package:tuneshell/domain/playback/model/player_state.dart';
+import 'package:tuneshell/domain/playback/model/repeat_mode.dart';
 import 'package:tuneshell/domain/playback/ports/audio_engine.dart';
 import 'package:tuneshell/domain/storage/model/media_source.dart';
 import 'package:tuneshell/domain/storage/model/volume_event.dart';
@@ -26,8 +28,14 @@ import 'package:tuneshell/domain/storage/ports/volume_events.dart';
 /// @implements BR-001
 /// @implements BR-002
 /// @implements BR-003
+/// @implements BR-009
 class PlayerController {
-  new({required this._engine, required this._opener, required this._volumes});
+  new({
+    required this._engine,
+    required this._opener,
+    required this._volumes,
+    Random? random,
+  }) : _random = random ?? Random();
 
   /// FR-001: "previous" restarts the track after this much playback.
   static const restartThreshold = Duration(seconds: 3);
@@ -38,6 +46,7 @@ class PlayerController {
   final AudioEngine _engine;
   final TrackSourceOpener _opener;
   final VolumeEvents _volumes;
+  final Random _random;
 
   final _states = StreamController<PlayerState>.broadcast();
   final _notices = StreamController<PlaybackNotice>.broadcast();
@@ -49,6 +58,15 @@ class PlayerController {
   /// Incremented on every load and unload; see the class comment.
   int _load = 0;
   int _consecutiveFailures = 0;
+
+  /// One identifier per queue entry, in queue order. A track may be in the
+  /// queue twice, so the original order of the shuffle is kept in entries.
+  List<int> _ids = const [];
+  int _nextId = 0;
+
+  /// The entries in their order before the shuffle (BR-009); null when the
+  /// shuffle is off.
+  List<int>? _origin;
 
   PlayerState get state => _state;
 
@@ -85,23 +103,46 @@ class PlayerController {
   /// Replaces the queue. Nothing is loaded until [play].
   Future<void> setQueue(List<Track> tracks, {int startIndex = 0}) {
     if (tracks.isNotEmpty) RangeError.checkValidIndex(startIndex, tracks);
-    return _serial(() async {
-      if (_isEngaged) await _unload();
-      _consecutiveFailures = 0;
-      _emit(
-        _state.copyWith(
-          queue: List.unmodifiable(tracks),
-          currentIndex: () => tracks.isEmpty ? null : startIndex,
-          status: tracks.isEmpty ? PlayerStatus.idle : PlayerStatus.stopped,
-          playing: false,
-          position: Duration.zero,
-          duration: () => null,
-        ),
-      );
-    });
+    return _serial(() => _setQueue(tracks, startIndex));
   }
 
-  Future<void> play() => _serial(() async {
+  Future<void> play() => _serial(_play);
+
+  Future<void> _setQueue(List<Track> tracks, int startIndex) async {
+    if (_isEngaged) await _unload();
+    _consecutiveFailures = 0;
+    final ids = [for (var i = 0; i < tracks.length; i++) _nextId++];
+    var queue = tracks;
+    var queueIds = ids;
+    var current = startIndex;
+    if (_state.shuffle && tracks.isNotEmpty) {
+      // BR-009, rule 3: the chosen track first, the others mixed behind it.
+      final others = [
+        for (var i = 0; i < tracks.length; i++)
+          if (i != startIndex) i,
+      ]..shuffle(_random);
+      final order = [startIndex, ...others];
+      queue = [for (final i in order) tracks[i]];
+      queueIds = [for (final i in order) ids[i]];
+      current = 0;
+      _origin = ids;
+    } else {
+      _origin = _state.shuffle ? ids : null;
+    }
+    _ids = queueIds;
+    _emit(
+      _state.copyWith(
+        queue: List.unmodifiable(queue),
+        currentIndex: () => tracks.isEmpty ? null : current,
+        status: tracks.isEmpty ? PlayerStatus.idle : PlayerStatus.stopped,
+        playing: false,
+        position: Duration.zero,
+        duration: () => null,
+      ),
+    );
+  }
+
+  Future<void> _play() async {
     final index = _state.currentIndex;
     if (index == null) return;
     _emit(_state.copyWith(playing: true));
@@ -111,12 +152,12 @@ class PlayerController {
       case PlayerStatus.stopped:
         // A new start by the user: earlier failures no longer count.
         _consecutiveFailures = 0;
-        await _loadFrom(index, 1);
+        await _loadFrom(index, 1, wrap: true);
       case PlayerStatus.loading:
       case PlayerStatus.idle:
         break;
     }
-  });
+  }
 
   Future<void> pause() => _serial(() async {
     _emit(_state.copyWith(playing: false));
@@ -130,7 +171,7 @@ class PlayerController {
   Future<void> next() => _serial(() async {
     final index = _state.currentIndex;
     if (index == null) return;
-    await _loadFrom(index + 1, 1);
+    await _loadFrom(index + 1, 1, wrap: true);
   });
 
   /// @implements FR-001: restart after [restartThreshold], otherwise go to
@@ -158,6 +199,9 @@ class PlayerController {
     final current = _state.currentIndex;
     if (current == null || index < 0 || index >= queue.length) return false;
     final remaining = List<Track>.unmodifiable([...queue]..removeAt(index));
+    final removedId = _ids[index];
+    _ids = [..._ids]..removeAt(index);
+    _origin = _origin?.where((id) => id != removedId).toList();
     if (index != current) {
       _emit(
         _state.copyWith(
@@ -190,6 +234,138 @@ class PlayerController {
     return true;
   });
 
+  /// Turns the shuffle on or off (BR-009, rules 1 and 2). Nothing is loaded
+  /// or stopped: only the order of the tracks after the current one changes.
+  Future<void> setShuffle({required bool enabled}) => _serial(() async {
+    if (enabled == _state.shuffle) return;
+    final current = _state.currentIndex;
+    if (current == null) {
+      _emit(_state.copyWith(shuffle: enabled));
+      return;
+    }
+    final queue = _state.queue;
+    if (enabled) {
+      _origin = [..._ids];
+      final tail = [for (var i = current + 1; i < queue.length; i++) i]
+        ..shuffle(_random);
+      final order = [for (var i = 0; i <= current; i++) i, ...tail];
+      _ids = [for (final i in order) _ids[i]];
+      _emit(
+        _state.copyWith(
+          queue: List.unmodifiable([for (final i in order) queue[i]]),
+          shuffle: true,
+        ),
+      );
+      return;
+    }
+    final origin = _origin;
+    _origin = null;
+    if (origin == null) {
+      _emit(_state.copyWith(shuffle: false));
+      return;
+    }
+    final byId = {for (var i = 0; i < queue.length; i++) _ids[i]: queue[i]};
+    final currentId = _ids[current];
+    final ids = [
+      for (final id in origin)
+        if (byId.containsKey(id)) id,
+    ];
+    _ids = ids;
+    _emit(
+      _state.copyWith(
+        queue: List.unmodifiable([for (final id in ids) byId[id]!]),
+        currentIndex: () => ids.indexOf(currentId),
+        shuffle: false,
+      ),
+    );
+  });
+
+  Future<void> setRepeat(RepeatMode mode) => _serial(() async {
+    if (mode != _state.repeat) _emit(_state.copyWith(repeat: mode));
+  });
+
+  /// Moves the track at [from] to [to] (BR-009, rule 6). Both must be after
+  /// the current track; otherwise nothing changes and false is returned.
+  Future<bool> move(int from, int to) => _serial(() async {
+    final current = _state.currentIndex;
+    final length = _state.queue.length;
+    if (current == null ||
+        from <= current ||
+        to <= current ||
+        from >= length ||
+        to >= length) {
+      return false;
+    }
+    if (from == to) return true;
+    final queue = [..._state.queue];
+    final ids = [..._ids];
+    queue.insert(to, queue.removeAt(from));
+    ids.insert(to, ids.removeAt(from));
+    _ids = ids;
+    _emit(_state.copyWith(queue: List.unmodifiable(queue)));
+    return true;
+  });
+
+  /// Removes every track after the current one (BR-009, rule 7).
+  Future<void> clearUpcoming() => _serial(() async {
+    final current = _state.currentIndex;
+    if (current == null || current == _state.queue.length - 1) return;
+    final kept = _ids.sublist(0, current + 1).toSet();
+    _ids = _ids.sublist(0, current + 1);
+    _origin = _origin?.where(kept.contains).toList();
+    _emit(
+      _state.copyWith(
+        queue: List.unmodifiable(_state.queue.sublist(0, current + 1)),
+      ),
+    );
+  });
+
+  /// Makes the track at [index] the current one and plays it (BR-009,
+  /// rule 8). Returns false, without any change, outside the queue.
+  Future<bool> skipTo(int index) => _serial(() async {
+    if (_state.currentIndex == null ||
+        index < 0 ||
+        index >= _state.queue.length) {
+      return false;
+    }
+    _consecutiveFailures = 0;
+    _emit(_state.copyWith(playing: true));
+    await _loadFrom(index, 1, wrap: true);
+    return true;
+  });
+
+  /// Puts [tracks] right after the current track (BR-009, rule 11). On an
+  /// empty queue they become the queue and playback starts.
+  Future<void> playNext(List<Track> tracks) =>
+      _serial(() => _insert(tracks, next: true));
+
+  /// Puts [tracks] at the end of the queue (BR-009, rule 11).
+  Future<void> enqueue(List<Track> tracks) =>
+      _serial(() => _insert(tracks, next: false));
+
+  Future<void> _insert(List<Track> tracks, {required bool next}) async {
+    if (tracks.isEmpty) return;
+    final current = _state.currentIndex;
+    if (current == null) {
+      await _setQueue(tracks, 0);
+      await _play();
+      return;
+    }
+    final at = next ? current + 1 : _state.queue.length;
+    final ids = [for (var i = 0; i < tracks.length; i++) _nextId++];
+    _ids = [..._ids]..insertAll(at, ids);
+    final origin = _origin;
+    if (origin != null) {
+      final after = next ? origin.indexOf(_ids[current]) + 1 : origin.length;
+      _origin = [...origin]..insertAll(after, ids);
+    }
+    _emit(
+      _state.copyWith(
+        queue: List.unmodifiable([..._state.queue]..insertAll(at, tracks)),
+      ),
+    );
+  }
+
   /// Stops following the engine and the volumes. Does not stop the engine.
   Future<void> dispose() async {
     for (final subscription in _subscriptions) {
@@ -207,14 +383,34 @@ class PlayerController {
   /// Loads the first track that can be played, starting at [index] and
   /// moving by [step]. Plays it if the intent to play is set.
   ///
+  /// With [wrap], and the repetition of all tracks, a forward search that
+  /// reaches the end of the queue goes on from its start up to [index] - 1
+  /// (BR-009, rule 4).
+  ///
   /// @implements BR-001: tracks of an unavailable disk are never opened; each
   /// run of them produces one [TracksSkipped].
-  Future<void> _loadFrom(int index, int step) async {
+  Future<void> _loadFrom(int index, int step, {bool wrap = false}) async {
     final skipped = <Track>[];
-    for (var i = index; i >= 0 && i < _state.queue.length; i += step) {
+    var wrapped = false;
+    var i = index;
+    while (true) {
+      if (i < 0 || i >= _state.queue.length) {
+        if (wrap &&
+            !wrapped &&
+            step > 0 &&
+            _state.repeat == RepeatMode.all &&
+            _state.queue.isNotEmpty) {
+          wrapped = true;
+          i = 0;
+          continue;
+        }
+        break;
+      }
+      if (wrapped && i >= index) break;
       final track = _state.queue[i];
       if (!_state.availableDisks.contains(track.disk)) {
         skipped.add(track);
+        i += step;
         continue;
       }
       _reportSkipped(skipped);
@@ -233,6 +429,7 @@ class PlayerController {
       } on TrackSourceException catch (e) {
         final failure = EngineFailure(EngineFailureKind.openFailed, e.message);
         if (await _fail(track, failure)) return;
+        i += step;
         continue;
       }
       await _engine.open(source);
@@ -293,7 +490,13 @@ class PlayerController {
     _consecutiveFailures = 0;
     final index = _state.currentIndex;
     if (index == null) return;
-    await _loadFrom(index + 1, 1);
+    // BR-009, rule 4: the same track starts again; an unavailable one is
+    // left behind by the usual skipping.
+    if (_state.repeat == RepeatMode.one) {
+      await _loadFrom(index, 1);
+      return;
+    }
+    await _loadFrom(index + 1, 1, wrap: true);
   }
 
   void _onIssue(EngineIssue issue) {
@@ -311,7 +514,7 @@ class PlayerController {
     final index = _state.currentIndex;
     if (load != _load || track == null || index == null) return;
     if (await _fail(track, failure)) return;
-    await _loadFrom(index + 1, 1);
+    await _loadFrom(index + 1, 1, wrap: true);
   }
 
   /// @implements BR-002: the engine is stopped, and its stop awaited, before
