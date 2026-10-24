@@ -1075,6 +1075,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This artist is no longer in the library.'**
   String get artistNotFound;
+
+  /// Said by TalkBack for a letter of the index of albums and artists (FR-020.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Letter {letter}, {items}'**
+  String indexLetterItems(String letter, String items);
+
+  /// Count in the bubble of the index of artists (FR-021.4).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} artist} other{{count} artists}}'**
+  String artistsCountShort(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -804,4 +804,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get artistNotFound => 'This artist is no longer in the library.';
+
+  @override
+  String indexLetterItems(String letter, String items) {
+    return 'Letter $letter, $items';
+  }
+
+  @override
+  String artistsCountShort(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString artists',
+      one: '$countString artist',
+    );
+    return '$_temp0';
+  }
 }

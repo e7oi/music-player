@@ -942,5 +942,27 @@
   "artistNotFound": "This artist is no longer in the library.",
   "@artistNotFound": {
     "description": "Shown when the artist of an open detail disappears (FR-021.7)."
+  },
+  "indexLetterItems": "Letter {letter}, {items}",
+  "@indexLetterItems": {
+    "description": "Said by TalkBack for a letter of the index of albums and artists (FR-020.6).",
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      },
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "artistsCountShort": "{count, plural, one{{count} artist} other{{count} artists}}",
+  "@artistsCountShort": {
+    "description": "Count in the bubble of the index of artists (FR-021.4).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
   }
 }

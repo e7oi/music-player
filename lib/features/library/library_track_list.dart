@@ -62,7 +62,9 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _ratio = View.of(context).devicePixelRatio;
-    _inFront = TickerMode.valuesOf(context).enabled;
+    // IndexedStack does not stop the tickers of the tabs it hides, but it
+    // says which one is visible (ADR-016).
+    _inFront = TickerMode.valuesOf(context).enabled && Visibility.of(context);
     _sendExclusion();
   }
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tuneshell/features/browse/albums_view.dart';
+import 'package:tuneshell/features/browse/artists_view.dart';
 import 'package:tuneshell/features/library/library_controller.dart';
 import 'package:tuneshell/features/library/library_page.dart';
 import 'package:tuneshell/features/player/mini_player_bar.dart';
@@ -25,6 +27,8 @@ class TuneShellApp extends StatelessWidget {
           libraryControllerProvider.select(isFirstLaunchScreen),
         ),
         tracks: const LibraryPage(),
+        albums: const AlbumsView(),
+        artists: const ArtistsView(),
         playerBar: const MiniPlayerBar(),
       ),
     ),

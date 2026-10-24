@@ -162,5 +162,7 @@
   "queueOriginAlbum": "Album · {title}",
   "queueOriginArtist": "Artiste · {name}",
   "groupNotFound": "Cet album n'est plus dans la bibliothèque.",
-  "artistNotFound": "Cet artiste n'est plus dans la bibliothèque."
+  "artistNotFound": "Cet artiste n'est plus dans la bibliothèque.",
+  "indexLetterItems": "Lettre {letter}, {items}",
+  "artistsCountShort": "{count, plural, one{{count} artiste} other{{count} artistes}}"
 }

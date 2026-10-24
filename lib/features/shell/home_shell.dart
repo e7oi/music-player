@@ -13,12 +13,20 @@ class HomeShell extends StatefulWidget {
   const new({
     required this.tracks,
     required this.playerBar,
+    this.albums,
+    this.artists,
     this.immersive = false,
     super.key,
   });
 
   /// The Tracks view: the library.
   final Widget tracks;
+
+  /// The Albums and Artists views; each lives in a navigator of its own, so
+  /// that a detail opens inside the tab (FR-009, ADR-016). A tab without a
+  /// view says "coming soon".
+  final Widget? albums;
+  final Widget? artists;
 
   /// Shown above the navigation in every view; empty when nothing plays.
   final Widget playerBar;
@@ -42,6 +50,11 @@ class _HomeShellState extends State<HomeShell> {
   /// losing their state (FR-009.4).
   final GlobalKey _contentKey = GlobalKey();
 
+  /// The navigators of the Albums and Artists tabs: the system Back goes
+  /// into them before it leaves the tab (ADR-016).
+  final GlobalKey<NavigatorState> _albumsNavigator = GlobalKey();
+  final GlobalKey<NavigatorState> _artistsNavigator = GlobalKey();
+
   void _select(int index) => setState(() => _index = index);
 
   @override
@@ -62,8 +75,15 @@ class _HomeShellState extends State<HomeShell> {
               index: _index,
               children: [
                 widget.tracks,
-                ComingSoonPage(title: l10n.navAlbums),
-                ComingSoonPage(title: l10n.navArtists),
+                _TabNavigator(
+                  navigatorKey: _albumsNavigator,
+                  root: widget.albums ?? ComingSoonPage(title: l10n.navAlbums),
+                ),
+                _TabNavigator(
+                  navigatorKey: _artistsNavigator,
+                  root:
+                      widget.artists ?? ComingSoonPage(title: l10n.navArtists),
+                ),
                 const SettingsPage(),
               ],
             ),
@@ -77,7 +97,18 @@ class _HomeShellState extends State<HomeShell> {
     return PopScope(
       canPop: _index == 0,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _select(0);
+        if (didPop) return;
+        // A detail open in the tab closes first (ADR-016).
+        final navigator = switch (_index) {
+          1 => _albumsNavigator.currentState,
+          2 => _artistsNavigator.currentState,
+          _ => null,
+        };
+        if (navigator != null && navigator.canPop()) {
+          navigator.pop();
+          return;
+        }
+        _select(0);
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -136,4 +167,18 @@ class _HomeShellState extends State<HomeShell> {
       ),
     );
   }
+}
+
+/// A tab with a navigator of its own, under the navigation and the player.
+class _TabNavigator extends StatelessWidget {
+  const new({required this.navigatorKey, required this.root});
+
+  final GlobalKey<NavigatorState> navigatorKey;
+  final Widget root;
+
+  @override
+  Widget build(BuildContext context) => Navigator(
+    key: navigatorKey,
+    onGenerateRoute: (_) => MaterialPageRoute<void>(builder: (_) => root),
+  );
 }
