@@ -1,6 +1,6 @@
 # FR-021 — Vue Artistes et détail d'un artiste
 
-**Statut :** Brouillon · **Créée le :** 2026-10-23 · **Ticket :** MPL-048 · **Lié :** UC-008, FR-009, FR-010, FR-013, FR-020, FR-022, BR-007, BR-008, BR-010, ADR-016 · **Source :** `docs/design/HANDOFF.md` §5 (écran 8, 8c et 8d), `Artistes.dc.html`
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-048 · **Lié :** UC-008, FR-009, FR-010, FR-013, FR-020, FR-022, BR-007, BR-008, BR-010, ADR-016 · **Source :** `docs/design/HANDOFF.md` §5 (écran 8, 8c et 8d), `Artistes.dc.html`
 
 ## Besoin
 

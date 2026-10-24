@@ -1,6 +1,6 @@
 # FR-020 — Vue Albums et détail d'un album
 
-**Statut :** Brouillon · **Créée le :** 2026-10-23 · **Ticket :** MPL-048 · **Lié :** UC-008, FR-009, FR-010, FR-012, FR-013, FR-022, BR-007, BR-008, BR-010, ADR-016 · **Source :** `docs/design/HANDOFF.md` §5 (écran 8, 8a et 8b), `Albums.dc.html`
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-048 · **Lié :** UC-008, FR-009, FR-010, FR-012, FR-013, FR-022, BR-007, BR-008, BR-010, ADR-016 · **Source :** `docs/design/HANDOFF.md` §5 (écran 8, 8a et 8b), `Albums.dc.html`
 
 ## Besoin
 
@@ -22,7 +22,7 @@ Parcourir la bibliothèque par albums, sous forme de pochettes, et voir un album
 
 8. **Ouverture.** Toucher une carte ouvre le détail dans l'onglet : la barre de navigation et le mini-lecteur restent. Retour par la flèche de l'en-tête ou le geste Retour ; la grille retrouve sa position.
 9. **En-tête.** Pochette de 152 dp, titre, artiste de l'album (`primary`), « {année} · {genre} » puis « {n} disques · {n} pistes · {durée} » (disques seulement s'il y en a plusieurs ; genre le plus fréquent). Boutons « Lire » et « Aléatoire » (FR-022).
-10. **Pistes.** Groupées sous « Disque 1 », « Disque 2 »… quand l'album compte plusieurs disques, sans intercalaire sinon. Chaque ligne : numéro (▶ pour la piste en cours, sinon le numéro de piste, ou la position si absent), titre, repère de source si l'album a plusieurs sources, durée. Ligne en cours surlignée (`nowPlayingRow`).
+10. **Pistes**, triées par numéro de disque puis numéro de piste (BR-010, règle 6). Groupées sous « Disque 1 », « Disque 2 »… quand l'album compte plusieurs disques, sans intercalaire sinon. Chaque ligne : numéro (▶ pour la piste en cours, sinon le numéro de piste, ou la position si absent), titre, repère de source si l'album a plusieurs sources, durée. Ligne en cours surlignée (`nowPlayingRow`).
 11. **Toucher une piste** lit l'album en commençant par elle (FR-022). Une piste indisponible est grisée ; la toucher explique (BR-008, règle 5).
 12. **Accessibilité.** Libellés de carte « {titre}, {artiste · année} » ; ligne « Piste 3, {titre}, 4:18, en lecture » ; boutons de 48 dp ; texte à 200 % sans coupure (les lignes grandissent).
 13. **Règles d'interface.** Jetons seulement, clair et sombre, animations réduites respectées (BR-007) ; pochettes en miniatures décodées à la taille d'affichage.

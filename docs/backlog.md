@@ -14,7 +14,7 @@ Préfixe : MPL · Prochaine clé : MPL-055 · Dernière MAJ : 2026-10-23
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-046 | Récit | P1 | Design lot 3 — Disques amovibles : écran 4 refait (4a–4e), repère de source modifiable, détection du branchement en direct, parcours dans un service au premier plan avec notification et « Arrêter » ; recoupe MPL-035 et MPL-038. À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
-| MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : onglets Albums et Artistes (grille et liste, détails dans l'onglet, index alphabétique, lire / aléatoire, ajout à la file d'un album ou d'un artiste ; regroupés par artiste de l'album). Cadré le 2026-10-23, fiches en Brouillon ; le reste du lot 5 est dans MPL-051 (Réglages), MPL-052 (panneau lecteur), MPL-053 et MPL-054 | À faire | MPL-001 | — |
+| MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : onglets Albums et Artistes (grille et liste, détails dans l'onglet, index alphabétique, lire / aléatoire, ajout à la file d'un album ou d'un artiste ; regroupés par artiste de l'album). Cadré et validé le 2026-10-23 ; le reste du lot 5 est dans MPL-051 (Réglages), MPL-052 (panneau lecteur), MPL-053 et MPL-054 | En cours | MPL-001 | — |
 | MPL-051 | Récit | P2 | Design lot 5 — Réglages (écran 8e) : stockage persisté des réglages (schéma ou paquet, à décider au cadrage), thème Système / Clair / Sombre, couleurs du fond d'écran (Material You par `dynamic_color`, dépendance à justifier : D30), index alphabétique à gauche (poignée et colonne), pause si le casque est débranché, actualiser au démarrage, liens « Dossiers de musique » et « Disques amovibles », À propos (version, licence GPL-3.0-or-later, code source) et Confidentialité ; n'affiche que les réglages qui fonctionnent. Découpé de MPL-048 le 2026-10-23. À cadrer | À faire | MPL-001 | — |
 | MPL-052 | Récit | P2 | Design lot 5 — Paysage et écrans larges (écran 6e) : panneau lecteur permanent de 280 dp à droite (pochette, contrôles, file d'attente) à partir de 840 dp, liste au centre, sans mini-lecteur ; panneau repliable de 600 à 839 dp ; réutilise les éléments du lecteur plein écran (FR-017). Découpé de MPL-048 le 2026-10-23. À cadrer | À faire | MPL-001 | MPL-048 |
 | MPL-053 | Récit | P2 | « Reprendre là où j'en étais » : mémoriser la file, la piste, la position et les modes (aléatoire, répétition) entre deux lancements et les restaurer à l'ouverture, en pause et sans service au premier plan ; réglage dans MPL-051 ; à cadrer (BR-004 : pistes disparues, disque absent, FR-005 : pas de notification avant un « Lecture »). Idée du design (écran 8e), découpée de MPL-048 le 2026-10-23 | À faire | MPL-001 | MPL-051 |
@@ -202,6 +202,12 @@ Fonctionnalité: Albums et artistes selon le design
     Alors la grille réapparaît au même endroit
     Et un second Retour ramène sur l'onglet Pistes
 
+  Scénario: Pistes d'un album dans l'ordre disque puis piste
+    Soit un album de deux disques dont les pistes sont indexées dans le désordre
+    Quand l'utilisateur ouvre le détail, touche "Lire", puis ajoute l'album à la file
+    Alors le détail, la file et l'ajout suivent l'ordre du disque 1 puis du disque 2, piste par piste
+    Et une piste sans numéro vient après les numérotées de son disque
+
   Scénario: Lire un album
     Soit le détail d'un album
     Quand l'utilisateur touche "Lire"
@@ -272,7 +278,7 @@ Fonctionnalité: Albums et artistes selon le design
 
 **Test appareil (Pixel, release).** Bibliothèque réelle (plus de 7 500 pistes) avec le SSD branché puis débranché ; thèmes clair et sombre ; portrait et paysage ; TalkBack ; texte à 200 % ; fluidité en profile ; geste Retour entre onglet et détail ; HOWTO §18 à écrire à la livraison.
 
-**Fiches liées.** UC-008, FR-020, FR-021, FR-022, BR-010 ; ADR-016 (toutes en `Brouillon`, en attente de validation). Utilise UC-004, UC-007, FR-009, FR-010, FR-012, FR-013, FR-017, FR-019, BR-001, BR-004, BR-007, BR-008, BR-009 et ADR-010, ADR-013, ADR-015 (`Active`).
+**Fiches liées.** UC-008, FR-020, FR-021, FR-022, BR-010 ; ADR-016 (toutes `Active`, validées par le propriétaire le 2026-10-23, avec l'ordre disque puis piste pour le détail, la lecture et l'ajout à la file). Utilise UC-004, UC-007, FR-009, FR-010, FR-012, FR-013, FR-017, FR-019, BR-001, BR-004, BR-007, BR-008, BR-009 et ADR-010, ADR-013, ADR-015 (`Active`).
 
 **À valider (PO).**
 - Découpage en MPL-048, MPL-051, MPL-052, MPL-053, MPL-054 (déjà choisi au cadrage ; à confirmer sur les fiches).

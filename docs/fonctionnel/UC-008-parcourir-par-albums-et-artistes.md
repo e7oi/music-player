@@ -1,6 +1,6 @@
 # UC-008 — Parcourir sa musique par albums et par artistes
 
-**Statut :** Brouillon · **Créée le :** 2026-10-23 · **Ticket :** MPL-048 · **Lié :** UC-004, UC-005, UC-007, FR-020, FR-021, FR-022, BR-010, ADR-016 · **Source :** `docs/design/HANDOFF.md` §4, §5 (écran 8, états 8a à 8d)
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-048 · **Lié :** UC-004, UC-005, UC-007, FR-020, FR-021, FR-022, BR-010, ADR-016 · **Source :** `docs/design/HANDOFF.md` §4, §5 (écran 8, états 8a à 8d)
 
 ## Acteur et but
 

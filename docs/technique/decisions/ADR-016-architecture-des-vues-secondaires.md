@@ -1,6 +1,6 @@
 # ADR-016 — Architecture des vues Albums et Artistes : groupes purs, navigation dans l'onglet, index multiples
 
-**Statut :** Brouillon · **Date :** 2026-10-23 · **Ticket :** MPL-048 · **Décisions :** D23 · **Fiches :** UC-008, FR-020, FR-021, FR-022, BR-010 · **Complète :** ADR-010, ADR-013, ADR-015
+**Statut :** Active (validée le 2026-10-23) · **Date :** 2026-10-23 · **Ticket :** MPL-048 · **Décisions :** D23 · **Fiches :** UC-008, FR-020, FR-021, FR-022, BR-010 · **Complète :** ADR-010, ADR-013, ADR-015
 
 ## Contexte
 

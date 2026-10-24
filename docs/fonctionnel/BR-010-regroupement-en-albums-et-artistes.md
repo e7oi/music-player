@@ -1,6 +1,6 @@
 # BR-010 — Regroupement des pistes en albums et en artistes
 
-**Statut :** Brouillon · **Créée le :** 2026-10-23 · **Ticket :** MPL-048 · **Décisions :** D23 · **Lié :** UC-008, FR-020, FR-021, BR-004, BR-008 · **Source :** `docs/design/HANDOFF.md` §4 (« Albums groupés… », « Artistes groupés… »)
+**Statut :** Active (validée le 2026-10-23) · **Créée le :** 2026-10-23 · **Ticket :** MPL-048 · **Décisions :** D23 · **Lié :** UC-008, FR-020, FR-021, BR-004, BR-008 · **Source :** `docs/design/HANDOFF.md` §4 (« Albums groupés… », « Artistes groupés… »)
 
 ## Règles
 
@@ -9,7 +9,7 @@
 3. **Comparaison** : la clé ignore la casse et les accents (comme l'index de la liste, FR-011.7) et les espaces en trop. L'affichage garde l'écriture la plus fréquente parmi les pistes du groupe, à égalité la première dans l'ordre des pistes.
 4. **Plusieurs sources** : un album dont les pistes sont sur le téléphone et sur un disque est un seul album. Il porte les repères de ses sources (au plus trois montrés, FR-012).
 5. **Artiste** : l'ensemble des albums qui ont le même artiste de l'album (comparaison de la règle 3). Un artiste qui n'apparaît que comme artiste de piste (« feat. ») n'a pas d'entrée propre ; ses pistes sont sous l'artiste de leur album.
-6. **Ordre des pistes d'un album** : numéro de disque (absent = 1), puis numéro de piste (absent après les numérotés), puis titre replié, puis chemin.
+6. **Ordre des pistes d'un album** : numéro de disque (absent = 1), puis numéro de piste (absent après les numérotés), puis titre replié, puis chemin. Cet ordre est **le seul** ordre d'un album : la fiche de l'album (FR-020), la file quand on le lit, quand on touche une de ses pistes, quand on l'ajoute à la file ou le met « ensuite » (FR-022) et les pistes d'un artiste, album par album (règle 7), l'utilisent. Décision du propriétaire du 2026-10-23.
 7. **Ordre des albums** : artiste de l'album replié, puis année croissante (absente en dernier), puis titre replié. Les artistes sont triés par nom replié. « Artiste inconnu » est dans le groupe « # » avec les noms qui commencent par un chiffre ou un symbole (FR-013, `alphabetKey`).
 8. **Année d'un album** : la plus ancienne année renseignée de ses pistes. **Pochette** : celle de la première piste de l'ordre de la règle 6 qui en a une ; sinon la tuile neutre. **Durée** : somme des durées connues.
 9. **Disponibilité** (BR-008, règle 1) : un album ou un artiste est indisponible quand toutes ses pistes le sont. Sinon il est disponible et ses pistes indisponibles sont grisées dans le détail.
