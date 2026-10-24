@@ -1,5 +1,5 @@
 # Backlog — TuneShell
-Préfixe : MPL · Prochaine clé : MPL-051 · Dernière MAJ : 2026-10-23
+Préfixe : MPL · Prochaine clé : MPL-055 · Dernière MAJ : 2026-10-23
 
 > Importé le 2026-10-14 depuis `docs/sprints/sprint-2/SPRINT-2-START.md` v5 (§3 snapshot du backlog, §4 registre des décisions), copie fidèle du tableau, des détails de MPL-029 et du registre : aucun libellé reformulé, seuls les icônes de type et de priorité sont remplacées par du texte. Le snapshot de sprint reste figé ; ce fichier est désormais la référence vivante, écrite par Claude Code, relue et validée par le propriétaire. Format : `backlog-methodology.md` §13 (dépôt AI-tools). MPL-032 est absent du snapshot : sa clé reste réservée.
 > Statuts : À faire → En cours → À tester → Terminé (+ Bloqué). Un ticket n'est « Terminé » que sur l'ordre « validé » du propriétaire, après un test réel en build release sur le Pixel (D14), et après le merge de sa PR.
@@ -14,8 +14,12 @@ Préfixe : MPL · Prochaine clé : MPL-051 · Dernière MAJ : 2026-10-23
 | MPL-014 | Tâche technique | P2 | Prototype audio Windows et macOS (en pause) | À faire | — | — |
 | MPL-015 | Tâche technique | P2 | Revoir dialogue et bandeau de permission ⚠️ un seul appareil testé | À faire | — | — |
 | MPL-046 | Récit | P1 | Design lot 3 — Disques amovibles : écran 4 refait (4a–4e), repère de source modifiable, détection du branchement en direct, parcours dans un service au premier plan avec notification et « Arrêter » ; recoupe MPL-035 et MPL-038. À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
-| MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : albums, artistes (regroupés par artiste de l'album), réglages persistés (thème, Material You par `dynamic_color`, index à gauche), paysage avec panneau lecteur (6e). À cadrer après MPL-016 | À faire | MPL-001 | MPL-045 |
-| MPL-049 | Tâche technique | P2 | Design lot 6 — Finitions : icône d'application et de notification finales (`docs/design/brand/`), écran de démarrage, liste de contrôle d'accessibilité (TalkBack, texte à 200 %), profilage. À cadrer après MPL-016 | À faire | MPL-001 | MPL-047, MPL-048 |
+| MPL-048 | Récit | P2 | Design lot 5 — Vues secondaires : onglets Albums et Artistes (grille et liste, détails dans l'onglet, index alphabétique, lire / aléatoire, ajout à la file d'un album ou d'un artiste ; regroupés par artiste de l'album). Cadré le 2026-10-23, fiches en Brouillon ; le reste du lot 5 est dans MPL-051 (Réglages), MPL-052 (panneau lecteur), MPL-053 et MPL-054 | À faire | MPL-001 | — |
+| MPL-051 | Récit | P2 | Design lot 5 — Réglages (écran 8e) : stockage persisté des réglages (schéma ou paquet, à décider au cadrage), thème Système / Clair / Sombre, couleurs du fond d'écran (Material You par `dynamic_color`, dépendance à justifier : D30), index alphabétique à gauche (poignée et colonne), pause si le casque est débranché, actualiser au démarrage, liens « Dossiers de musique » et « Disques amovibles », À propos (version, licence GPL-3.0-or-later, code source) et Confidentialité ; n'affiche que les réglages qui fonctionnent. Découpé de MPL-048 le 2026-10-23. À cadrer | À faire | MPL-001 | — |
+| MPL-052 | Récit | P2 | Design lot 5 — Paysage et écrans larges (écran 6e) : panneau lecteur permanent de 280 dp à droite (pochette, contrôles, file d'attente) à partir de 840 dp, liste au centre, sans mini-lecteur ; panneau repliable de 600 à 839 dp ; réutilise les éléments du lecteur plein écran (FR-017). Découpé de MPL-048 le 2026-10-23. À cadrer | À faire | MPL-001 | MPL-048 |
+| MPL-053 | Récit | P2 | « Reprendre là où j'en étais » : mémoriser la file, la piste, la position et les modes (aléatoire, répétition) entre deux lancements et les restaurer à l'ouverture, en pause et sans service au premier plan ; réglage dans MPL-051 ; à cadrer (BR-004 : pistes disparues, disque absent, FR-005 : pas de notification avant un « Lecture »). Idée du design (écran 8e), découpée de MPL-048 le 2026-10-23 | À faire | MPL-001 | MPL-051 |
+| MPL-054 | Récit | P2 | Ignorer les fichiers courts (moins de 30 s : sonneries, notes vocales) : réglage de l'indexation ; à cadrer (durée connue tout de suite pour MediaStore, seulement après la lecture des étiquettes sur un disque ; pistes déjà indexées ; effet sur les listes et les compteurs ; seuil réglable ou fixe). Idée du design (écran 8e), découpée de MPL-048 le 2026-10-23 | À faire | MPL-001 | MPL-051 |
+| MPL-049 | Tâche technique | P2 | Design lot 6 — Finitions : icône d'application et de notification finales (`docs/design/brand/`), écran de démarrage, liste de contrôle d'accessibilité (TalkBack, texte à 200 %), profilage. À cadrer après MPL-016 | À faire | MPL-001 | MPL-048, MPL-051, MPL-052 |
 | MPL-050 | Bug | P1 | Deux cartes de TuneShell dans les applications récentes : toucher la notification de lecture (action `NOTIFICATION_CLICK` d'`audio_service`, drapeau « nouvelle tâche ») crée une seconde tâche, car `MainActivity` a `taskAffinity=""` (réglage par défaut de Flutter) et Android ne retrouve pas la tâche ouverte ; plus de deux cartes possibles. Pistes : retirer `taskAffinity=""` ou passer en `launchMode="singleTask"` ; à retester avec `HOWTO.md` §12 (étapes 9 et 12). **Ordre voulu par le propriétaire le 2026-10-23 : juste après le design complet (MPL-044 à MPL-049).** Origine : MPL-036. À cadrer le moment venu | À faire | MPL-001 | — |
 | MPL-038 | Récit | P1 | Réassociation d'un nouveau disque dont les chemins relatifs correspondent à ceux d'un disque absent (D23) et retrait d'un disque externe de la bibliothèque (demande du propriétaire du 2026-10-15 ; sort des playlists, favoris et statistiques du disque à trancher au cadrage). Repris de MPL-018 le 2026-10-15 | À faire | MPL-001 | — |
 | MPL-019 | Récit | P2 | Normalisation du volume (ReplayGain, préampli) | À faire | MPL-004 | — |
@@ -143,6 +147,140 @@ Revue QA : ✅ (1 tour, sous-agent à contexte neuf ; aucun bloquant). Majeurs c
 Description de PR : titre `feat(ui): add the design foundations: theme, navigation and components (MPL-016)`. What: the Claude Design handoff enters the repository (specification, mock-up sources, four reduced captures, six OFL fonts); TuneShell tokens and light/dark themes that follow the system; four-tab shell with a bottom bar under 600 dp and a rail beyond, keeping each view's state on rotation, with the player bar in the shell; eight reusable components (ArtworkTile, SourceMark, TrackTile, StatusBanner, ProgressBanner, DiskCard, JumpToCurrentFab, AlphabetScroller) with a debug and profile gallery; a native channel that keeps the index handle out of the Back gesture; the current screens moved to the tokens with persistent states in the flow; `lib/ui/` rules in CLAUDE.md and the architecture tests, plus a no-literal style test; backlog MPL-044 to MPL-049 for the next design lots. Why: the owner chose to build the design lot by lot (lot 0 first), and the existing screens must keep working while the new ones arrive (ADR-010, ADR-011). How tested: format, analyses and 385 unit and widget tests green; release APK built (79.7 MB, no INTERNET); one review round without blocker; device: Pixel 10 Pro through adb in release and profile (see delivery block), owner confirmation pending. Known gaps: dark theme, landscape, TalkBack and fluidity not tested on the device; column fade-in and teardrop bubble of the index not done; the style test misses some literals; the gesture-exclusion rectangle is last-writer-wins; `playerStateProvider` now subscribes before it reads the state (out of scope, found by the page tests).
 Décisions prises en route : `playerStateProvider` corrigé (hors périmètre, trouvé par les tests de page) ; barre de lecture montée dans la coquille ; jetons `coverDetail`, `bannerMin` et `fixedRowMaxTextScale` ajoutés ; captures versionnées en JPEG ; galerie ouverte depuis Réglages en debug et profile ; courbe de l'effet loupe ajustée sur les valeurs de Design.
 À valider (PO) : écarts du dossier de conception consignés dans les As-built de FR-010 (fondu, bulle, échelle de texte) et BR-007 (test des jetons) ; sortir `ClaudeDesign/` de l'arbre de travail (il gêne `flutter analyze`) ; passer le ticket à « Terminé » après le test sur le Pixel (`HOWTO.md` §14, avec une build profile pour les étapes 7 à 11).
+
+### MPL-048
+**Description.** Faire des onglets Albums et Artistes de vraies vues, selon le lot 5 de la conception Claude Design (`docs/design/HANDOFF.md`, écran 8, états 8a à 8d) : une grille d'albums, une liste d'artistes regroupés par artiste de l'album, leurs détails dans l'onglet, l'index alphabétique, et la possibilité de lire ou d'ajouter à la file un album ou un artiste en entier. Cadrage du 2026-10-23. Le lot 5 de Design est découpé (choix du propriétaire) : Réglages dans MPL-051, panneau lecteur permanent dans MPL-052, « Reprendre » dans MPL-053 et fichiers courts dans MPL-054.
+
+**Inclus.**
+- Regroupement en albums et artistes, pur et testé d'abord : clé sans casse ni accents, « Artiste inconnu » et « Album inconnu », plusieurs sources, ordre, année, pochette, disponibilité (BR-010, ADR-016).
+- Vue Albums : grille, ligne de compte, libellé de tri, repères de source, albums indisponibles grisés, index alphabétique, états chargement et vide (FR-020).
+- Détail d'un album dans l'onglet, pistes groupées par disque, piste en cours, pistes indisponibles (FR-020).
+- Vue Artistes : liste avec avatars à initiale, intercalaires, index alphabétique, artistes indisponibles grisés (FR-021) ; détail avec albums en carrousel et pistes (FR-021).
+- Lire, Aléatoire, Tout lire, toucher une piste, appui long « Lire ensuite » et « Ajouter à la file » pour un album ou un artiste ; provenance de la file « Album · … » et « Artiste · … » (FR-022, BR-009).
+- Navigateur imbriqué par onglet avec le geste Retour du système ; table des rectangles d'exclusion du geste Retour (ADR-016).
+- Textes en français et en anglais dans les ARB ; clair, sombre, portrait et paysage (sans panneau) ; HOWTO §18 à écrire à la livraison.
+
+**Exclusions.** Réglages et leur stockage, thème, Material You, côté gauche de l'index (MPL-051) ; panneau lecteur permanent (MPL-052) ; « Reprendre » (MPL-053) ; fichiers courts (MPL-054) ; recherche, autres tris, filtres, playlists, favoris ; image d'artiste ; rattachement des compilations sans artiste d'album ; retrait d'un album de la bibliothèque ; modification des étiquettes.
+
+**Critères d'acceptation.**
+```gherkin
+# language: fr
+Fonctionnalité: Albums et artistes selon le design
+
+  Scénario: Grille d'albums
+    Soit une bibliothèque de plusieurs albums
+    Quand l'utilisateur ouvre l'onglet Albums
+    Alors une grille de pochettes s'affiche, deux colonnes en portrait
+    Et la ligne dit "{n} albums" avec le tri "Artiste de l'album"
+
+  Scénario: Regroupement par artiste de l'album
+    Soit des pistes avec un artiste d'album et d'autres sans
+    Quand l'onglet Albums s'affiche
+    Alors le regroupement suit l'artiste de l'album, à défaut l'artiste de la piste
+    Et les pistes sans étiquettes sont sous "Artiste inconnu" et "Album inconnu"
+
+  Scénario: Album réparti sur deux sources
+    Soit un album dont des pistes sont sur le téléphone et d'autres sur un disque
+    Quand l'utilisateur regarde la grille
+    Alors une seule carte porte les repères des deux sources
+
+  Scénario: Album indisponible
+    Soit un album dont tous les disques sont absents
+    Quand la grille s'affiche
+    Alors la carte est grisée avec l'icône de prise et un libellé TalkBack "indisponible"
+    Et la toucher ouvre quand même le détail
+
+  Scénario: Détail d'un album
+    Soit la grille d'albums
+    Quand l'utilisateur touche un album de deux disques
+    Alors le détail s'ouvre dans l'onglet, navigation et mini-lecteur visibles
+    Et les pistes sont sous "Disque 1" et "Disque 2", la piste en cours marquée
+
+  Scénario: Retour au même endroit
+    Soit un détail d'album ouvert depuis le milieu de la grille
+    Quand l'utilisateur fait le geste Retour
+    Alors la grille réapparaît au même endroit
+    Et un second Retour ramène sur l'onglet Pistes
+
+  Scénario: Lire un album
+    Soit le détail d'un album
+    Quand l'utilisateur touche "Lire"
+    Alors la file est l'album dans l'ordre et la lecture démarre sur la première piste
+    Et le lecteur dit "Lecture depuis Album · {titre}"
+
+  Scénario: Aléatoire
+    Soit le détail d'un artiste
+    Quand l'utilisateur touche "Aléatoire"
+    Alors le mode aléatoire est actif, la file est l'artiste et la lecture démarre
+    Et le bouton aléatoire du lecteur le montre
+
+  Scénario: Toucher une piste du détail
+    Soit le détail d'un album
+    Quand l'utilisateur touche la 3e piste
+    Alors la lecture démarre sur elle avec l'album pour file
+
+  Scénario: Piste indisponible dans un détail
+    Soit une piste d'un disque absent dans un détail
+    Quand l'utilisateur la touche
+    Alors un message dit "Branche {disque} pour lire cette piste" et rien ne se lance
+
+  Scénario: Liste d'artistes
+    Soit des artistes
+    Quand l'utilisateur ouvre l'onglet Artistes
+    Alors la liste montre un avatar à initiale, "{n} albums · {n} pistes", des intercalaires de lettres
+    Et "Artiste inconnu" est sous "#"
+
+  Scénario: Détail d'un artiste
+    Soit la liste d'artistes
+    Quand l'utilisateur touche un artiste
+    Alors le détail montre "{n} albums · {n} pistes · {durée}", "Tout lire", "Aléatoire"
+    Et les albums en carrousel puis les pistes
+
+  Scénario: De l'artiste à l'album
+    Soit le détail d'un artiste
+    Quand l'utilisateur touche un album du carrousel
+    Alors le détail de l'album s'ouvre et le retour ramène à l'artiste
+
+  Scénario: Index alphabétique
+    Soit plus de 100 albums
+    Quand l'utilisateur glisse depuis la poignée jusqu'à la lettre M
+    Alors la grille se place sur les artistes en M en temps réel
+    Et le geste Retour reste exclu sur la poignée de la vue au premier plan seulement
+
+  Scénario: Ajouter un album à la file
+    Soit une piste en lecture
+    Quand l'utilisateur fait un appui long sur un album et choisit "Ajouter à la file"
+    Alors toutes les pistes de l'album sont à la fin de la file dans l'ordre
+    Et un message le confirme
+
+  Scénario: Lire un album ensuite
+    Soit une piste en lecture
+    Quand l'utilisateur choisit "Lire ensuite" sur un album
+    Alors les pistes de l'album suivent la piste en cours dans l'ordre de l'album
+
+  Scénario: Bibliothèque vide
+    Soit une bibliothèque sans piste
+    Quand l'utilisateur ouvre Albums puis Artistes
+    Alors chaque vue dit qu'il n'y a rien et renvoie vers l'onglet Pistes
+
+  Scénario: Fluidité et grand texte
+    Soit la bibliothèque réelle de plus de 5 000 pistes en build profile
+    Quand l'utilisateur fait défiler la grille et la liste
+    Alors le défilement reste fluide
+    Et à 200 % du texte, aucune carte ni ligne n'est coupée
+```
+
+**Test appareil (Pixel, release).** Bibliothèque réelle (plus de 7 500 pistes) avec le SSD branché puis débranché ; thèmes clair et sombre ; portrait et paysage ; TalkBack ; texte à 200 % ; fluidité en profile ; geste Retour entre onglet et détail ; HOWTO §18 à écrire à la livraison.
+
+**Fiches liées.** UC-008, FR-020, FR-021, FR-022, BR-010 ; ADR-016 (toutes en `Brouillon`, en attente de validation). Utilise UC-004, UC-007, FR-009, FR-010, FR-012, FR-013, FR-017, FR-019, BR-001, BR-004, BR-007, BR-008, BR-009 et ADR-010, ADR-013, ADR-015 (`Active`).
+
+**À valider (PO).**
+- Découpage en MPL-048, MPL-051, MPL-052, MPL-053, MPL-054 (déjà choisi au cadrage ; à confirmer sur les fiches).
+- Compilations sans artiste d'album : découpées par artiste de piste, comme la conception (BR-010) ; à juger sur la bibliothèque réelle.
+- Un « Album inconnu » par artiste de l'album (BR-010, règle 2).
+- Détail dans l'onglet avec un navigateur imbriqué (ADR-016) ; table de rectangles d'exclusion du geste Retour.
+- « Lire » coupe l'aléatoire, « Aléatoire » l'allume et le garde ; toucher une piste prend le groupe pour file (FR-022).
+- Colonnes selon la largeur, textes de l'état vide, pas d'intercalaire « Disque 1 » pour un seul disque, ordre des pistes d'un artiste par albums (FR-020, FR-021).
 
 ### MPL-047
 **Description.** Refaire la lecture selon le lot 4 de la conception Claude Design (`docs/design/HANDOFF.md`, écran 5, états 5a à 5d et 6d) : un mini-lecteur dans la coquille à la place de la barre provisoire, un lecteur plein écran, la file d'attente en feuille, l'aléatoire et la répétition, le retrait et l'ajout de pistes à la file, et les états « fichier illisible » et « source perdue » visibles dans ces écrans. Cadrage du 2026-10-23. Prolonge MPL-036 (la notification n'est pas touchée) et MPL-045 (la liste, le bouton « En cours »). La conception montre des fonctions que le contrôleur n'a pas (aléatoire, répétition, déplacer, vider la suite) : elles entrent ici, en domaine d'abord (BR-009).
@@ -1173,4 +1311,5 @@ Décisions prises en route : Flutter mis à jour de 3.47.6 à 3.47.7 sur le Mac 
 | À numéroter | Mise en œuvre du design (dossier Claude Design v0.4) : MPL-016 devient le lot 0 (fondations) ; les lots 1 à 6 sont des tickets séparés (MPL-044 à MPL-049), cadrés un par un et adaptés à l'existant (les lots Accès, Bibliothèque, Disques et Lecture refont des écrans déjà livrés) | Tranchée 2026-10-23 | Choix du propriétaire au cadrage ; le dossier suppose un projet vide · MPL-016, MPL-044 à MPL-049 |
 | À numéroter | Repère de source : un repère par disque (D23), retenu pour MPL-045 ; un repère par dossier reste une option ouverte, à trancher à l'usage | Ouverte 2026-10-23 | Demande du propriétaire : sur un téléphone, plusieurs disques externes branchés ensemble sont rares · FR-012, ADR-012, MPL-045 |
 | À numéroter | Premier lancement : « Choisir un dossier à la place » et « Ajouter un dossier » n'acceptent que les disques amovibles (D25 : MediaStore pour le stockage interne, SAF pour les disques) ; la maquette suppose le contraire | Provisoire 2026-10-23 | Cadrage de MPL-044 ; à confirmer par le propriétaire · MPL-044 |
+| À numéroter | Lot 5 du design (MPL-048) découpé en trois tickets : MPL-048 (Albums et Artistes), MPL-051 (Réglages, Material You), MPL-052 (panneau lecteur permanent) ; « Reprendre là où j'en étais » (MPL-053) et « Ignorer les fichiers courts » (MPL-054) restent des idées au backlog | Tranchée 2026-10-23 | Choix du propriétaire au cadrage, pour garder un test sur le Pixel par ticket · MPL-048, MPL-051 à MPL-054 |
 | D30 | Dépendances et versions : dernière version stable compatible avec le Flutter épinglé, tout épinglé, Dependabot hebdomadaire, avis de sécurité traités hors cycle, dérogations dans `docs/dependency-exceptions.md`. Détail : `CLAUDE.md` | Provisoire | Ajoutée au registre le 2026-10-15 (citée par `CLAUDE.md`) |
