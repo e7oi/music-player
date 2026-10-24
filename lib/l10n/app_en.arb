@@ -4,46 +4,17 @@
   "@appTitle": {
     "description": "Application name shown in the app bar and the task switcher."
   },
-  "permissionExplanation": "Access to the audio files is needed to show and play the music on this phone.",
-  "@permissionExplanation": {
-    "description": "Shown instead of the library when the audio permission is refused (FR-004)."
-  },
-  "permissionRetry": "Allow access",
-  "@permissionRetry": {
-    "description": "Button that asks for the audio permission again."
-  },
-  "permissionOpenSettings": "Open settings",
-  "@permissionOpenSettings": {
-    "description": "Button that opens the app settings when Android no longer shows the permission dialog."
-  },
   "foldersTitle": "Music folders",
   "@foldersTitle": {
     "description": "Title of the folder choice screen (FR-003)."
-  },
-  "foldersExplanation": "Choose the folders that hold your music. Ringtones and audio from messaging apps stay out unless their folder is checked.",
-  "@foldersExplanation": {
-    "description": "Explains the folder choice."
   },
   "foldersRoot": "Storage root",
   "@foldersRoot": {
     "description": "Name shown for audio files placed directly at the root of the internal storage."
   },
-  "folderFileCount": "{count, plural, =1{1 file} other{{count} files}}",
-  "@folderFileCount": {
-    "description": "Number of audio files in a folder.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "foldersConfirm": "Confirm",
   "@foldersConfirm": {
     "description": "Confirms the folder choice and starts indexing."
-  },
-  "foldersNone": "No folder of this phone holds audio.",
-  "@foldersNone": {
-    "description": "Folder choice when MediaStore finds no audio."
   },
   "libraryRefresh": "Refresh",
   "@libraryRefresh": {
@@ -52,18 +23,6 @@
   "libraryFolders": "Folders",
   "@libraryFolders": {
     "description": "Action that reopens the folder choice."
-  },
-  "libraryNoFolders": "No folder chosen.",
-  "@libraryNoFolders": {
-    "description": "Empty library because no folder is checked."
-  },
-  "libraryEmpty": "No track found in the chosen folders.",
-  "@libraryEmpty": {
-    "description": "Empty library after indexing the chosen folders."
-  },
-  "libraryChooseFolders": "Choose folders",
-  "@libraryChooseFolders": {
-    "description": "Button to the folder choice from an empty library."
   },
   "libraryIndexFailed": "The library could not be refreshed.",
   "@libraryIndexFailed": {
@@ -115,10 +74,6 @@
   "noticeStoppedByEjection": "Playback stopped: disk removed",
   "@noticeStoppedByEjection": {
     "description": "BR-002: the disk of the current track was ejected."
-  },
-  "libraryLoadFailed": "The folders of this phone could not be read.",
-  "@libraryLoadFailed": {
-    "description": "Shown when MediaStore cannot be queried."
   },
   "libraryRetry": "Retry",
   "@libraryRetry": {
@@ -441,5 +396,189 @@
         "format": "decimalPattern"
       }
     }
+  },
+  "welcomeGreeting": "Welcome to",
+  "@welcomeGreeting": {
+    "description": "Small line above the name on the welcome screen (FR-014.1)."
+  },
+  "welcomeTagline": "Your music, at home.",
+  "@welcomeTagline": {
+    "description": "Tagline of the welcome screen (FR-014.1)."
+  },
+  "welcomePromiseRead": "Reads the files already on your phone and your disks.",
+  "@welcomePromiseRead": {
+    "description": "First promise of the welcome screen (FR-014.1)."
+  },
+  "welcomePromiseNoAccount": "No account, no ads.",
+  "@welcomePromiseNoAccount": {
+    "description": "Second promise of the welcome screen (FR-014.1)."
+  },
+  "welcomePromiseNoData": "No data sent: everything stays on the device.",
+  "@welcomePromiseNoData": {
+    "description": "Third promise of the welcome screen (FR-014.1)."
+  },
+  "welcomeStart": "Get started",
+  "@welcomeStart": {
+    "description": "Button of the welcome screen (FR-014.1)."
+  },
+  "welcomeFooter": "Free and open source",
+  "@welcomeFooter": {
+    "description": "Footer line of the welcome screen (FR-014.1)."
+  },
+  "stepOf": "Step {step} of {total}",
+  "@stepOf": {
+    "description": "Step indicator of the first launch (FR-014.1, FR-014.2).",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "accessTitle": "Allow access to your music",
+  "@accessTitle": {
+    "description": "Title of the explanation screen (FR-014.2)."
+  },
+  "accessBody": "TuneShell needs to read the audio files of this phone to build your library.",
+  "@accessBody": {
+    "description": "Body of the explanation screen (FR-014.2)."
+  },
+  "accessGuaranteeReadOnly": "Read only: nothing is changed or deleted",
+  "@accessGuaranteeReadOnly": {
+    "description": "First guarantee of the explanation screen (FR-014.2)."
+  },
+  "accessGuaranteeLocal": "Nothing leaves your phone",
+  "@accessGuaranteeLocal": {
+    "description": "Second guarantee of the explanation screen (FR-014.2)."
+  },
+  "accessAllow": "Allow access",
+  "@accessAllow": {
+    "description": "Button that asks Android for access (FR-014.2)."
+  },
+  "accessRetry": "Try again",
+  "@accessRetry": {
+    "description": "Button after a simple refusal (FR-014.3)."
+  },
+  "accessNotNow": "Not now",
+  "@accessNotNow": {
+    "description": "Button that postpones the access (FR-014.6)."
+  },
+  "accessRefused": "Access denied. Without it, TuneShell cannot find your music.",
+  "@accessRefused": {
+    "description": "Banner after a simple refusal (FR-014.3)."
+  },
+  "blockedTitle": "Access is blocked",
+  "@blockedTitle": {
+    "description": "Title of the blocked screen (FR-014.5)."
+  },
+  "blockedBody": "Android no longer lets the app ask for permission. You can turn it on in the app settings:",
+  "@blockedBody": {
+    "description": "Body of the blocked screen (FR-014.5)."
+  },
+  "blockedStepSettings": "Open the TuneShell settings",
+  "@blockedStepSettings": {
+    "description": "First step of the blocked screen (FR-014.5)."
+  },
+  "blockedStepPermissions": "Permissions",
+  "@blockedStepPermissions": {
+    "description": "Second step of the blocked screen (FR-014.5)."
+  },
+  "blockedStepMusic": "Music and audio",
+  "@blockedStepMusic": {
+    "description": "Third step of the blocked screen (FR-014.5)."
+  },
+  "blockedStepAllow": "Allow",
+  "@blockedStepAllow": {
+    "description": "Fourth step of the blocked screen (FR-014.5)."
+  },
+  "blockedOpenSettings": "Open settings",
+  "@blockedOpenSettings": {
+    "description": "Button that opens the app settings (FR-014.5)."
+  },
+  "blockedChooseFolder": "Choose a folder instead",
+  "@blockedChooseFolder": {
+    "description": "Button that opens the Android folder picker (FR-014.5)."
+  },
+  "blockedNote": "Choosing a folder on a removable disk works without this permission.",
+  "@blockedNote": {
+    "description": "Note under the buttons of the blocked screen (FR-014.5)."
+  },
+  "declinedTitle": "Access to your music not granted",
+  "@declinedTitle": {
+    "description": "Title of the library when the user chose Not now (FR-014.6)."
+  },
+  "declinedBody": "TuneShell cannot read your audio files without your permission.",
+  "@declinedBody": {
+    "description": "Body of the library when the user chose Not now (FR-014.6)."
+  },
+  "foldersIntro": "TuneShell looks for your music in the checked folders. You can change this choice later.",
+  "@foldersIntro": {
+    "description": "Introduction of the folder choice (FR-015.1)."
+  },
+  "foldersSection": "Internal storage",
+  "@foldersSection": {
+    "description": "Section title of the folder list (FR-015.1)."
+  },
+  "folderAudioCount": "{count, plural, one{{count} audio file} other{{count} audio files}}",
+  "@folderAudioCount": {
+    "description": "File count under a folder (FR-015.1).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "foldersAdd": "Add a folder",
+  "@foldersAdd": {
+    "description": "Button that opens the folder picker for a removable disk (FR-015.7)."
+  },
+  "foldersSummary": "{folders, plural, one{{folders} folder} other{{folders} folders}} · {files, plural, one{{files} file} other{{files} files}}",
+  "@foldersSummary": {
+    "description": "Summary under the folder list (FR-015.1).",
+    "placeholders": {
+      "folders": {
+        "type": "int"
+      },
+      "files": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "foldersCounting": "{folders, plural, one{{folders} folder} other{{folders} folders}} · counting…",
+  "@foldersCounting": {
+    "description": "Summary while the counts are read (FR-015.3).",
+    "placeholders": {
+      "folders": {
+        "type": "int"
+      }
+    }
+  },
+  "foldersContinue": "Continue",
+  "@foldersContinue": {
+    "description": "Button of the first folder choice (FR-015.1)."
+  },
+  "foldersNoneChecked": "Check at least one folder to continue.",
+  "@foldersNoneChecked": {
+    "description": "Message when no folder is checked (FR-015.4)."
+  },
+  "foldersEmptyTitle": "No audio file found",
+  "@foldersEmptyTitle": {
+    "description": "Title when no folder holds audio (FR-015.5)."
+  },
+  "foldersEmptyBody": "No folder on this phone holds music. Add a folder or plug in a disk.",
+  "@foldersEmptyBody": {
+    "description": "Body when no folder holds audio (FR-015.5)."
+  },
+  "foldersNothingToAdd": "No folder to add.",
+  "@foldersNothingToAdd": {
+    "description": "Summary when no folder holds audio (FR-015.5)."
+  },
+  "foldersReadFailed": "The folders could not be read.",
+  "@foldersReadFailed": {
+    "description": "Error banner of the folder choice (FR-015.6)."
   }
 }

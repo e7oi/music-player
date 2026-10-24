@@ -10,13 +10,22 @@ import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 /// @implements FR-009
 /// @implements UC-004
 class HomeShell extends StatefulWidget {
-  const new({required this.tracks, required this.playerBar, super.key});
+  const new({
+    required this.tracks,
+    required this.playerBar,
+    this.immersive = false,
+    super.key,
+  });
 
   /// The Tracks view: the library.
   final Widget tracks;
 
   /// Shown above the navigation in every view; empty when nothing plays.
   final Widget playerBar;
+
+  /// The first-launch screens fill the window: no navigation and no player
+  /// bar (FR-014.7). The views keep their state.
+  final bool immersive;
 
   /// The background of the navigation rail (tests).
   static const railBackgroundKey = Key('rail-background');
@@ -59,10 +68,11 @@ class _HomeShellState extends State<HomeShell> {
               ],
             ),
           ),
-          widget.playerBar,
+          if (!widget.immersive) widget.playerBar,
         ],
       ),
     );
+    if (widget.immersive) return Scaffold(body: content);
     // FR-009.7: Back leads to Tracks before it leaves the application.
     return PopScope(
       canPop: _index == 0,

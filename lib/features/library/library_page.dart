@@ -5,12 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/library_providers.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
 import 'package:tuneshell/app/providers/tag_providers.dart';
-import 'package:tuneshell/domain/library/services/library_indexer.dart';
 import 'package:tuneshell/domain/playback/model/playback_notice.dart';
+import 'package:tuneshell/features/library/first_launch_pages.dart';
+import 'package:tuneshell/features/library/folder_choice_view.dart';
 import 'package:tuneshell/features/library/library_controller.dart';
 import 'package:tuneshell/features/library/library_header.dart';
 import 'package:tuneshell/features/library/library_list_providers.dart';
 import 'package:tuneshell/features/library/library_track_list.dart';
+import 'package:tuneshell/features/library/removable_controller.dart';
+import 'package:tuneshell/features/library/removable_messages.dart';
 import 'package:tuneshell/features/library/removable_page.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
@@ -62,23 +65,40 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
       final notice = next.value;
       if (notice != null) _showNotice(context, notice);
     });
-    final ready = state is LibraryReady;
+    ref.listen(removableControllerProvider.select((s) => s.message), (
+      _,
+      message,
+    ) {
+      // The disks screen shows its own messages; here only the first-launch
+      // screens, where "Choisir un dossier à la place" can fail.
+      if (message == null || state is LibraryReady) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(removableMessageText(l10n, message))),
+      );
+      ref.read(removableControllerProvider.notifier).clearMessage();
+    });
     final cancelable = switch (state) {
       LibraryFolderChoice(:final cancelable) => cancelable,
       LibraryLoadFailed(:final cancelable) => cancelable,
       _ => false,
     };
+    // The first-launch screens have their own full-screen design (FR-014).
+    final withBar = state is LibraryFolderChoice || state is LibraryLoadFailed;
     // FR-003.4: Back leaves the folder choice before it leaves the app.
+    final explaining = state is LibraryWelcome && state.explaining;
     return PopScope(
-      canPop: !cancelable,
+      canPop: !cancelable && !explaining,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _controller.cancelFolderChoice();
+        if (didPop) return;
+        if (explaining) {
+          _controller.backToWelcome();
+        } else {
+          _controller.cancelFolderChoice();
+        }
       },
       child: Scaffold(
-        // The ready view has its own header (FR-011.1).
-        appBar: ready
-            ? null
-            : AppBar(
+        appBar: withBar
+            ? AppBar(
                 leading: cancelable
                     ? IconButton(
                         tooltip: l10n.foldersBack,
@@ -86,27 +106,45 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
                         onPressed: _controller.cancelFolderChoice,
                       )
                     : null,
-                title: Text(l10n.appTitle),
-              ),
+                title: Text(l10n.foldersTitle),
+              )
+            : null,
         body: switch (state) {
           LibraryStarting() => const Center(child: CircularProgressIndicator()),
-          LibraryPermissionNeeded(:final permanent) => _Message(
-            text: l10n.permissionExplanation,
-            action: permanent
-                ? l10n.permissionOpenSettings
-                : l10n.permissionRetry,
-            onAction: () => unawaited(_controller.requestPermission()),
+          LibraryWelcome(:final explaining) =>
+            explaining
+                ? AccessExplanationPage(
+                    refused: false,
+                    onAllow: () => unawaited(_controller.requestPermission()),
+                    onNotNow: _controller.declineAccess,
+                  )
+                : WelcomePage(onStart: _controller.showExplanation),
+          LibraryPermissionNeeded(:final permanent) =>
+            permanent
+                ? AccessBlockedPage(
+                    onOpenSettings: () =>
+                        unawaited(_controller.requestPermission()),
+                    onChooseFolder: () =>
+                        unawaited(_controller.chooseFolderInstead()),
+                  )
+                : AccessExplanationPage(
+                    refused: true,
+                    onAllow: () => unawaited(_controller.requestPermission()),
+                    onNotNow: _controller.declineAccess,
+                  ),
+          LibraryAccessDeclined() => AccessDeclinedView(
+            onAllow: _controller.showExplanation,
           ),
-          LibraryLoadFailed() => _Message(
-            text: l10n.libraryLoadFailed,
-            action: l10n.libraryRetry,
-            onAction: () => unawaited(_controller.retry()),
+          LibraryLoadFailed() => FolderLoadFailedView(
+            onRetry: () => unawaited(_controller.retry()),
           ),
           LibraryFolderChoice() => FolderChoiceView(
             key: ValueKey(state),
             choice: state,
             onConfirm: (folders) =>
                 unawaited(_controller.confirmFolders(folders)),
+            onAddFolder: () => unawaited(_controller.addRemovableFolder()),
+            onReload: () => unawaited(_controller.reloadFolders()),
           ),
           LibraryReady() => _ReadyView(
             state: state,
@@ -132,101 +170,6 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
       PlaybackStoppedByEjection() => l10n.noticeStoppedByEjection,
     };
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
-  }
-}
-
-class _Message extends StatelessWidget {
-  const new({required this.text, this.action, this.onAction});
-
-  final String text;
-  final String? action;
-  final VoidCallback? onAction;
-
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(TsSpace.xl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(text, textAlign: TextAlign.center),
-          if (action != null) ...[
-            const SizedBox(height: TsSpace.l),
-            FilledButton(onPressed: onAction, child: Text(action!)),
-          ],
-        ],
-      ),
-    ),
-  );
-}
-
-/// FR-003: top-level folders that hold audio, with their file counts.
-class FolderChoiceView extends StatefulWidget {
-  const new({required this.choice, required this.onConfirm, super.key});
-
-  final LibraryFolderChoice choice;
-  final ValueChanged<Set<String>> onConfirm;
-
-  @override
-  State<FolderChoiceView> createState() => _FolderChoiceViewState();
-}
-
-class _FolderChoiceViewState extends State<FolderChoiceView> {
-  late final Set<String> _selected = {...widget.choice.selected};
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final folders = widget.choice.folders;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(TsSpace.l),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.foldersTitle,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: TsSpace.s),
-              Text(l10n.foldersExplanation),
-            ],
-          ),
-        ),
-        Expanded(
-          child: folders.isEmpty
-              ? _Message(text: l10n.foldersNone)
-              : ListView(
-                  children: [
-                    for (final FolderSummary folder in folders)
-                      CheckboxListTile(
-                        value: _selected.contains(folder.path),
-                        title: Text(
-                          folder.path.isEmpty ? l10n.foldersRoot : folder.path,
-                        ),
-                        subtitle: Text(l10n.folderFileCount(folder.fileCount)),
-                        onChanged: (checked) => setState(() {
-                          if (checked ?? false) {
-                            _selected.add(folder.path);
-                          } else {
-                            _selected.remove(folder.path);
-                          }
-                        }),
-                      ),
-                  ],
-                ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(TsSpace.l),
-          child: FilledButton(
-            onPressed: () => widget.onConfirm({..._selected}),
-            child: Text(l10n.foldersConfirm),
-          ),
-        ),
-      ],
-    );
   }
 }
 

@@ -15,7 +15,23 @@ final class LibraryStarting extends LibraryViewState {
   const new();
 }
 
-/// FR-004: access to the audio files is missing.
+/// FR-014.1 and .2: the first launch, before Android was ever asked. The
+/// welcome first, then the explanation that leads to the dialog.
+final class LibraryWelcome extends LibraryViewState {
+  const new({this.explaining = false});
+
+  /// Second step: why access is needed, and the button that asks for it.
+  final bool explaining;
+}
+
+/// FR-014.6: the user chose "not now"; the library shows without access.
+final class LibraryAccessDeclined extends LibraryViewState {
+  const new();
+}
+
+/// FR-004: access to the audio files is missing. Not permanent: the
+/// explanation with a refusal banner (FR-014.3); permanent: Android no longer
+/// asks (FR-014.5).
 final class LibraryPermissionNeeded extends LibraryViewState {
   const new({required this.permanent});
 
@@ -42,9 +58,13 @@ final class LibraryFolderChoice extends LibraryViewState {
     required this.folders,
     required this.selected,
     this.cancelable = false,
+    this.loading = false,
   });
 
   final List<FolderSummary> folders;
+
+  /// The folders are being read: the screen shows skeletons (FR-015.3).
+  final bool loading;
   final Set<String> selected;
 
   /// Opened from the library, so that Back returns to it; false on first
@@ -66,6 +86,11 @@ final class LibraryReady extends LibraryViewState {
   final bool indexFailed;
 }
 
+/// The welcome, the explanation and the blocked screen fill the window
+/// (FR-014.7); the library with its navigation does not.
+bool isFirstLaunchScreen(LibraryViewState state) =>
+    state is LibraryWelcome || state is LibraryPermissionNeeded;
+
 final libraryControllerProvider =
     NotifierProvider<LibraryController, LibraryViewState>(
       LibraryController.new,
@@ -75,8 +100,11 @@ final libraryControllerProvider =
 /// index is followed by the removable disks and the tags.
 ///
 /// @implements UC-001
+/// @implements UC-006
 /// @implements FR-003
 /// @implements FR-004
+/// @implements FR-014
+/// @implements FR-015
 class LibraryController extends Notifier<LibraryViewState> {
   @override
   LibraryViewState build() => const LibraryStarting();
@@ -89,15 +117,68 @@ class LibraryController extends Notifier<LibraryViewState> {
 
   AudioPermission get _permission => ref.read(audioPermissionProvider);
 
-  /// The first launch asks for access once (FR-004.1), then offers the
-  /// folders; later launches show the library and reindex (FR-003).
+  /// The first launch shows the welcome and waits for the button: Android is
+  /// asked only from there (FR-014.1, FR-014.2). Later launches show the
+  /// library and reindex (FR-003).
   Future<void> start() async {
-    var status = await _permission.status();
+    _withoutAccess = false;
+    _libraryWithoutAccess = null;
+    final status = await _permission.status();
     if (status == AudioPermissionStatus.notRequested) {
-      status = await _permission.request();
+      state = const LibraryWelcome();
+      return;
     }
     await _continueWith(status);
   }
+
+  /// "Commencer", or the offer after "Pas maintenant" (FR-014.2).
+  void showExplanation() => state = const LibraryWelcome(explaining: true);
+
+  /// Back from the explanation returns to the welcome (FR-014.2), or to the
+  /// library of disk folders if the explanation was opened from it.
+  void backToWelcome() {
+    final library = _libraryWithoutAccess;
+    state = library ?? const LibraryWelcome();
+  }
+
+  /// "Pas maintenant" (FR-014.6); with a library of disk folders behind the
+  /// explanation, it returns to that library.
+  void declineAccess() {
+    final library = _libraryWithoutAccess;
+    state = library ?? const LibraryAccessDeclined();
+  }
+
+  /// The library shown before "Dossiers" led to the explanation, while it
+  /// holds only disk folders (FR-014.5).
+  LibraryReady? _libraryWithoutAccess;
+
+  /// True once the library holds only what a disk folder gave, without
+  /// access to the phone's audio (FR-014.5).
+  bool _withoutAccess = false;
+
+  /// "Choisir un dossier à la place" (FR-014.5): the Android picker for a
+  /// folder of a removable disk; the phone's own folders stay with
+  /// MediaStore (D25). From the blocked screen only: a folder that gives
+  /// tracks leads to the library.
+  Future<void> chooseFolderInstead() async {
+    final removable = ref.read(removableControllerProvider.notifier);
+    final before = _folderCount();
+    await removable.addFolder();
+    if (!ref.mounted || state is! LibraryPermissionNeeded) return;
+    if (_folderCount() <= before) return;
+    _withoutAccess = true;
+    state = const LibraryReady(hasFolders: false);
+  }
+
+  /// "Ajouter un dossier" of the folder choice (FR-015.7): the disk is
+  /// registered for the disks screen; the choice stays as the user left it.
+  Future<void> addRemovableFolder() =>
+      ref.read(removableControllerProvider.notifier).addFolder();
+
+  int _folderCount() => ref
+      .read(removableControllerProvider)
+      .disks
+      .fold(0, (sum, disk) => sum + disk.folders.length);
 
   /// FR-004.3 and .4. Android also reports "permanently denied" after a
   /// dismissed dialog that it would still show, so the dialog is tried
@@ -120,11 +201,23 @@ class LibraryController extends Notifier<LibraryViewState> {
   Future<void> onResumed() async {
     unawaited(ref.read(removableControllerProvider.notifier).onResumed());
     final status = await _permission.status();
-    final waiting = state is LibraryPermissionNeeded;
+    final current = state;
+    final waiting =
+        current is LibraryPermissionNeeded ||
+        current is LibraryAccessDeclined ||
+        current is LibraryWelcome;
     if (status == AudioPermissionStatus.granted) {
-      if (waiting) await _continueWith(status);
+      if (waiting || (_withoutAccess && current is LibraryReady)) {
+        _withoutAccess = false;
+        _libraryWithoutAccess = null;
+        await _continueWith(status);
+      }
       return;
     }
+    // Nothing was refused yet, or the user chose not to grant it for now.
+    if (status == AudioPermissionStatus.notRequested) return;
+    if (current is LibraryAccessDeclined) return;
+    if (_withoutAccess && current is LibraryReady) return;
     state = LibraryPermissionNeeded(
       permanent: status == AudioPermissionStatus.permanentlyDenied,
     );
@@ -140,16 +233,34 @@ class LibraryController extends Notifier<LibraryViewState> {
   Future<void> openFolderChoice() async {
     final current = state;
     if (current is LibraryReady && current.indexing) return;
+    // Without access the phone's folders cannot be listed: ask for it.
+    if (_withoutAccess) {
+      _libraryWithoutAccess = current is LibraryReady ? current : null;
+      showExplanation();
+      return;
+    }
     // Remembered so that the user can leave the choice unchanged.
     if (current is LibraryReady) _beforeChoice = current;
     final cancelable = _beforeChoice != null;
+    state = LibraryFolderChoice(
+      folders: const [],
+      selected: const {},
+      cancelable: cancelable,
+      loading: true,
+    );
+    final loading = state;
     try {
+      final folders = await _indexer.availableFolders();
+      final selected = await _indexer.chosenFolders();
+      // Back may have left the choice while it loaded.
+      if (!ref.mounted || !identical(state, loading)) return;
       state = LibraryFolderChoice(
-        folders: await _indexer.availableFolders(),
-        selected: await _indexer.chosenFolders(),
+        folders: folders,
+        selected: selected,
         cancelable: cancelable,
       );
     } on Exception {
+      if (!ref.mounted || !identical(state, loading)) return;
       state = LibraryLoadFailed(
         whileChoosingFolders: true,
         cancelable: cancelable,
@@ -175,6 +286,10 @@ class LibraryController extends Notifier<LibraryViewState> {
     state = before;
   }
 
+  /// "Actualiser" of an empty folder list (FR-015.5).
+  Future<void> reloadFolders() =>
+      _beforeChoice == null ? start() : openFolderChoice();
+
   Future<void> retry() async {
     final current = state;
     if (current is LibraryLoadFailed && current.whileChoosingFolders) {
@@ -188,6 +303,13 @@ class LibraryController extends Notifier<LibraryViewState> {
   Future<void> refresh() => _refresh(retryFailed: true);
 
   Future<void> _refresh({required bool retryFailed}) async {
+    if (_withoutAccess) {
+      // Only the disks can be read without access.
+      await ref
+          .read(removableControllerProvider.notifier)
+          .refresh(retryFailed: retryFailed);
+      return;
+    }
     final folders = await _indexer.chosenFolders();
     await _runIndex(
       _indexer.index,
@@ -211,7 +333,15 @@ class LibraryController extends Notifier<LibraryViewState> {
       );
       return;
     }
+    // Access is there: the library no longer depends on disk folders alone.
+    _withoutAccess = false;
+    _libraryWithoutAccess = null;
     if (await _indexer.needsFolderChoice()) {
+      state = const LibraryFolderChoice(
+        folders: [],
+        selected: {},
+        loading: true,
+      );
       try {
         final folders = await _indexer.availableFolders();
         state = LibraryFolderChoice(

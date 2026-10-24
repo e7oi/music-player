@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/tag_providers.dart';
 import 'package:tuneshell/domain/library/services/removable_indexer.dart';
 import 'package:tuneshell/features/library/removable_controller.dart';
+import 'package:tuneshell/features/library/removable_messages.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 
@@ -41,13 +42,9 @@ class _RemovablePageState extends ConsumerState<RemovablePage> {
       message,
     ) {
       if (message == null) return;
-      final text = switch (message) {
-        RemovableMessage.noAudio => l10n.removableNoAudio,
-        RemovableMessage.addFailed => l10n.removableAddFailed,
-        RemovableMessage.notRemovable => l10n.removableNotRemovable,
-        RemovableMessage.refreshFailed => l10n.removableRefreshFailed,
-      };
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(removableMessageText(l10n, message))),
+      );
       _controller.clearMessage();
     });
     return Scaffold(

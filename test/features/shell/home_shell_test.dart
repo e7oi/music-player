@@ -28,6 +28,7 @@ void main() {
     WidgetTester tester, {
     required Size size,
     String locale = 'en',
+    bool immersive = false,
   }) async {
     tester.view
       ..physicalSize = size
@@ -40,9 +41,10 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale(locale),
-          home: const HomeShell(
-            tracks: _Probe(),
-            playerBar: SizedBox(key: Key('player'), height: 10),
+          home: HomeShell(
+            immersive: immersive,
+            tracks: const _Probe(),
+            playerBar: const SizedBox(key: Key('player'), height: 10),
           ),
         ),
       ),
@@ -65,6 +67,35 @@ void main() {
         expect(find.byType(NavigationRail), findsOneWidget, reason: '$width');
         expect(find.byType(NavigationBar), findsNothing, reason: '$width');
       }
+    });
+  });
+
+  /// @verifies FR-014.7
+  group('immersive', () {
+    testWidgets('no navigation and no player bar, whatever the width', (
+      tester,
+    ) async {
+      for (final size in [const Size(412, 915), const Size(915, 412)]) {
+        await pump(tester, size: size, immersive: true);
+
+        expect(find.byType(NavigationBar), findsNothing, reason: '$size');
+        expect(find.byType(NavigationRail), findsNothing, reason: '$size');
+        expect(find.byKey(const Key('player')), findsNothing, reason: '$size');
+        expect(find.text('taps 0'), findsOneWidget, reason: '$size');
+      }
+    });
+
+    testWidgets('the view keeps its state when the bars come back', (
+      tester,
+    ) async {
+      await pump(tester, size: const Size(412, 915), immersive: true);
+      await tester.tap(find.byType(TextButton));
+      await tester.pump();
+
+      await pump(tester, size: const Size(412, 915));
+
+      expect(find.text('taps 1'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
     });
   });
 
