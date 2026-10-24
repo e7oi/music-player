@@ -168,8 +168,13 @@ class _Header extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     final origin = ref.watch(queueOriginProvider);
     final originText = switch (origin) {
-      QueueOrigin.tracksByTitle =>
-        '${l10n.navTracks} · ${l10n.librarySortTitle}',
+      TracksByTitle() => '${l10n.navTracks} · ${l10n.librarySortTitle}',
+      AlbumOrigin(:final title) => l10n.queueOriginAlbum(
+        title.isEmpty ? l10n.albumUnknown : title,
+      ),
+      ArtistOrigin(:final name) => l10n.queueOriginArtist(
+        name.isEmpty ? l10n.trackUnknownArtist : name,
+      ),
       null => null,
     };
     return Padding(

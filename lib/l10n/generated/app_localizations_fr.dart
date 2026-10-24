@@ -664,4 +664,153 @@ class AppLocalizationsFr extends AppLocalizations {
   String menuAddedDone(String title) {
     return 'Ajouté à la file : $title';
   }
+
+  @override
+  String albumsCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString albums',
+      one: '$countString album',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get albumsSort => 'Artiste de l\'album';
+
+  @override
+  String get albumUnknown => 'Album inconnu';
+
+  @override
+  String groupTracks(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString pistes',
+      one: '$countString piste',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String albumDiscs(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString disques',
+      one: '$countString disque',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String albumNotConnected(String label, String disk) {
+    return '$label, indisponible : $disk non connecté';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String durationHours(int hours, String minutes) {
+    return '$hours h $minutes';
+  }
+
+  @override
+  String get albumPlay => 'Lire';
+
+  @override
+  String get artistPlayAll => 'Tout lire';
+
+  @override
+  String artistsCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString artistes',
+      one: '$countString artiste',
+    );
+    return '$_temp0 · regroupés par artiste de l\'album';
+  }
+
+  @override
+  String artistSummary(int albums, int tracks) {
+    String _temp0 = intl.Intl.pluralLogic(
+      albums,
+      locale: localeName,
+      other: '$albums albums',
+      one: '$albums album',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      tracks,
+      locale: localeName,
+      other: '$tracks pistes',
+      one: '$tracks piste',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String artistUnknownSummary(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString pistes sans étiquette',
+      one: '$countString piste sans étiquette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String artistNotConnected(String summary, String disk) {
+    return '$summary · $disk non connecté';
+  }
+
+  @override
+  String get groupsEmptyAlbums => 'Aucun album';
+
+  @override
+  String get groupsEmptyArtists => 'Aucun artiste';
+
+  @override
+  String get groupsEmptyHint => 'Choisis des dossiers dans l\'onglet Pistes.';
+
+  @override
+  String queueOriginAlbum(String title) {
+    return 'Album · $title';
+  }
+
+  @override
+  String queueOriginArtist(String name) {
+    return 'Artiste · $name';
+  }
+
+  @override
+  String get groupNotFound => 'Cet album n\'est plus dans la bibliothèque.';
+
+  @override
+  String get artistNotFound => 'Cet artiste n\'est plus dans la bibliothèque.';
 }

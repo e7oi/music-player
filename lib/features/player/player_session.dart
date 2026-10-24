@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meta/meta.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
@@ -14,9 +15,46 @@ final trackIndexProvider = Provider<Map<Track, LibraryTrack>>((ref) {
   return {for (final t in tracks) t.track: t};
 });
 
-/// Where the queue was started from (FR-017.2). The only list that starts
-/// one today is Tracks, sorted by title.
-enum QueueOrigin { tracksByTitle }
+/// Where the queue was started from (FR-017.2, FR-022.6): the list of tracks,
+/// an album or an artist.
+@immutable
+sealed class QueueOrigin {
+  const new();
+
+  static const tracksByTitle = TracksByTitle();
+}
+
+/// The Tracks list, sorted by title.
+final class TracksByTitle extends QueueOrigin {
+  const new();
+}
+
+/// An album; [title] is empty for the unknown album.
+final class AlbumOrigin extends QueueOrigin {
+  const new(this.title);
+
+  final String title;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AlbumOrigin && other.title == title;
+
+  @override
+  int get hashCode => Object.hash(AlbumOrigin, title);
+}
+
+/// An artist; [name] is empty for the unknown artist.
+final class ArtistOrigin extends QueueOrigin {
+  const new(this.name);
+
+  final String name;
+
+  @override
+  bool operator ==(Object other) => other is ArtistOrigin && other.name == name;
+
+  @override
+  int get hashCode => Object.hash(ArtistOrigin, name);
+}
 
 class QueueOriginNotifier extends Notifier<QueueOrigin?> {
   @override

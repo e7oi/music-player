@@ -781,5 +781,166 @@
         "type": "String"
       }
     }
+  },
+  "albumsCount": "{count, plural, one{{count} album} other{{count} albums}}",
+  "@albumsCount": {
+    "description": "Count line of the Albums view (FR-020.1).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "albumsSort": "Album artist",
+  "@albumsSort": {
+    "description": "Label of the only sort of the Albums view (FR-020.1)."
+  },
+  "albumUnknown": "Unknown album",
+  "@albumUnknown": {
+    "description": "Title of the tracks without an album tag (BR-010, rule 2)."
+  },
+  "groupTracks": "{count, plural, one{{count} track} other{{count} tracks}}",
+  "@groupTracks": {
+    "description": "Number of tracks of an album or an artist (FR-020, FR-021).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "albumDiscs": "{count, plural, one{{count} disc} other{{count} discs}}",
+  "@albumDiscs": {
+    "description": "Number of discs of an album, shown above one (FR-020.9).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "albumNotConnected": "{label}, unavailable: {disk} not connected",
+  "@albumNotConnected": {
+    "description": "Said by TalkBack for an album or artist whose disks are absent (FR-020.5).",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "disk": {
+        "type": "String"
+      }
+    }
+  },
+  "durationMinutes": "{minutes} min",
+  "@durationMinutes": {
+    "description": "Duration under an hour (FR-020.9).",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHours": "{hours} h {minutes}",
+  "@durationHours": {
+    "description": "Duration of an hour or more; minutes are padded to two digits (FR-021.8).",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "albumPlay": "Play",
+  "@albumPlay": {
+    "description": "Button that plays an album in order (FR-022.2)."
+  },
+  "artistPlayAll": "Play all",
+  "@artistPlayAll": {
+    "description": "Button that plays all the tracks of an artist (FR-022.2)."
+  },
+  "artistsCount": "{count, plural, one{{count} artist} other{{count} artists}} · grouped by album artist",
+  "@artistsCount": {
+    "description": "Count line of the Artists view (FR-021.1).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "artistSummary": "{albums, plural, one{{albums} album} other{{albums} albums}} · {tracks, plural, one{{tracks} track} other{{tracks} tracks}}",
+  "@artistSummary": {
+    "description": "Second line of an artist (FR-021.2).",
+    "placeholders": {
+      "albums": {
+        "type": "int"
+      },
+      "tracks": {
+        "type": "int"
+      }
+    }
+  },
+  "artistUnknownSummary": "{count, plural, one{{count} track without tags} other{{count} tracks without tags}}",
+  "@artistUnknownSummary": {
+    "description": "Second line of the unknown artist (FR-021.2).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "artistNotConnected": "{summary} · {disk} not connected",
+  "@artistNotConnected": {
+    "description": "Second line of an artist whose disks are absent (FR-021.5).",
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      },
+      "disk": {
+        "type": "String"
+      }
+    }
+  },
+  "groupsEmptyAlbums": "No albums",
+  "@groupsEmptyAlbums": {
+    "description": "Empty state of the Albums view (FR-020.7)."
+  },
+  "groupsEmptyArtists": "No artists",
+  "@groupsEmptyArtists": {
+    "description": "Empty state of the Artists view (FR-021.6)."
+  },
+  "groupsEmptyHint": "Choose folders in the Tracks tab.",
+  "@groupsEmptyHint": {
+    "description": "Hint of the empty Albums and Artists views (FR-020.7)."
+  },
+  "queueOriginAlbum": "Album · {title}",
+  "@queueOriginAlbum": {
+    "description": "Origin of a queue started from an album (FR-022.6).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "queueOriginArtist": "Artist · {name}",
+  "@queueOriginArtist": {
+    "description": "Origin of a queue started from an artist (FR-022.6).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "groupNotFound": "This album is no longer in the library.",
+  "@groupNotFound": {
+    "description": "Shown when the album of an open detail disappears (FR-020.8)."
+  },
+  "artistNotFound": "This artist is no longer in the library.",
+  "@artistNotFound": {
+    "description": "Shown when the artist of an open detail disappears (FR-021.7)."
   }
 }

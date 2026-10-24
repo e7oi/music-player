@@ -949,6 +949,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added to the queue: {title}'**
   String menuAddedDone(String title);
+
+  /// Count line of the Albums view (FR-020.1).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} album} other{{count} albums}}'**
+  String albumsCount(int count);
+
+  /// Label of the only sort of the Albums view (FR-020.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Album artist'**
+  String get albumsSort;
+
+  /// Title of the tracks without an album tag (BR-010, rule 2).
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown album'**
+  String get albumUnknown;
+
+  /// Number of tracks of an album or an artist (FR-020, FR-021).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} track} other{{count} tracks}}'**
+  String groupTracks(int count);
+
+  /// Number of discs of an album, shown above one (FR-020.9).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} disc} other{{count} discs}}'**
+  String albumDiscs(int count);
+
+  /// Said by TalkBack for an album or artist whose disks are absent (FR-020.5).
+  ///
+  /// In en, this message translates to:
+  /// **'{label}, unavailable: {disk} not connected'**
+  String albumNotConnected(String label, String disk);
+
+  /// Duration under an hour (FR-020.9).
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
+
+  /// Duration of an hour or more; minutes are padded to two digits (FR-021.8).
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes}'**
+  String durationHours(int hours, String minutes);
+
+  /// Button that plays an album in order (FR-022.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get albumPlay;
+
+  /// Button that plays all the tracks of an artist (FR-022.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Play all'**
+  String get artistPlayAll;
+
+  /// Count line of the Artists view (FR-021.1).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} artist} other{{count} artists}} · grouped by album artist'**
+  String artistsCount(int count);
+
+  /// Second line of an artist (FR-021.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{albums, plural, one{{albums} album} other{{albums} albums}} · {tracks, plural, one{{tracks} track} other{{tracks} tracks}}'**
+  String artistSummary(int albums, int tracks);
+
+  /// Second line of the unknown artist (FR-021.2).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} track without tags} other{{count} tracks without tags}}'**
+  String artistUnknownSummary(int count);
+
+  /// Second line of an artist whose disks are absent (FR-021.5).
+  ///
+  /// In en, this message translates to:
+  /// **'{summary} · {disk} not connected'**
+  String artistNotConnected(String summary, String disk);
+
+  /// Empty state of the Albums view (FR-020.7).
+  ///
+  /// In en, this message translates to:
+  /// **'No albums'**
+  String get groupsEmptyAlbums;
+
+  /// Empty state of the Artists view (FR-021.6).
+  ///
+  /// In en, this message translates to:
+  /// **'No artists'**
+  String get groupsEmptyArtists;
+
+  /// Hint of the empty Albums and Artists views (FR-020.7).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folders in the Tracks tab.'**
+  String get groupsEmptyHint;
+
+  /// Origin of a queue started from an album (FR-022.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Album · {title}'**
+  String queueOriginAlbum(String title);
+
+  /// Origin of a queue started from an artist (FR-022.6).
+  ///
+  /// In en, this message translates to:
+  /// **'Artist · {name}'**
+  String queueOriginArtist(String name);
+
+  /// Shown when the album of an open detail disappears (FR-020.8).
+  ///
+  /// In en, this message translates to:
+  /// **'This album is no longer in the library.'**
+  String get groupNotFound;
+
+  /// Shown when the artist of an open detail disappears (FR-021.7).
+  ///
+  /// In en, this message translates to:
+  /// **'This artist is no longer in the library.'**
+  String get artistNotFound;
 }
 
 class _AppLocalizationsDelegate
