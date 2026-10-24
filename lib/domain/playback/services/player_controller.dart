@@ -550,7 +550,7 @@ class PlayerController {
   }
 
   void _emit(PlayerState state) {
-    _state = state;
+    _state = state.copyWith(entryIds: _ids);
     if (!_states.isClosed) _states.add(state);
   }
 }

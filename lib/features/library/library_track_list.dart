@@ -8,6 +8,9 @@ import 'package:tuneshell/app/providers/tag_providers.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/features/library/library_list_model.dart';
 import 'package:tuneshell/features/library/library_list_providers.dart';
+import 'package:tuneshell/features/player/player_page.dart';
+import 'package:tuneshell/features/player/player_session.dart';
+import 'package:tuneshell/features/player/track_menu.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 import 'package:tuneshell/ui/widgets/alphabet_scroller.dart';
@@ -153,6 +156,7 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
 
   Future<void> _play(int index) async {
     final player = ref.read(playerControllerProvider);
+    ref.read(queueOriginProvider.notifier).set(QueueOrigin.tracksByTitle);
     // UC-001: the queue is the whole list, in the displayed order.
     await player.setQueue([
       for (final e in widget.model.entries) e.track.track,
@@ -228,6 +232,15 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
   }
 
   Widget _fab(AppLocalizations l10n) {
+    if (widget.model.currentOutsideList) {
+      // FR-013.5: the track is not in this list; the player shows it.
+      return JumpToCurrentFab(
+        label: l10n.jumpCurrent,
+        showArrow: false,
+        folded: _scrolling.value,
+        onPressed: () => unawaited(openPlayer(context, ref)),
+      );
+    }
     final target = widget.model.jumpTarget;
     JumpDirection? direction;
     if (target != null && _scroll.hasClients) {
@@ -258,16 +271,25 @@ class _LibraryTrackListState extends ConsumerState<LibraryTrackList> {
       entry: widget.model.entries[index],
       flashed: flash == index,
       onTap: () => _onTap(index),
+      onLongPress: () => unawaited(
+        showTrackMenu(context, ref, widget.model.entries[index].track),
+      ),
     ),
   );
 }
 
 class _TrackRow extends ConsumerWidget {
-  const new({required this.entry, required this.flashed, required this.onTap});
+  const new({
+    required this.entry,
+    required this.flashed,
+    required this.onTap,
+    required this.onLongPress,
+  });
 
   final LibraryEntry entry;
   final bool flashed;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -316,6 +338,7 @@ class _TrackRow extends ConsumerWidget {
         if (source != null) l10n.trackSource(source),
       ].join(', '),
       onTap: onTap,
+      onLongPress: onLongPress,
     );
     if (!flashed) return tile;
     // FR-013.5: the row the button led to is lit for a moment.

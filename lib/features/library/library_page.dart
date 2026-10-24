@@ -15,6 +15,7 @@ import 'package:tuneshell/features/library/library_track_list.dart';
 import 'package:tuneshell/features/library/removable_controller.dart';
 import 'package:tuneshell/features/library/removable_messages.dart';
 import 'package:tuneshell/features/library/removable_page.dart';
+import 'package:tuneshell/features/player/player_session.dart';
 import 'package:tuneshell/l10n/generated/app_localizations.dart';
 import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 import 'package:tuneshell/ui/widgets/progress_banner.dart';
@@ -157,6 +158,8 @@ class _LibraryPageState extends ConsumerState<LibraryPage> {
   }
 
   void _showNotice(BuildContext context, PlaybackNotice notice) {
+    // FR-017.9: the open player says it in a banner; no second message.
+    if (notice is TrackFailed && ref.read(playerOpenProvider)) return;
     final l10n = AppLocalizations.of(context);
     final tracks = ref.read(libraryTracksProvider).value ?? const [];
     final text = switch (notice) {
