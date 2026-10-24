@@ -23,7 +23,14 @@ Future<void> showQueueSheet(BuildContext context) => showModalBottomSheet<void>(
     expand: false,
     initialChildSize: TsSize.queueSheetInitial,
     minChildSize: TsSize.queueSheetMin,
-    builder: (context, scroll) => QueueSheet(scroll: scroll),
+    // Its own messenger and scaffold: a snack bar of the page behind would
+    // show under the sheet, out of sight (FR-018.8).
+    builder: (context, scroll) => ScaffoldMessenger(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: QueueSheet(scroll: scroll),
+      ),
+    ),
   ),
 );
 

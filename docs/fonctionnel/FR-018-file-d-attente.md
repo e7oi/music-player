@@ -41,3 +41,4 @@ MPL-047, 2026-10-23, test appareil en attente (D14). `showQueueSheet` et `QueueS
 - TalkBack : la liste réordonnable de Flutter ajoute « Monter », « Descendre », « Au début », « À la fin » ; « Retirer de la file » est une action personnalisée de la ligne.
 - L'en-tête (titre, résumé, « Vider la suite ») passe à la ligne aux grands textes.
 - Le test de glissé vérifie que la piste monte, pas sa place exacte.
+- Le message de retrait est affiché dans la feuille : elle a son propre `ScaffoldMessenger` et `Scaffold`, sans quoi le `SnackBar` de la page derrière restait caché sous elle (vu sur le Pixel, 2026-10-23).
