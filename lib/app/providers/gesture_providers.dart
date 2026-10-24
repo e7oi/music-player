@@ -10,6 +10,8 @@ final gestureExclusionProvider = Provider<GestureExclusionChannel>(
 /// The rectangles kept out of the Back gesture, by owner. The channel keeps
 /// only the last report, and several views of the shell carry an index: each
 /// reports under its own key and the union goes to the channel (ADR-016).
+///
+/// @decision ADR-016
 class GestureRegions {
   new(this._send);
 

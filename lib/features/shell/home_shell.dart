@@ -170,6 +170,8 @@ class _HomeShellState extends State<HomeShell> {
 }
 
 /// A tab with a navigator of its own, under the navigation and the player.
+///
+/// @decision ADR-016
 class _TabNavigator extends StatelessWidget {
   const new({required this.navigatorKey, required this.root});
 

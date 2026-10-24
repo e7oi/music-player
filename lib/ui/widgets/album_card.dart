@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 import 'package:tuneshell/ui/widgets/artwork_tile.dart';
 
@@ -20,6 +21,7 @@ class AlbumCard extends StatelessWidget {
     this.semanticsLabel,
     this.onTap,
     this.onLongPress,
+    this.customActions,
     super.key,
   });
 
@@ -39,6 +41,9 @@ class AlbumCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
+  /// Extra actions TalkBack offers on the card.
+  final Map<CustomSemanticsAction, VoidCallback>? customActions;
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -51,6 +56,7 @@ class AlbumCard extends StatelessWidget {
       button: onTap != null,
       onTap: onTap,
       onLongPress: onLongPress,
+      customSemanticsActions: customActions,
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,

@@ -87,7 +87,7 @@ class _ArtistsViewState extends ConsumerState<ArtistsView> {
 
   Widget _list(BuildContext context, LibraryGroups groups) {
     final l10n = AppLocalizations.of(context);
-    final model = ArtistListModel.build(groups.artists);
+    final model = ref.watch(artistListModelProvider)!;
     final disks = ref.watch(disksByIdProvider);
     final unavailable = ref.watch(unavailableDiskIdsProvider);
     return AlphabetScroller(
@@ -166,7 +166,20 @@ class _ArtistsViewState extends ConsumerState<ArtistsView> {
       semanticsLabel: '$name, $subtitle',
       onTap: () => unawaited(openArtist(context, artist.key)),
       onLongPress: () => unawaited(
-        showTracksMenu(context, ref, name: name, tracks: artist.tracks),
+        showTracksMenu(
+          context,
+          ref,
+          name: name,
+          tracks: artist.tracks,
+          origin: artistOrigin(artist),
+        ),
+      ),
+      customActions: menuSemanticsActions(
+        context,
+        ref,
+        name: name,
+        tracks: artist.tracks,
+        origin: artistOrigin(artist),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -109,6 +111,7 @@ void main() {
     Set<DiskId> available = const {internalDisk, ssd},
     Size size = const Size(412, 915),
     double textScale = 1,
+    Stream<List<LibraryTrack>>? tracksStream,
   }) async {
     tester.view
       ..physicalSize = size
@@ -127,7 +130,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         playerControllerProvider.overrideWithValue(player),
-        listedTracksProvider.overrideWith((ref) => Stream.value(all)),
+        listedTracksProvider.overrideWith(
+          (ref) => tracksStream ?? Stream.value(all),
+        ),
         libraryDisksProvider.overrideWith(
           (ref) => Stream.value(const [
             Disk.internal,
@@ -181,7 +186,12 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    // A stream that has not spoken yet leaves a spinner turning for ever.
+    if (tracksStream == null) {
+      await tester.pumpAndSettle();
+    } else {
+      await tester.pump();
+    }
   }
 
   Future<void> tab(WidgetTester tester, String label) async {
@@ -555,6 +565,212 @@ void main() {
     await tab(tester, 'Albums');
     await tester.pump();
     expect(rects.last, hasLength(1));
+  });
+
+  /// @verifies FR-022.8
+  flow('an album added on an empty queue says where it comes from', (
+    tester,
+  ) async {
+    await pump(tester);
+    await tab(tester, 'Albums');
+
+    await tester.longPress(find.text('Littoral'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add to queue'));
+    await tester.pumpAndSettle();
+
+    expect(
+      _container!.read(queueOriginProvider),
+      const AlbumOrigin('Littoral'),
+    );
+    expect(player.state.queue, hasLength(3));
+    expect(player.state.playing, isTrue);
+  });
+
+  flow('an artist added on an empty queue says where it comes from', (
+    tester,
+  ) async {
+    await pump(tester);
+    await tab(tester, 'Artists');
+
+    await tester.longPress(find.text('Clara'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Play next'));
+    await tester.pumpAndSettle();
+
+    expect(_container!.read(queueOriginProvider), const ArtistOrigin('Clara'));
+  });
+
+  /// @verifies FR-022.7
+  flow('cards, rows and tracks offer the menu actions to TalkBack', (
+    tester,
+  ) async {
+    List<String> labels() => [
+      for (final semantics in tester.widgetList<Semantics>(
+        find.byType(Semantics),
+      ))
+        ...?semantics.properties.customSemanticsActions?.keys.map(
+          (action) => action.label ?? '',
+        ),
+    ];
+
+    await pump(tester);
+    await tab(tester, 'Albums');
+    expect(labels().where((l) => l == 'Add to queue'), isNotEmpty);
+    await tester.tap(find.text('Littoral'));
+    await tester.pumpAndSettle();
+    expect(labels().where((l) => l == 'Play next').length, greaterThan(2));
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    await tab(tester, 'Artists');
+    expect(labels().where((l) => l == 'Play next'), isNotEmpty);
+    await tester.tap(find.text('Clara'));
+    await tester.pumpAndSettle();
+    expect(labels().where((l) => l == 'Add to queue').length, greaterThan(4));
+  });
+
+  /// @verifies FR-022.5
+  flow('Play on an album with no available disk starts nothing', (
+    tester,
+  ) async {
+    await pump(tester, available: {internalDisk});
+    await tab(tester, 'Albums');
+    await tester.tap(find.text('Champs'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Play'));
+    await tester.pump();
+
+    expect(find.text('Plug in T7 Shield to play this track'), findsOneWidget);
+    expect(player.state.queue, isEmpty);
+  });
+
+  /// @verifies FR-022.3
+  flow('Shuffle does not always start on the first track', (tester) async {
+    final big = [
+      for (var i = 0; i < 20; i++)
+        t('s$i', albumArtist: 'Big', album: 'Album', number: i + 1),
+    ];
+    await pump(tester, tracks: big);
+    await tab(tester, 'Albums');
+    await tester.tap(find.text('Album'));
+    await tester.pumpAndSettle();
+
+    final firsts = <String>{};
+    for (var i = 0; i < 8; i++) {
+      await tester.tap(find.text('Shuffle'));
+      await tester.pump();
+      await tester.pump();
+      firsts.add(player.state.currentTrack!.relativePath);
+    }
+
+    expect(firsts.length, greaterThan(1));
+    expect(player.state.shuffle, isTrue);
+  });
+
+  /// @verifies FR-020.10
+  flow('an unavailable track of a detail shows the plug icon', (tester) async {
+    await pump(tester, available: {internalDisk});
+    await tab(tester, 'Albums');
+    await tester.tap(find.text('Champs'));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.usb_off_rounded), findsWidgets);
+  });
+
+  flow('a track number below one shows the position instead', (tester) async {
+    await pump(
+      tester,
+      tracks: [
+        t('first', albumArtist: 'A', album: 'Zero', number: 0),
+        t('second', albumArtist: 'A', album: 'Zero', number: 0),
+      ],
+    );
+    await tab(tester, 'Albums');
+    await tester.tap(find.text('Zero'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+    expect(find.text('2'), findsOneWidget);
+  });
+
+  /// @verifies FR-020.8
+  flow('a detail whose album is gone says so', (tester) async {
+    final updates = StreamController<List<LibraryTrack>>();
+    addTearDown(updates.close);
+    await pump(tester, tracksStream: updates.stream);
+    updates.add(lib);
+    await tester.pumpAndSettle();
+    await tab(tester, 'Albums');
+    await tester.tap(find.text('Littoral'));
+    await tester.pumpAndSettle();
+
+    updates.add([lib.last]);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('This album is no longer in the library.'),
+      findsOneWidget,
+    );
+  });
+
+  flow('an artist detail whose artist is gone says so', (tester) async {
+    final updates = StreamController<List<LibraryTrack>>();
+    addTearDown(updates.close);
+    await pump(tester, tracksStream: updates.stream);
+    updates.add(lib);
+    await tester.pumpAndSettle();
+    await tab(tester, 'Artists');
+    await tester.tap(find.text('Clara'));
+    await tester.pumpAndSettle();
+
+    updates.add([lib.last]);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('This artist is no longer in the library.'),
+      findsOneWidget,
+    );
+  });
+
+  flow('the grid keeps its place when a detail is closed', (tester) async {
+    final many = [
+      for (var i = 0; i < 150; i++)
+        t(
+          't$i',
+          albumArtist: 'Artist ${i.toString().padLeft(3, '0')}',
+          album: 'Album ${i.toString().padLeft(3, '0')}',
+          number: 1,
+        ),
+    ];
+    await pump(tester, tracks: many);
+    await tab(tester, 'Albums');
+    await tester.drag(find.byType(GridView), const Offset(0, -1500));
+    await tester.pumpAndSettle();
+    final grid = tester.state<ScrollableState>(
+      find.descendant(
+        of: find.byType(GridView),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    final before = grid.position.pixels;
+    expect(before, greaterThan(500));
+
+    await tester.tap(find.byType(AlbumCard).hitTestable().first);
+    await tester.pumpAndSettle();
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(grid.position.pixels, before);
+  });
+
+  /// @verifies FR-020.6
+  flow('no index handle under 100 albums, one above', (tester) async {
+    await pump(tester);
+    await tab(tester, 'Albums');
+    await tester.pump();
+    expect(rects.every((list) => list.isEmpty), isTrue);
   });
 
   /// @verifies FR-020.12

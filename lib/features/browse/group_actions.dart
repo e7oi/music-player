@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,15 +21,16 @@ Future<void> playGroup(
   WidgetRef ref, {
   required List<LibraryTrack> tracks,
   required QueueOrigin origin,
-  int startIndex = 0,
+  int? startIndex,
   bool? shuffle,
 }) async {
   final player = ref.read(playerControllerProvider);
+  // "Shuffle" starts on any track of the group, not always the first one.
+  final start =
+      startIndex ?? ((shuffle ?? false) ? Random().nextInt(tracks.length) : 0);
   if (shuffle != null) await player.setShuffle(enabled: shuffle);
   ref.read(queueOriginProvider.notifier).set(origin);
-  await player.setQueue([
-    for (final t in tracks) t.track,
-  ], startIndex: startIndex);
+  await player.setQueue([for (final t in tracks) t.track], startIndex: start);
   await player.play();
 }
 
@@ -53,13 +55,13 @@ void playOrExplain(
   WidgetRef ref, {
   required List<LibraryTrack> tracks,
   required QueueOrigin origin,
-  int startIndex = 0,
+  int? startIndex,
   bool? shuffle,
 }) {
   final unavailable = ref.read(unavailableDiskIdsProvider);
   final playable = tracks.any((t) => !unavailable.contains(t.disk));
   if (!playable) {
-    explainUnavailable(context, ref, tracks[startIndex].disk);
+    explainUnavailable(context, ref, tracks[startIndex ?? 0].disk);
     return;
   }
   unawaited(

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
 import 'package:tuneshell/domain/library/model/track.dart';
+import 'package:tuneshell/features/browse/artist_list_model.dart';
 import 'package:tuneshell/features/browse/library_groups.dart';
 import 'package:tuneshell/features/library/library_list_providers.dart';
 
@@ -38,4 +39,11 @@ final libraryGroupsProvider = Provider<LibraryGroups?>((ref) {
 final disksByIdProvider = Provider<Map<DiskId, Disk>>((ref) {
   final disks = ref.watch(libraryDisksProvider).value ?? const <Disk>[];
   return {for (final disk in disks) disk.id: disk};
+});
+
+/// The Artists list with its letter headers, made once per change of the
+/// groups, not at each build of the view.
+final artistListModelProvider = Provider<ArtistListModel?>((ref) {
+  final groups = ref.watch(libraryGroupsProvider);
+  return groups == null ? null : ArtistListModel.build(groups.artists);
 });

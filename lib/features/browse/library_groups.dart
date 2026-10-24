@@ -8,6 +8,7 @@ import 'package:tuneshell/ui/widgets/alphabet_index.dart';
 final class AlbumGroup {
   const new({
     required this.key,
+    required this.artistKey,
     required this.title,
     required this.artist,
     required this.unknownAlbum,
@@ -24,6 +25,9 @@ final class AlbumGroup {
 
   /// Folded identity: artist and title without case, accents or extra spaces.
   final String key;
+
+  /// The folded artist alone, the identity of the artist (empty: unknown).
+  final String artistKey;
 
   /// The most frequent spelling; empty when [unknownAlbum].
   final String title;
@@ -107,23 +111,29 @@ final class LibraryGroups {
     required Set<DiskId> unavailableDisks,
   }) {
     final byAlbum = <String, List<LibraryTrack>>{};
+    final artistKeys = <String, String>{};
     for (final track in tracks) {
       final artist = _albumArtist(track);
       final album = _text(track.info.album);
-      final key =
-          '${artist == null ? '' : _fold(artist)}\u0000'
-          '${album == null ? '' : _fold(album)}';
+      final artistKey = artist == null ? '' : _fold(artist);
+      final key = '$artistKey\u0000${album == null ? '' : _fold(album)}';
+      artistKeys[key] = artistKey;
       (byAlbum[key] ??= []).add(track);
     }
 
     final albums = [
       for (final entry in byAlbum.entries)
-        _album(entry.key, entry.value, unavailableDisks),
+        _album(
+          entry.key,
+          artistKeys[entry.key]!,
+          entry.value,
+          unavailableDisks,
+        ),
     ]..sort(_compareAlbums);
 
     final byArtist = <String, List<AlbumGroup>>{};
     for (final album in albums) {
-      (byArtist[album.key.split('\u0000').first] ??= []).add(album);
+      (byArtist[album.artistKey] ??= []).add(album);
     }
     final artists = [
       for (final entry in byArtist.entries) _artist(entry.key, entry.value),
@@ -164,15 +174,27 @@ String? _albumArtist(LibraryTrack track) =>
     _text(track.info.albumArtist) ?? _text(track.info.artist);
 
 /// BR-010, rule 3: case, accents and runs of spaces do not count.
-String _fold(String text) =>
-    sortKey(text.trim().replaceAll(RegExp(r'\s+'), ' '));
+final _spaces = RegExp(r'\s+');
+
+String _fold(String text) => sortKey(text.trim().replaceAll(_spaces, ' '));
 
 AlbumGroup _album(
   String key,
+  String artistKey,
   List<LibraryTrack> found,
   Set<DiskId> unavailable,
 ) {
-  final tracks = [...found]..sort(_compareTracks);
+  // The sort keys are made once per track, not once per comparison.
+  final keyed = [
+    for (final t in found)
+      (
+        track: t,
+        disc: _disc(t),
+        number: _number(t),
+        title: sortKey(t.displayTitle),
+      ),
+  ]..sort(_compareKeyed);
+  final tracks = [for (final k in keyed) k.track];
   final artist = _mostFrequent([for (final t in tracks) ?_albumArtist(t)]);
   final title = _mostFrequent([for (final t in tracks) ?_text(t.info.album)]);
   final years = [
@@ -190,6 +212,7 @@ AlbumGroup _album(
   }
   return AlbumGroup(
     key: key,
+    artistKey: artistKey,
     title: title ?? '',
     artist: artist ?? '',
     unknownAlbum: title == null,
@@ -246,23 +269,27 @@ int _disc(LibraryTrack track) {
   return disc == null || disc < 1 ? 1 : disc;
 }
 
+/// The track number, or null when it is absent or below one.
+int? _number(LibraryTrack track) {
+  final number = track.info.trackNumber;
+  return number == null || number < 1 ? null : number;
+}
+
+typedef _Keyed = ({LibraryTrack track, int disc, int? number, String title});
+
 /// BR-010, rule 6: disc, then track number (none after the numbered), then
 /// title, then path.
-int _compareTracks(LibraryTrack a, LibraryTrack b) {
-  final byDisc = _disc(a).compareTo(_disc(b));
+int _compareKeyed(_Keyed a, _Keyed b) {
+  final byDisc = a.disc.compareTo(b.disc);
   if (byDisc != 0) return byDisc;
-  final an = a.info.trackNumber;
-  final bn = b.info.trackNumber;
-  final aNumber = an == null || an < 1 ? null : an;
-  final bNumber = bn == null || bn < 1 ? null : bn;
-  if (aNumber != bNumber) {
-    if (aNumber == null) return 1;
-    if (bNumber == null) return -1;
-    return aNumber.compareTo(bNumber);
+  if (a.number != b.number) {
+    if (a.number == null) return 1;
+    if (b.number == null) return -1;
+    return a.number!.compareTo(b.number!);
   }
-  final byTitle = sortKey(a.displayTitle).compareTo(sortKey(b.displayTitle));
+  final byTitle = a.title.compareTo(b.title);
   if (byTitle != 0) return byTitle;
-  return a.info.relativePath.compareTo(b.info.relativePath);
+  return a.track.info.relativePath.compareTo(b.track.info.relativePath);
 }
 
 /// The unknown artist leads: its key is shorter than any other.
@@ -285,4 +312,4 @@ int _compareAlbums(AlbumGroup a, AlbumGroup b) {
 }
 
 String _artistKey(AlbumGroup album) =>
-    album.unknownArtist ? '0' : album.key.split('\u0000').first;
+    album.unknownArtist ? '0' : album.artistKey;

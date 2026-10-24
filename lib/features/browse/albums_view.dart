@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/gesture_providers.dart';
 import 'package:tuneshell/app/providers/tag_providers.dart';
@@ -162,6 +163,7 @@ class AlbumGridCard extends StatelessWidget {
     required this.diskName,
     required this.onTap,
     required this.onLongPress,
+    this.customActions,
     this.artwork,
     this.showArtist = true,
     super.key,
@@ -179,6 +181,7 @@ class AlbumGridCard extends StatelessWidget {
   final bool showArtist;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
+  final Map<CustomSemanticsAction, VoidCallback>? customActions;
 
   @override
   Widget build(BuildContext context) {
@@ -201,6 +204,7 @@ class AlbumGridCard extends StatelessWidget {
           : l10n.albumNotConnected(label, diskName!),
       onTap: onTap,
       onLongPress: onLongPress,
+      customActions: customActions,
     );
   }
 }
@@ -234,7 +238,15 @@ class _AlbumGridCard extends ConsumerWidget {
           ref,
           name: albumName(AppLocalizations.of(context), album),
           tracks: album.tracks,
+          origin: albumOrigin(album),
         ),
+      ),
+      customActions: menuSemanticsActions(
+        context,
+        ref,
+        name: albumName(AppLocalizations.of(context), album),
+        tracks: album.tracks,
+        origin: albumOrigin(album),
       ),
     );
   }

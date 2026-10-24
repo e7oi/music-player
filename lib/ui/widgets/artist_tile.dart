@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:tuneshell/ui/theme/tuneshell_tokens.dart';
 
 /// A round avatar with the initial of a name; there is no artist image in the
@@ -70,6 +71,7 @@ class ArtistTile extends StatelessWidget {
     this.semanticsLabel,
     this.onTap,
     this.onLongPress,
+    this.customActions,
     super.key,
   });
 
@@ -81,6 +83,9 @@ class ArtistTile extends StatelessWidget {
   final String? semanticsLabel;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
+
+  /// Extra actions TalkBack offers on the row.
+  final Map<CustomSemanticsAction, VoidCallback>? customActions;
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +102,7 @@ class ArtistTile extends StatelessWidget {
       button: onTap != null,
       onTap: onTap,
       onLongPress: onLongPress,
+      customSemanticsActions: customActions,
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,

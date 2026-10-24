@@ -103,6 +103,8 @@ class BrowseEmpty extends StatelessWidget {
 /// Keeps the handle of an index out of the Back gesture while its view is in
 /// front (FR-013.2, ADR-016): the rectangle is converted to physical pixels
 /// and reported under this view's own key.
+///
+/// @decision ADR-016
 class HandleExclusion {
   new(this._regions, this._owner);
 

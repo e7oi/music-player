@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
 import 'package:tuneshell/domain/library/model/library_track.dart';
@@ -30,11 +31,13 @@ Future<void> showTracksMenu(
   WidgetRef ref, {
   required String name,
   required List<LibraryTrack> tracks,
+  QueueOrigin? origin,
 }) async {
   final l10n = AppLocalizations.of(context);
   final choice = await showModalBottomSheet<MenuAction>(
     context: context,
     showDragHandle: true,
+    useRootNavigator: true,
     useSafeArea: true,
     builder: (context) => SafeArea(
       child: Column(
@@ -61,7 +64,37 @@ Future<void> showTracksMenu(
     name: name,
     tracks: tracks,
     action: choice,
+    origin: origin,
   );
+}
+
+/// The two menu actions as custom actions of a row, for TalkBack
+/// (FR-019.1, FR-022.7).
+Map<CustomSemanticsAction, VoidCallback> menuSemanticsActions(
+  BuildContext context,
+  WidgetRef ref, {
+  required String name,
+  required List<LibraryTrack> tracks,
+  QueueOrigin? origin,
+}) {
+  final l10n = AppLocalizations.of(context);
+  return {
+    for (final action in MenuAction.values)
+      CustomSemanticsAction(
+        label: action == MenuAction.next
+            ? l10n.menuPlayNext
+            : l10n.menuAddToQueue,
+      ): () => unawaited(
+        applyTracksAction(
+          context,
+          ref,
+          name: name,
+          tracks: tracks,
+          action: action,
+          origin: origin,
+        ),
+      ),
+  };
 }
 
 /// Does [action] on one track and confirms it in a snack bar. Also the
@@ -87,15 +120,21 @@ Future<void> applyTracksAction(
   required String name,
   required List<LibraryTrack> tracks,
   required MenuAction action,
+  QueueOrigin? origin,
 }) async {
   final l10n = AppLocalizations.of(context);
   final messenger = ScaffoldMessenger.of(context);
   final player = ref.read(playerControllerProvider);
   final list = [for (final t in tracks) t.track];
-  // On an empty queue the tracks start a queue of their own: no origin to
-  // name, unless the caller knows one.
+  // On an empty queue the tracks start a queue of their own: it comes from
+  // [origin], an album or an artist, or from nowhere (FR-022.8).
   if (player.state.queue.isEmpty) {
-    ref.read(queueOriginProvider.notifier).clear();
+    final holder = ref.read(queueOriginProvider.notifier);
+    if (origin == null) {
+      holder.clear();
+    } else {
+      holder.set(origin);
+    }
   }
   switch (action) {
     case MenuAction.next:

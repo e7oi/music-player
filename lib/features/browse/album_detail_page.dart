@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
 import 'package:tuneshell/app/providers/tag_providers.dart';
@@ -74,82 +75,136 @@ class _Detail extends ConsumerWidget {
     ].join(' · ');
     final line = [?album.year?.toString(), ?album.genre].join(' · ');
 
-    final rows = <Widget>[];
+    // Light entries; the rows are built when they scroll into view.
+    final entries = <Object>[];
     int? disc;
     for (var i = 0; i < album.tracks.length; i++) {
-      final track = album.tracks[i];
-      final trackDisc = _disc(track);
+      final trackDisc = _disc(album.tracks[i]);
       if (album.discCount > 1 && trackDisc != disc) {
         disc = trackDisc;
-        rows.add(_DiscHeader(l10n.playerDiscNumber(trackDisc)));
+        entries.add(l10n.playerDiscNumber(trackDisc));
       }
-      rows.add(
-        _TrackRow(
-          track: track,
-          number: track.info.trackNumber ?? i + 1,
-          playing: track.track == current,
-          unavailable: unavailable.contains(track.disk),
-          showMark: album.disks.length > 1,
-          disk: disks[track.disk],
-          onTap: () {
-            if (unavailable.contains(track.disk)) {
-              explainUnavailable(context, ref, track.disk);
-              return;
-            }
-            playOrExplain(
-              context,
-              ref,
-              tracks: album.tracks,
-              origin: origin,
-              startIndex: i,
-            );
-          },
-          onLongPress: () => unawaited(showTrackMenu(context, ref, track)),
+      entries.add(i);
+    }
+
+    Widget row(int i) {
+      final track = album.tracks[i];
+      return _TrackRow(
+        track: track,
+        number: _number(track) ?? i + 1,
+        playing: track.track == current,
+        unavailable: unavailable.contains(track.disk),
+        showMark: album.disks.length > 1,
+        disk: disks[track.disk],
+        onTap: () {
+          if (unavailable.contains(track.disk)) {
+            explainUnavailable(context, ref, track.disk);
+            return;
+          }
+          playOrExplain(
+            context,
+            ref,
+            tracks: album.tracks,
+            origin: origin,
+            startIndex: i,
+          );
+        },
+        onLongPress: () => unawaited(showTrackMenu(context, ref, track)),
+        customActions: menuSemanticsActions(
+          context,
+          ref,
+          name: track.displayTitle,
+          tracks: [track],
         ),
       );
     }
 
-    return ListView(
-      padding: const EdgeInsets.only(bottom: TsSpace.xl),
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: TsSpace.screenMargin),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
             children: [
-              ArtworkTile(
-                size: TsSize.coverDetail,
-                image: id == null ? null : ref.watch(artworkImageProvider(id)),
-                unavailable: !album.available,
-              ),
-              const SizedBox(width: TsSpace.l),
-              Expanded(
-                child: Column(
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: TsSpace.screenMargin,
+                ),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      albumName(l10n, album),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: text.titleLarge,
+                    ArtworkTile(
+                      size: TsSize.coverDetail,
+                      image: id == null
+                          ? null
+                          : ref.watch(artworkImageProvider(id)),
+                      unavailable: !album.available,
                     ),
-                    Text(
-                      artist,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: text.titleSmall?.copyWith(color: scheme.primary),
-                    ),
-                    if (line.isNotEmpty)
-                      Text(
-                        line,
-                        style: text.bodyMedium?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
+                    const SizedBox(width: TsSpace.l),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            albumName(l10n, album),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: text.titleLarge,
+                          ),
+                          Text(
+                            artist,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: text.titleSmall?.copyWith(
+                              color: scheme.primary,
+                            ),
+                          ),
+                          if (line.isNotEmpty)
+                            Text(
+                              line,
+                              style: text.bodyMedium?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          Text(
+                            meta,
+                            style: text.bodyMedium?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
-                    Text(
-                      meta,
-                      style: text.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: TsSpace.screenMargin,
+                  vertical: TsSpace.l,
+                ),
+                child: Wrap(
+                  spacing: TsSpace.s,
+                  runSpacing: TsSpace.s,
+                  children: [
+                    FilledButton.icon(
+                      icon: const Icon(Icons.play_arrow_rounded),
+                      label: Text(l10n.albumPlay),
+                      onPressed: () => playOrExplain(
+                        context,
+                        ref,
+                        tracks: album.tracks,
+                        origin: origin,
+                        shuffle: false,
+                      ),
+                    ),
+                    FilledButton.tonalIcon(
+                      icon: const Icon(Icons.shuffle_rounded),
+                      label: Text(l10n.playerShuffle),
+                      onPressed: () => playOrExplain(
+                        context,
+                        ref,
+                        tracks: album.tracks,
+                        origin: origin,
+                        shuffle: true,
                       ),
                     ),
                   ],
@@ -158,44 +213,23 @@ class _Detail extends ConsumerWidget {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: TsSpace.screenMargin,
-            vertical: TsSpace.l,
-          ),
-          child: Wrap(
-            spacing: TsSpace.s,
-            runSpacing: TsSpace.s,
-            children: [
-              FilledButton.icon(
-                icon: const Icon(Icons.play_arrow_rounded),
-                label: Text(l10n.albumPlay),
-                onPressed: () => playOrExplain(
-                  context,
-                  ref,
-                  tracks: album.tracks,
-                  origin: origin,
-                  shuffle: false,
-                ),
-              ),
-              FilledButton.tonalIcon(
-                icon: const Icon(Icons.shuffle_rounded),
-                label: Text(l10n.playerShuffle),
-                onPressed: () => playOrExplain(
-                  context,
-                  ref,
-                  tracks: album.tracks,
-                  origin: origin,
-                  shuffle: true,
-                ),
-              ),
-            ],
-          ),
+        SliverList.builder(
+          itemCount: entries.length,
+          itemBuilder: (context, index) {
+            final entry = entries[index];
+            return entry is String ? _DiscHeader(entry) : row(entry as int);
+          },
         ),
-        ...rows,
+        const SliverToBoxAdapter(child: SizedBox(height: TsSpace.xl)),
       ],
     );
   }
+}
+
+/// The track number of the tag, or null when absent or below one (BR-010).
+int? _number(LibraryTrack track) {
+  final number = track.info.trackNumber;
+  return number == null || number < 1 ? null : number;
 }
 
 /// A disc number below one counts as disc one (BR-010, rule 6).
@@ -238,6 +272,7 @@ class _TrackRow extends StatelessWidget {
     required this.disk,
     required this.onTap,
     required this.onLongPress,
+    required this.customActions,
   });
 
   final LibraryTrack track;
@@ -248,6 +283,7 @@ class _TrackRow extends StatelessWidget {
   final Disk? disk;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
+  final Map<CustomSemanticsAction, VoidCallback> customActions;
 
   @override
   Widget build(BuildContext context) {
@@ -281,6 +317,7 @@ class _TrackRow extends StatelessWidget {
       button: true,
       onTap: onTap,
       onLongPress: onLongPress,
+      customSemanticsActions: customActions,
       excludeSemantics: true,
       child: Material(
         color: playing ? colors.nowPlayingRow : Colors.transparent,
@@ -295,8 +332,8 @@ class _TrackRow extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  SizedBox(
-                    width: TsSpace.xxl,
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: TsSpace.xxl),
                     child: playing
                         ? Icon(
                             Icons.play_arrow_rounded,
@@ -310,6 +347,14 @@ class _TrackRow extends StatelessWidget {
                             ),
                           ),
                   ),
+                  if (unavailable) ...[
+                    Icon(
+                      Icons.usb_off_rounded,
+                      size: TsSpace.l,
+                      color: numberColor,
+                    ),
+                    const SizedBox(width: TsSpace.xs),
+                  ],
                   Expanded(
                     child: Text(
                       track.displayTitle,
