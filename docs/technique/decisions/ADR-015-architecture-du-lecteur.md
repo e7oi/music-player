@@ -41,4 +41,4 @@ La barre de lecture actuelle (`features/library/player_bar.dart`) lit la liste c
 
 ## As-built
 
-À écrire à la livraison.
+MPL-047, 2026-10-23, test appareil en attente (D14). Réalisé comme décidé, avec ces précisions : `PlayerState.entryIds` (identifiant stable par entrée de la file) a été ajouté pour les clés des lignes de la file ; `RepeatMode` est caché de `package:flutter/material.dart` (`hide RepeatMode`) là où les deux sont importés ; `trackIndexProvider` (`features/player/player_session.dart`) lit la liste limitée à deux émissions par seconde, et non `libraryTrackIndexProvider` de la notification. Le glissé vers le bas pour fermer le lecteur est un simple détecteur de geste. La notification n'est pas modifiée.

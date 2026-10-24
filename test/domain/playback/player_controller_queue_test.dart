@@ -576,6 +576,98 @@ void main() {
     );
   });
 
+  /// @verifies BR-009
+  group('BR-009 entry identifiers', () {
+    test(
+      'every emitted state carries the identifiers of its own queue',
+      () async {
+        final states = <PlayerState>[];
+        controller.states.listen(states.add);
+        await controller.setQueue([a, b, c, d]);
+        await controller.setShuffle(enabled: true);
+        await controller.move(2, 3);
+        await controller.playNext([e]);
+        await controller.enqueue([a]);
+        await controller.removeAt(1);
+        await controller.clearUpcoming();
+        await settle();
+
+        expect(states, isNotEmpty);
+        for (final state in states) {
+          expect(state.entryIds, hasLength(state.queue.length));
+          expect(state.entryIds.toSet(), hasLength(state.queue.length));
+        }
+        expect(controller.state.entryIds, states.last.entryIds);
+      },
+    );
+
+    test('a moved track keeps its identifier', () async {
+      await controller.setQueue([a, b, c]);
+      final before = {
+        for (var i = 0; i < 3; i++)
+          controller.state.queue[i]: controller.state.entryIds[i],
+      };
+
+      await controller.move(2, 1);
+
+      expect(controller.state.queue, [a, c, b]);
+      expect(controller.state.entryIds[1], before[c]);
+      expect(controller.state.entryIds[2], before[b]);
+    });
+  });
+
+  /// @verifies BR-009
+  group('BR-009 crossings', () {
+    test(
+      'rule 2: a manual move during the shuffle is lost on turning it off',
+      () async {
+        final tracks = many(10);
+        await controller.setQueue(tracks);
+        await controller.setShuffle(enabled: true);
+        await controller.move(3, 8);
+
+        await controller.setShuffle(enabled: false);
+
+        expect(controller.state.queue, tracks);
+      },
+    );
+
+    test('rule 2: duplicates come back in their original places', () async {
+      await controller.setQueue([a, b, a, c, a]);
+      await controller.setShuffle(enabled: true);
+      expect(controller.state.queue, hasLength(5));
+
+      await controller.setShuffle(enabled: false);
+
+      expect(controller.state.queue, [a, b, a, c, a]);
+    });
+
+    test(
+      'rule 4: removing the last current track starts over with repeat all',
+      () async {
+        await controller.setRepeat(RepeatMode.all);
+        await controller.setQueue([a, b], startIndex: 1);
+        await controller.play();
+
+        await controller.removeAt(1);
+
+        expect(controller.state.queue, [a]);
+        expect(controller.state.currentIndex, 0);
+        expect(controller.state.playing, isTrue);
+        expect(loadedPath(), pathOf(a));
+      },
+    );
+
+    test('rule 4: without repeat all it still stops', () async {
+      await controller.setQueue([a, b], startIndex: 1);
+      await controller.play();
+
+      await controller.removeAt(1);
+
+      expect(controller.state.status, PlayerStatus.stopped);
+    });
+  });
+
   /// @verifies FR-002
   group('FR-002 with duplicates', () {
     test('removes only the track at that position', () async {

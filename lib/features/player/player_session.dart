@@ -24,6 +24,8 @@ class QueueOriginNotifier extends Notifier<QueueOrigin?> {
 
   // ignore: use_setters_to_change_properties, the notifier API is a method
   void set(QueueOrigin origin) => state = origin;
+
+  void clear() => state = null;
 }
 
 final queueOriginProvider = NotifierProvider<QueueOriginNotifier, QueueOrigin?>(

@@ -32,4 +32,8 @@ Glisser horizontalement pour changer de piste, fermer ou arrêter depuis le mini
 
 ## As-built
 
-À écrire à la livraison.
+MPL-047, 2026-10-23, test appareil en attente (D14). `MiniPlayer` et `MiniPlayerProgress` (`lib/ui/widgets/mini_player.dart`), branchés par `MiniPlayerBar` (`lib/features/player/mini_player_bar.dart`) dans la coquille à la place de l'ancienne barre (`player_bar.dart` supprimé). Tests : `test/ui/widgets/mini_player_test.dart`, `test/features/player/player_flow_test.dart`.
+
+- La progression passe par `playerPositionProvider` (au plus 4 mises à jour par seconde) ; le reste du mini-lecteur ne se redessine pas à chaque tic. Il regarde la piste par `trackIndexProvider` (liste limitée à deux émissions par seconde), ce qui règle le reste de MPL-045 sur la barre de lecture.
+- « Source perdue » : `stopCauseProvider` garde la dernière cause d'arrêt (éjection ou échecs) jusqu'à ce que `playing` redevienne vrai.
+- L'icône de prise remplace le repère de source dans l'état « source perdue ».

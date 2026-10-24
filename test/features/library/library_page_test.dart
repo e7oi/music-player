@@ -167,6 +167,24 @@ void main() {
     expect(player.state.currentIndex, 0);
   });
 
+  /// @verifies FR-019.1
+  testWidgets('a row offers the two menu actions to TalkBack', (tester) async {
+    await pumpPage(tester);
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+
+    final labels = [
+      for (final semantics in tester.widgetList<Semantics>(
+        find.byType(Semantics),
+      ))
+        ...?semantics.properties.customSemanticsActions?.keys.map(
+          (action) => action.label,
+        ),
+    ];
+
+    expect(labels, containsAll(['Play next', 'Add to queue']));
+  });
+
   /// @verifies FR-017.2
   testWidgets('the player says the queue came from the track list', (
     tester,

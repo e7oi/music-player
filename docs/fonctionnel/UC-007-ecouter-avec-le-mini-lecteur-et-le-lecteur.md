@@ -34,4 +34,6 @@ Panneau lecteur permanent des écrans larges (MPL-048), favoris, paroles, égali
 
 ## As-built
 
-À écrire à la livraison.
+MPL-047, 2026-10-23, test appareil en attente (D14). Parcours livré par FR-016 à FR-019 et BR-009. `lib/features/player/` (mini-lecteur, page du lecteur, feuille de la file, menu d'appui long, fournisseurs de session) ; tests : `test/features/player/`, `test/ui/widgets/mini_player_test.dart`, `test/features/library/library_page_test.dart`.
+
+- Le lecteur en paysage est sur deux colonnes ; le panneau permanent reste à décider (MPL-048, voir le backlog).

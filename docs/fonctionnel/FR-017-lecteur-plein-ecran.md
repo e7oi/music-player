@@ -37,4 +37,10 @@ Favoris réels, paroles, égaliseur, minuterie de sommeil, vitesse de lecture, p
 
 ## As-built
 
-À écrire à la livraison.
+MPL-047, 2026-10-23, test appareil en attente (D14). `PlayerPage` et `openPlayer` (`lib/features/player/player_page.dart`), `NowPlaying` (`now_playing.dart`, informations et ligne de métadonnées), `ToggleIconButton` (`lib/ui/widgets/toggle_icon_button.dart`). Tests : `test/features/player/now_playing_test.dart`, `player_flow_test.dart`.
+
+- Page poussée par `Navigator.push` (fondu, `Hero` sur la pochette) ; fermeture par « Réduire », glissé vers le bas (vitesse de plus de 700 dp/s) et geste Retour. Le glissé vers le bas est un détecteur simple : il est inopérant quand le contenu défile.
+- `playerOpenProvider` dit que le lecteur est ouvert : la liste n'affiche alors pas le `SnackBar` de fichier illisible. `playerFailureProvider` est vidé à chaque ouverture.
+- Le curseur n'envoie le déplacement qu'au lâcher ; ses actions TalkBack avancent et reculent de 5 s et annoncent la nouvelle valeur (une assertion de Flutter l'exige).
+- Écart : le point d'état d'aléatoire et de répétition est dans `ToggleIconButton` ; le bouton « À suivre » montre « titre · artiste » de la prochaine piste.
+- Texte du bandeau d'éjection (« Lecture arrêtée : {disque} débranché ») et libellés ajoutés par moi, en français et en anglais.

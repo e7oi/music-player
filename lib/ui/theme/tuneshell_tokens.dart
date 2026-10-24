@@ -62,9 +62,6 @@ abstract final class TsSize {
   static const double transportIcon = 32; // previous, play and next
   static const double queueSheetInitial = 0.6; // share of the screen
   static const double queueSheetMin = 0.3;
-  static const Duration seekStep = Duration(
-    seconds: 5,
-  ); // keyboard and TalkBack
   static const double bannerMin = 56; // status banner
   static const double fixedRowMaxTextScale = 1.3; // above: rows grow
   static const double sourceMark = 12; // source mark on a TrackTile

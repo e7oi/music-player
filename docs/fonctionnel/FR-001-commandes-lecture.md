@@ -28,3 +28,4 @@ MPL-017, 2026-10-15. `lib/domain/playback/services/player_controller.dart` (`Pla
 - « Suivant » sur la dernière piste arrête la lecture, comme la fin de file.
 - « Précédent » sur la première piste, ou quand aucune piste disponible ne précède, reprend la piste courante au début. Si une piste précédente a été tentée sans succès (échec d'ouverture) et qu'aucune autre ne la précède, la lecture s'arrête.
 - Les commandes et les événements du moteur sont traités un par un, dans l'ordre d'arrivée ; un événement du moteur qui arrive après un changement de piste est ignoré.
+- MPL-047, 2026-10-23 : aléatoire, répétition et déplacement dans la file, laissés hors périmètre, sont livrés par BR-009 (FR-016 à FR-019 pour l'interface). Les règles ci-dessus ne changent que si la répétition est active : « toutes » reprend la file à son début au lieu de s'arrêter (règle 5), « une piste » rejoue la piste à sa fin.

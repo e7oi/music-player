@@ -97,7 +97,9 @@ class QueueModel {
 
   /// The [n]th track after the current one.
   QueueRow upcoming(int n) {
-    RangeError.checkValidIndex(n, List<void>.filled(upcomingCount, null));
+    if (n < 0 || n >= upcomingCount) {
+      throw RangeError.range(n, 0, upcomingCount - 1);
+    }
     return _row(_currentIndex! + 1 + n);
   }
 

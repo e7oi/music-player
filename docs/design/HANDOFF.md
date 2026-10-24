@@ -352,7 +352,7 @@ Recherche, playlists, favoris, égaliseur, paroles, synchronisation, comptes, r�
 | Taille d'écran de référence Pixel 10 Pro | 412 × 915 dp supposé, **à confirmer** sur l'appareil |
 | Texte exact du dialogue de permission | Imposé par Android ; la maquette 1c est approximative |
 | Version Android minimale | **`minSdk` 30** (ADR-005) |
-| Source dans la notification / l'écran verrouillé | Le repère graphique est impossible (rendu système). Option : ajouter le nom de la source au sous-titre de la MediaSession. **À décider** (MPL-047) |
+| Source dans la notification / l'écran verrouillé | Le repère graphique est impossible (rendu système). Option : ajouter le nom de la source au sous-titre de la MediaSession. **Décidé le 2026-10-23 (MPL-047, ADR-015) :** non, la notification n'est pas modifiée dans ce lot (ni nom de source, ni actions aléatoire et répétition) ; à reprendre si le propriétaire le demande |
 | Moteur audio et base de données | `media_kit` (D2), Drift (D3), `audio_service` (ADR-006) ; aucune dépendance réseau |
 
 ---

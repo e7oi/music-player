@@ -36,8 +36,15 @@ Le `PlayerController` porte deux modes (aléatoire, répétition) et six opérat
 - Règle 4 : l'ordre d'une nouvelle boucle reste celui du premier tour (pas de nouveau mélange).
 - Règle 8 : toucher une ligne de la file lit cette piste ; les pistes sautées ne sont pas retirées.
 - Les modes ne survivent pas à la fermeture de l'application.
+- Ajouté à la revue (2026-10-23) : retirer la dernière piste, quand elle est la courante, avec la répétition « toutes » reprend la file au début (FR-002, règle 4 s'arrêterait). Autre choix : l'arrêt.
 - Règle 11 : « Lire ensuite » répété place chaque piste juste après la courante (ordre inverse de la demande) ; doublons permis.
 
 ## As-built
 
-À écrire à la livraison.
+MPL-047, 2026-10-23, test appareil en attente (D14). `PlayerController` : `setShuffle`, `setRepeat`, `move`, `clearUpcoming`, `skipTo`, `playNext`, `enqueue` (`lib/domain/playback/services/player_controller.dart`), `RepeatMode` (`model/repeat_mode.dart`), `PlayerState.shuffle`, `repeat` et `entryIds`. Tests : `test/domain/playback/player_controller_queue_test.dart` (groupes « BR-009 »).
+
+- Un identifiant par entrée de la file (`_ids`) permet de restaurer l'ordre d'origine malgré les doublons ; l'ordre d'origine (`_origin`) n'existe que pendant l'aléatoire.
+- Retrait de la dernière piste courante avec « toutes » : la file repart de sa première piste.
+- Répétition « toutes » : `_loadFrom(..., wrap: true)` reprend la recherche à 0 jusqu'à la piste de départ exclue, une seule fois. Au premier lancement sur une file dont tout le reste est indisponible, la recherche couvre aussi le début de la file. Partir de la première piste en échec sur toute une file ne reboucle pas : les échecs de suite arrêtent la lecture (règle 5).
+- `skipTo` passe l'intention de lecture à vrai et repart à zéro sur les échecs de suite (règle 8).
+- Le mélange utilise un `Random` injectable (tests).

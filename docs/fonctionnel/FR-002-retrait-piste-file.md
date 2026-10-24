@@ -25,3 +25,4 @@ Retrait de plusieurs pistes en une fois, déplacement d'une piste dans la file, 
 MPL-017, 2026-10-15. `PlayerController.removeAt(index)`, qui renvoie `false` pour une position hors de la file ; tests : groupe « FR-002 » de `test/domain/playback/player_controller_test.dart`.
 
 - Exigence 7 : implémentée sans chargement.
+- MPL-047, 2026-10-23 : le retrait par l'interface (glissé d'une ligne de la suite dans la file, FR-018.8) appelle `removeAt` ; le déplacement d'une piste, hors périmètre ici, est dans BR-009 (règle 6). `removeAt` retire aussi la piste de l'ordre d'origine de l'aléatoire.

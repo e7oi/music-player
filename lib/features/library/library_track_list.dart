@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tuneshell/app/providers/gesture_providers.dart';
 import 'package:tuneshell/app/providers/player_providers.dart';
@@ -340,11 +341,23 @@ class _TrackRow extends ConsumerWidget {
       onTap: onTap,
       onLongPress: onLongPress,
     );
-    if (!flashed) return tile;
+    final withActions = Semantics(
+      // FR-019.1: the menu actions, for TalkBack too.
+      customSemanticsActions: {
+        CustomSemanticsAction(label: l10n.menuPlayNext): () => unawaited(
+          applyTrackAction(context, ref, entry.track, MenuAction.next),
+        ),
+        CustomSemanticsAction(label: l10n.menuAddToQueue): () => unawaited(
+          applyTrackAction(context, ref, entry.track, MenuAction.last),
+        ),
+      },
+      child: tile,
+    );
+    if (!flashed) return withActions;
     // FR-013.5: the row the button led to is lit for a moment.
     return Stack(
       children: [
-        tile,
+        withActions,
         Positioned.fill(
           child: IgnorePointer(
             child: ColoredBox(

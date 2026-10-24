@@ -31,4 +31,8 @@ Sélection de plusieurs pistes, ajout d'un album ou d'un artiste entier (MPL-048
 
 ## As-built
 
-À écrire à la livraison.
+MPL-047, 2026-10-23, test appareil en attente (D14). `showTrackMenu` (`lib/features/player/track_menu.dart`), appelé par l'appui long d'une ligne de `LibraryTrackList` (`TrackTile.onLongPress`). Contrôleur : `playNext` et `enqueue`. Tests : `test/features/library/library_page_test.dart` (menu, file vide, ordre), `test/domain/playback/player_controller_queue_test.dart`.
+
+- Menu : feuille modale à deux lignes (`showTrackMenu`). Pour TalkBack, la ligne offre aussi « Lire ensuite » et « Ajouter à la file » comme actions personnalisées (`applyTrackAction`, testé).
+- Sur une file vide, la provenance de la file (FR-017.2) est effacée : la piste ajoutée ne vient d'aucune liste.
+- Aucune confirmation avant l'ajout hors le message bref.

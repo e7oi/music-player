@@ -224,6 +224,12 @@ class PlayerController {
       return true;
     }
     if (index == remaining.length) {
+      // BR-009, rule 4: with "repeat all", the queue starts over.
+      if (_state.repeat == RepeatMode.all && _isEngaged) {
+        _emit(_state.copyWith(queue: remaining, currentIndex: () => 0));
+        await _loadFrom(0, 1);
+        return true;
+      }
       _emit(_state.copyWith(queue: remaining, currentIndex: () => index - 1));
       await _stopPlayback();
       return true;
@@ -551,6 +557,6 @@ class PlayerController {
 
   void _emit(PlayerState state) {
     _state = state.copyWith(entryIds: _ids);
-    if (!_states.isClosed) _states.add(state);
+    if (!_states.isClosed) _states.add(_state);
   }
 }

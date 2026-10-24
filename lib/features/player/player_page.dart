@@ -28,7 +28,9 @@ const _seekStep = Duration(seconds: 5);
 /// travels from the mini player to the large size.
 Future<void> openPlayer(BuildContext context, WidgetRef ref) async {
   if (ref.read(playerOpenProvider)) return;
-  ref.read(playerOpenProvider.notifier).set(open: true);
+  // Kept before the push: the caller may be unmounted while the player is
+  // open, and the flag must come back down all the same.
+  final open = ref.read(playerOpenProvider.notifier)..set(open: true);
   ref.read(playerFailureProvider.notifier).clear();
   final still = MediaQuery.disableAnimationsOf(context);
   final navigator = Navigator.of(context);
@@ -43,9 +45,7 @@ Future<void> openPlayer(BuildContext context, WidgetRef ref) async {
       ),
     ),
   );
-  if (context.mounted) {
-    ref.read(playerOpenProvider.notifier).set(open: false);
-  }
+  open.set(open: false);
 }
 
 /// The full-screen player (FR-017).

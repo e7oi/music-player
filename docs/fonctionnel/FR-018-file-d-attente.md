@@ -35,4 +35,9 @@ Ajouter des pistes à la file (FR-019), annuler un retrait, enregistrer la file 
 
 ## As-built
 
-À écrire à la livraison.
+MPL-047, 2026-10-23, test appareil en attente (D14). `showQueueSheet` et `QueueSheet` (`lib/features/player/queue_sheet.dart`), `QueueModel` (`queue_model.dart`, lignes construites à la demande, durée totale calculée une fois par état). Tests : `test/features/player/queue_model_test.dart`, `queue_sheet_test.dart`.
+
+- Feuille modale avec `DraggableScrollableSheet` ; la suite est une `SliverReorderableList` (poignée `ReorderableDragStartListener`) ; chaque ligne est un `Dismissible` (sans animation de repli) dont la clé est l'identifiant d'entrée du lecteur (`PlayerState.entryIds`), stable quand la file change.
+- TalkBack : la liste réordonnable de Flutter ajoute « Monter », « Descendre », « Au début », « À la fin » ; « Retirer de la file » est une action personnalisée de la ligne.
+- L'en-tête (titre, résumé, « Vider la suite ») passe à la ligne aux grands textes.
+- Le test de glissé vérifie que la piste monte, pas sa place exacte.
